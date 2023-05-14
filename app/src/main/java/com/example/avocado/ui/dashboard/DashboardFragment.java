@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        container.removeAllViews();
+
         DashboardViewModel dashboardViewModel =
                 new ViewModelProvider(this).get(DashboardViewModel.class);
 
@@ -42,9 +45,12 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        GT_FillInSubtitles gt_fillInSubtitles = new GT_FillInSubtitles();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.nav_host_fragment_activity_main, gt_fillInSubtitles);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        Quiz3Fragment quiz3Fragment = new Quiz3Fragment();
+
+        transaction.replace(R.id.nav_host_fragment_activity_main, quiz3Fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

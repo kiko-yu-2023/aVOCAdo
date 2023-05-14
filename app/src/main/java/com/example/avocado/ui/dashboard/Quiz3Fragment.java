@@ -1,6 +1,7 @@
 package com.example.avocado.ui.dashboard;
 
-import android.net.Uri;
+import static java.sql.DriverManager.println;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,19 +9,19 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.MediaController;
-import android.widget.VideoView;
 
 import com.example.avocado.R;
+import com.example.avocado.databinding.FragmentQuiz3Binding;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link GT_FillInSubtitles#newInstance} factory method to
+ * Use the {@link Quiz3Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GT_FillInSubtitles extends Fragment {
+public class Quiz3Fragment extends Fragment {
+
+    private FragmentQuiz3Binding binding;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,7 +32,7 @@ public class GT_FillInSubtitles extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public GT_FillInSubtitles() {
+    public Quiz3Fragment() {
         // Required empty public constructor
     }
 
@@ -41,11 +42,11 @@ public class GT_FillInSubtitles extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment GT_FillInSubtitles.
+     * @return A new instance of fragment Quiz3Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GT_FillInSubtitles newInstance(String param1, String param2) {
-        GT_FillInSubtitles fragment = new GT_FillInSubtitles();
+    public static Quiz3Fragment newInstance(String param1, String param2) {
+        Quiz3Fragment fragment = new Quiz3Fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -66,12 +67,18 @@ public class GT_FillInSubtitles extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_gt_fill_in_subtitles, container, false);
 
-        YouTubePlayerView youTubePlayerView = (YouTubePlayerView) v.findViewById(R.id.youtubeplayerId);
-        Button button_play = (Button) v.findViewById(R.id.button_play);
+        binding = FragmentQuiz3Binding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-        // Inflate the layout for this fragment
-        return v;
+        YouTubePlayerView youTubePlayerView = binding.youtubeplayerId;
+
+        return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
