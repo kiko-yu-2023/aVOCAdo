@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz1Binding;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link Quiz1Fragment#newInstance} factory method to
@@ -18,6 +18,7 @@ import com.example.avocado.databinding.FragmentQuiz1Binding;
 public class Quiz1Fragment extends Fragment {
 
     private FragmentQuiz1Binding binding;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,6 +68,7 @@ public class Quiz1Fragment extends Fragment {
 
         binding = FragmentQuiz1Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
 
         return root;
     }

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,7 +62,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
 
         // Choose the appropriate fragment based on the quiz type
         if (quizType.equals("TYPE 1 QUIZ")) {
-            selectedFragment = new Quiz1Fragment();
+            selectedFragment = new AddWordFragment();
         } else if (quizType.equals("TYPE 2 QUIZ")) {
             selectedFragment = new Quiz2Fragment();
         } else if (quizType.equals("TYPE 3 QUIZ")) {
