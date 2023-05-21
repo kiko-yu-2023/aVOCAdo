@@ -9,17 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.avocado.R;
-import com.example.avocado.databinding.FragmentQuiz3Binding;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-
+import com.example.avocado.databinding.FragmentQuiz1Binding;
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Quiz3Fragment#newInstance} factory method to
+ * Use the {@link Quiz1Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Quiz3Fragment extends Fragment {
+public class Quiz1Fragment extends Fragment {
 
-    private FragmentQuiz3Binding binding;
+    private FragmentQuiz1Binding binding;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +28,7 @@ public class Quiz3Fragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Quiz3Fragment() {
+    public Quiz1Fragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +38,11 @@ public class Quiz3Fragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Quiz3Fragment.
+     * @return A new instance of fragment Quiz1Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Quiz3Fragment newInstance(String param1, String param2) {
-        Quiz3Fragment fragment = new Quiz3Fragment();
+    public static Quiz1Fragment newInstance(String param1, String param2) {
+        Quiz1Fragment fragment = new Quiz1Fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,18 +57,16 @@ public class Quiz3Fragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         container.removeAllViews();
 
-        binding = FragmentQuiz3Binding.inflate(inflater, container, false);
+        binding = FragmentQuiz1Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        YouTubePlayerView youTubePlayerView = binding.youtubeplayerId;
 
         return root;
     }
