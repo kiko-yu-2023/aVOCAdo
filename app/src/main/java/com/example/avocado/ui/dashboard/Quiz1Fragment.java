@@ -3,12 +3,22 @@ package com.example.avocado.ui.dashboard;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.avocado.databinding.FragmentQuiz1Binding;
+import com.example.avocado.db.Words;
+import com.example.avocado.db.WordsDao;
+import com.example.avocado.db.WordsDatabase;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +29,11 @@ public class Quiz1Fragment extends Fragment {
 
     private FragmentQuiz1Binding binding;
 
+    TextView textView;
+    Button button1, button2, button3, button4;
+
+    List<String> meanings;
+    private WordsDatabase db;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,9 +84,55 @@ public class Quiz1Fragment extends Fragment {
         binding = FragmentQuiz1Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        textView = binding.textView;
+        button1 = binding.button1;
+        button2 = binding.button2;
+        button3 = binding.button3;
+        button4 = binding.button4;
+
+
+
+        db = Room.databaseBuilder(requireContext(), WordsDatabase.class, "words")
+                .allowMainThreadQueries()
+                .build();
+
+        fillWord();
+        fillOptions();
 
         return root;
     }
+
+    private void fillWord() {
+        Words word = db.getWordsDao().getNthWord(2);
+        if (word != null) {
+            // Word found, do something with it
+            textView.setText(word.word);
+        } else {
+            // Word not found
+            textView.setText("단어 들어오기 오류");
+        }
+    }
+
+    private void fillOptions() {
+        // Retrieve all Words from the database
+        List<Words> allWords =db.getWordsDao().getAll();
+
+        // Extract the meanings from the Words objects
+        meanings = new ArrayList<>();
+        for (Words word : allWords) {
+            meanings.add(word.meaning);
+        }
+
+        // Shuffle the meanings list
+        Collections.shuffle(meanings);
+
+        // Set the meanings to the buttons
+        button1.setText(meanings.get(0));
+        button2.setText(meanings.get(1));
+        button3.setText(meanings.get(2));
+        button4.setText(meanings.get(3));
+    }
+
 
     @Override
     public void onDestroyView() {

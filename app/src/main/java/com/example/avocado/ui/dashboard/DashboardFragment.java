@@ -62,7 +62,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
 
         // Choose the appropriate fragment based on the quiz type
         if (quizType.equals("TYPE 1 QUIZ")) {
-            selectedFragment = new AddWordFragment();
+            selectedFragment = new Quiz1Fragment();
         } else if (quizType.equals("TYPE 2 QUIZ")) {
             selectedFragment = new Quiz2Fragment();
         } else if (quizType.equals("TYPE 3 QUIZ")) {
