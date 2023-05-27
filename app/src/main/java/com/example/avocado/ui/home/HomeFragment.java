@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.avocado.db.dict;
+import com.example.avocado.db.Dict;
 
 import com.example.avocado.databinding.FragmentHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,9 +31,9 @@ public class HomeFragment extends Fragment {
     public RecyclerView rc_dict;
     public dictAdapter adapter_dict;
     //원본 데이터 리스트
-    public ArrayList<dict> total_items = new ArrayList<>();
+    public ArrayList<Dict> total_items = new ArrayList<>();
     //검색한 데이터 리스트
-    public ArrayList<dict> search_list = new ArrayList<>();
+    public ArrayList<Dict> search_list = new ArrayList<>();
     public EditText editText;
 
 
@@ -62,8 +62,8 @@ public class HomeFragment extends Fragment {
 
         for(int i=0;i<5;i++)
         {
-            total_items.add(new dict("abc"+i)); //임시데이터
-            Log.e("dict",total_items.get(i).getDictID()+ " "+ total_items.get(i).getTitle()+" "+total_items.get(i).getDate());
+            total_items.add(new Dict("abc"+i)); //임시데이터
+            Log.e("dict",total_items.get(i).getDictID()+ " "+ total_items.get(i).getTitle()+" "+total_items.get(i).getModifiedTime());
         }
 
         editText = binding.searchText;
