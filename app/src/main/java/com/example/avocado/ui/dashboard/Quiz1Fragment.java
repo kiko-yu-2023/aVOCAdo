@@ -90,8 +90,6 @@ public class Quiz1Fragment extends Fragment {
         button3 = binding.button3;
         button4 = binding.button4;
 
-
-
         db = Room.databaseBuilder(requireContext(), WordsDatabase.class, "words")
                 .allowMainThreadQueries()
                 .build();

@@ -3,13 +3,17 @@ package com.example.avocado.ui.dashboard;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.room.Room;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz2Binding;
+import com.example.avocado.db.Words;
+import com.example.avocado.db.WordsDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +23,10 @@ import com.example.avocado.databinding.FragmentQuiz2Binding;
 public class Quiz2Fragment extends Fragment {
 
     private FragmentQuiz2Binding binding;
+
+    TextView textView;
+
+    private WordsDatabase db;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -68,8 +76,30 @@ public class Quiz2Fragment extends Fragment {
         binding = FragmentQuiz2Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        textView = binding.textView;
+
+        db = Room.databaseBuilder(requireContext(), WordsDatabase.class, "words")
+                .allowMainThreadQueries()
+                .build();
+
+        fillSentence();
+
         // Inflate the layout for this fragment
         return root;
+    }
+
+    private void fillSentence() {
+        Words word = db.getWordsDao().getNthExample(2);
+        String example;
+        if (word != null) {
+            // Word found, do something with it
+            example = word.example;
+            String modifiedExample = example.replace(word.word, "_______");
+            textView.setText(modifiedExample);
+        } else {
+            // Example not found
+            textView.setText("예문 들어오기 오류");
+        }
     }
 
     @Override

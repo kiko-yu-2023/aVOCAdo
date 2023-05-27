@@ -28,4 +28,9 @@ public interface WordsDao {
     //index 번째 단어 보여주기
     @Query("SELECT * FROM Words LIMIT 1 OFFSET :index")
     Words getNthWord(int index);
+
+    //index 번째 문장 보여주기
+    @Query("SELECT * FROM Words LIMIT 1 OFFSET :index")
+    Words getNthExample(int index);
+
 }
