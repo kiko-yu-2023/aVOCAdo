@@ -1,6 +1,5 @@
 package com.example.avocado.db;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -13,16 +12,16 @@ import io.reactivex.rxjava3.core.Flowable;
 
 
 @Dao
-public interface dictDao {
+public interface DictDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    Completable insert(dict d);
+    Completable insert(Dict d);
 
     @Query("DELETE FROM DICT_TABLE")
     Completable deleteAll();
 
     //수정일자 최신순 전체조회
     @Query("SELECT * FROM DICT_TABLE ORDER BY modifiedTime")
-    Flowable<List<dict>> loadOrderByModified();
+    Flowable<List<Dict>> loadOrderByModified();
 
     //updateUpdatedTime
 

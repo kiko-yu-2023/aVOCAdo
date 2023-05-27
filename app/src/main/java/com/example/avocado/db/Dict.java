@@ -8,14 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity(tableName = "dict_table")
-public class dict {
+public class Dict {
     @PrimaryKey(autoGenerate = true)
     private int dictID;
     private String title;
     private String createdTime;
     private String modifiedTime;
 
-    public dict(String title)
+    public Dict(String title)
     {
         this.title=title;
         Date date = new Date();
