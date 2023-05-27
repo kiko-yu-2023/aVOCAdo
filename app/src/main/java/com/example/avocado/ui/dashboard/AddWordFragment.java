@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.avocado.R;
@@ -29,7 +30,9 @@ public class AddWordFragment extends Fragment {
     private FragmentAddWordBinding binding;
 
     TextView word, meaning, example, savedWord;
-    Button addButton;
+    Button addButton, deleteButton, showButton, showExampleButton, searchExampleButton;
+
+    EditText searchWord;
 
     private WordsDatabase db;
 
@@ -86,6 +89,12 @@ public class AddWordFragment extends Fragment {
         example = binding.example;
 
         addButton = binding.addButton;
+        deleteButton = binding.deleteButton;
+        showButton = binding.showButton;
+        showExampleButton = binding.showExamplesButton;
+        searchExampleButton = binding.searchExampleButton;
+
+        searchWord = binding.searchWord;
 
         savedWord = binding.savedWord;
 
@@ -107,7 +116,60 @@ public class AddWordFragment extends Fragment {
             }
         });
 
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.getWordsDao().deleteAll();
+                fetchWordList();
+            }
+        });
+
+        showButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchWordList();
+            }
+        });
+
+        showExampleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showExamples();
+            }
+        });
+
+        searchExampleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchExample();
+            }
+        });
+
         return root;
+    }
+
+    private void searchExample() {
+        String userInput = binding.searchWord.getText().toString();
+
+        // Search for the word in the database
+        Words word = db.getWordsDao().findWord(userInput);
+
+        if (word != null) {
+            // Word found, display the example
+            savedWord.setText(word.example);
+        } else {
+            // Word not found
+            savedWord.setText("Example not found");
+        }
+    }
+
+    private void showExamples() {
+        List<Words> exampleList = db.getWordsDao().getAll();
+        String exampleListText = "";
+        for(Words words : exampleList){
+            exampleListText += words.example;
+            savedWord.setText(exampleListText);
+        }
     }
 
     private void fetchWordList(){
@@ -118,6 +180,8 @@ public class AddWordFragment extends Fragment {
             savedWord.setText(wordListText);
         }
     }
+
+
 
     @Override
     public void onDestroyView() {

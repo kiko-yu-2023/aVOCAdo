@@ -1,7 +1,6 @@
 package com.example.avocado.db;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -16,9 +15,12 @@ public interface WordsDao {
     @Update
     void update(Words words);
 
-    @Delete
-    void delete(Words words);
+    @Query("DELETE FROM Words")
+    void deleteAll();
 
     @Query("SELECT * FROM Words")
     List<Words> getAll();
+
+    @Query("SELECT * FROM Words WHERE word = :userInput")
+    Words findWord(String userInput);
 }

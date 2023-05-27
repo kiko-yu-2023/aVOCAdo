@@ -31,6 +31,36 @@
         android:layout_height="wrap_content"
         android:text="추가"/>
 
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="삭제"/>
+
+    <Button
+        android:id="@+id/show_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="보기"/>
+
+    <Button
+        android:id="@+id/show_examples_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="예문만 보기"/>
+
+    <EditText
+        android:hint="단어 검색"
+        android:id="@+id/search_word"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/search_example_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="단어 예문 보기"/>
+
     <TextView
         android:id="@+id/saved_word"
         android:layout_width="match_parent"
