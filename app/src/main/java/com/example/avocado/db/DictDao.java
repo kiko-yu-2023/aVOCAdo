@@ -16,11 +16,11 @@ public interface DictDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(Dict d);
 
-    @Query("DELETE FROM DICT_TABLE")
+    @Query("DELETE FROM DICT")
     Completable deleteAll();
 
     //수정일자 최신순 전체조회
-    @Query("SELECT * FROM DICT_TABLE ORDER BY modifiedTime")
+    @Query("SELECT * FROM DICT ORDER BY modifiedTime")
     Flowable<List<Dict>> loadOrderByModified();
 
     //updateUpdatedTime

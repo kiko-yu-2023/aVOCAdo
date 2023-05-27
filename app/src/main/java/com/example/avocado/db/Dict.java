@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Entity(tableName = "dict_table")
+@Entity
 public class Dict {
     @PrimaryKey(autoGenerate = true)
     private int dictID;
