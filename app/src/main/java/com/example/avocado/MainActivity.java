@@ -1,12 +1,18 @@
 package com.example.avocado;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.example.avocado.ui.home.HomeFragment;
 import com.example.avocado.ui.home.NewMemoFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,6 +34,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //배경화면 보이도록 패딩넣기
+        ConstraintLayout mainLayout = binding.container;
+        int padding = getResources().getDimensionPixelSize(R.dimen.fragment_padding);
+        mainLayout.setPadding(padding,0,padding,padding);
+
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setItemIconTintList(null);
         // Passing each menu ID as a set of Ids because each
@@ -45,6 +57,24 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager= getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container,fragment).commit();
+    }
+
+    //키보드 나왔을 때 다른 곳을 터치하면 키보드 내리기
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        View view = getCurrentFocus();
+        if (view != null && (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_MOVE) &&
+                view instanceof EditText && !view.getClass().getName().startsWith("android.webkit.")) {
+            int[] sourceCoordinates = new int[2];
+            view.getLocationOnScreen(sourceCoordinates);
+            float x = event.getRawX() + view.getLeft() - sourceCoordinates[0];
+            float y = event.getRawY() + view.getTop() - sourceCoordinates[1];
+            if (x < view.getLeft() || x > view.getRight() || y < view.getTop() || y > view.getBottom()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 
 

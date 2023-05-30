@@ -101,11 +101,10 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
 
                 if(inputMemoName.getText().toString().length()==0)
                 {
-                    memoName = "imsi";
+                    Toast.makeText(getActivity(),"새 메모장의 이름을 입력해주세요.",Toast.LENGTH_SHORT).show();
                 }
                 else {
                     memoName=inputMemoName.getText().toString();
-                }
 
                 DictDao dao = AppDatabase.getDatabase(getContext()).dictDao();
                 //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
@@ -133,7 +132,7 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                 Log.e("change",memoName);
                 getDialog().dismiss();
 
-            }
+            }}
         });
 
         return root;

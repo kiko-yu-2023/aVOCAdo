@@ -1,5 +1,6 @@
 package com.example.avocado.ui.home;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,16 @@ import com.example.avocado.R;
 import com.example.avocado.db.Dict;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import com.example.avocado.databinding.DictItemListBinding;
 
-import org.w3c.dom.Text;
-
-public class dictAdapter extends RecyclerView.Adapter<dictAdapter.ViewHolder>{
+public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder>{
 
     private ArrayList<Dict> dictData;
     private DictItemListBinding binding;
 
-    public dictAdapter(ArrayList<Dict> dictData){
+    public DictAdapter(ArrayList<Dict> dictData){
         this.dictData = dictData;
     }
     @NonNull
@@ -34,7 +35,7 @@ public class dictAdapter extends RecyclerView.Adapter<dictAdapter.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull dictAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DictAdapter.ViewHolder holder, int position) {
         holder.dictNAme.setText(dictData.get(position).getTitle());
     }
 
@@ -43,10 +44,10 @@ public class dictAdapter extends RecyclerView.Adapter<dictAdapter.ViewHolder>{
         return dictData.size();
     } //임시
 
-    public void setItems(ArrayList<Dict> list)
-    {
-        dictData = list;
-        notifyDataSetChanged();
+    public void setItems(ArrayList<Dict> newItems) {
+        dictData = newItems; // 기존 데이터를 새로운 데이터로 교체
+
+        notifyDataSetChanged(); // 어댑터에 데이터 변경을 알림
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -57,4 +58,5 @@ public class dictAdapter extends RecyclerView.Adapter<dictAdapter.ViewHolder>{
             dictNAme = (TextView)itemView.findViewById(R.id.dictName);
         }
     }
+
 }

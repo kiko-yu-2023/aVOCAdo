@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/fragmentLayout"
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment"
     android:orientation="vertical">
@@ -14,14 +15,17 @@
         android:ems="10"
         android:hint="검색어를 입력하세요."
         android:inputType="textPersonName"
-        app:layout_constraintTop_toTopOf="parent"></EditText>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout2"
+        ></EditText>
 
     <LinearLayout
-        android:id="@+id/frameLayout2"
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="@id/searchText"
-        android:orientation="horizontal">
+        android:layout_height="700dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchText">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_dict"
@@ -31,24 +35,36 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
+            android:id="@+id/pageIndicatorContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/pageIndicatorContainer"
-            android:orientation="horizontal">
-        </LinearLayout>
+            android:orientation="horizontal"></LinearLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="50px"
-        android:layout_marginBottom="150px"
         android:clickable="true"
         android:tint="@color/white"
         app:borderWidth="0px"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@drawable/add_dict_button" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:contentDescription="add new memo"
+        android:layout_marginBottom="70dp"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/noMemoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="메모장이 없습니다.\n 새 메모를 추가해 보세요!"
+            android:layout_gravity="center"
+            android:gravity="center">
+        </TextView>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
