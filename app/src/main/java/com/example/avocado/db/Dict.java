@@ -1,13 +1,17 @@
 package com.example.avocado.db;
 
 import androidx.annotation.NonNull;
+import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.Relation;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-@Entity
+@Entity(indices = {@Index(value = "title", unique = true)})
 public class Dict {
     @PrimaryKey(autoGenerate = true)
     private int dictID;
@@ -23,9 +27,6 @@ public class Dict {
         this.createdTime=formatter.format(date);
         this.modifiedTime=formatter.format(date);
     }
-
-
-
     public void setDictID(int dictID) {
         this.dictID = dictID;
     }
@@ -60,3 +61,4 @@ public class Dict {
         return this.dictID+" "+this.title+" "+this.createdTime+" "+this.modifiedTime;
     }
 }
+

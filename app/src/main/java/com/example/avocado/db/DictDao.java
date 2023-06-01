@@ -4,17 +4,22 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 
 @Dao
 public interface DictDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    Completable insert(Dict d);
+    Single<Long> insert(Dict d);
+
+    @Query("SELECT * FROM DICT WHERE title = :title")
+    Single<Dict> getDictByTitle(String title);
 
     @Query("DELETE FROM DICT")
     Completable deleteAll();
@@ -22,6 +27,9 @@ public interface DictDao {
     //수정일자 최신순 전체조회
     @Query("SELECT * FROM DICT ORDER BY modifiedTime")
     Flowable<List<Dict>> loadOrderByModified();
+    @Transaction
+    @Query("SELECT * FROM dict WHERE dictID = :dictId")
+    Flowable<DictWithWordsAndSentences> getDictWithWordsAndSentencesById(int dictId);
 
     //updateUpdatedTime
 
@@ -30,4 +38,5 @@ public interface DictDao {
     //separateDict : 새로운 단어장을 생성하여 기존의 단어장에 있는 선택된 단어들을 옮긴다.
 
     //migrateDict : dict1에서 선택된 wordlist 단어들을 dict2로 옮긴다.
+
 }
