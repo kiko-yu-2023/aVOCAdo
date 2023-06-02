@@ -1,31 +1,39 @@
 package com.example.avocado.db;
 
 import androidx.annotation.NonNull;
+import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.Relation;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-@Entity
+@Entity(indices = {@Index(value = "title", unique = true)})
 public class Dict {
     @PrimaryKey(autoGenerate = true)
     private int dictID;
+    @NonNull
     private String title;
-    private String createdTime;
-    private String modifiedTime;
+    @NonNull
+    private Date createdTime;
+    @NonNull
+    private Date modifiedTime;
 
     public Dict(String title)
     {
-        this.title=title;
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        this.createdTime=formatter.format(date);
-        this.modifiedTime=formatter.format(date);
+        if(title==null||title.isEmpty())
+        {
+            this.title=Converters.dateToTimestamp(new Date());
+        }
+        else {
+            this.title = title;
+        }
+        this.createdTime=new Date();
+        this.modifiedTime=new Date();
     }
-
-
-
     public void setDictID(int dictID) {
         this.dictID = dictID;
     }
@@ -34,10 +42,10 @@ public class Dict {
         this.title = title;
     }
 
-    public void setModifiedTime(String modifiedTime) {
+    public void setModifiedTime(Date modifiedTime) {
         this.modifiedTime=modifiedTime;
     }
-    public void setCreatedTime(String createdTime) {
+    public void setCreatedTime(Date createdTime) {
         this.createdTime=createdTime;
     }
     public int getDictID() {
@@ -48,9 +56,9 @@ public class Dict {
         return title;
     }
 
-    public String getCreatedTime() {return createdTime;}
+    public Date getCreatedTime() {return createdTime;}
 
-    public String getModifiedTime() {
+    public Date getModifiedTime() {
         return this.modifiedTime;
     }
 
@@ -60,3 +68,4 @@ public class Dict {
         return this.dictID+" "+this.title+" "+this.createdTime+" "+this.modifiedTime;
     }
 }
+
