@@ -1,4 +1,4 @@
-package com.example.avocado.db;
+package com.example.avocado.db.dict_with_words;
 
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.Relation;
+
+import com.example.avocado.db.Converters;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,7 +28,7 @@ public class Dict {
     {
         if(title==null||title.isEmpty())
         {
-            this.title=Converters.dateToTimestamp(new Date());
+            this.title= Converters.dateToTimestamp(new Date());
         }
         else {
             this.title = title;

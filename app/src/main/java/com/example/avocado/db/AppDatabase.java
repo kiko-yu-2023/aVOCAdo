@@ -7,7 +7,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-@Database(entities = {Dict.class,Word.class}, version = 1,exportSchema = false)
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictDao;
+import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordDao;
+
+@Database(entities = {Dict.class, Word.class}, version = 1,exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DictDao dictDao();

@@ -1,7 +1,4 @@
-package com.example.avocado.db;
-
-import androidx.room.Query;
-import androidx.room.Transaction;
+package com.example.avocado.db.dict_with_words;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +8,6 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import kotlinx.coroutines.flow.Flow;
 
 public class DictRepository {
     private DictDao dictDao;

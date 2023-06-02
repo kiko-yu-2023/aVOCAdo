@@ -1,4 +1,4 @@
-package com.example.avocado.db;
+package com.example.avocado.db.dict_with_words;
 
 import android.util.Log;
 

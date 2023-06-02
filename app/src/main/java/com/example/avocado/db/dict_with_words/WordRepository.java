@@ -1,4 +1,4 @@
-package com.example.avocado.db;
+package com.example.avocado.db.dict_with_words;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;

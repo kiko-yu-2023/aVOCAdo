@@ -13,16 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.avocado.db.Dict;
+import com.example.avocado.db.dict_with_words.Dict;
 
 import com.example.avocado.databinding.FragmentHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {

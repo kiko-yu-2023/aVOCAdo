@@ -9,12 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.avocado.R;
-import com.example.avocado.db.Dict;
+import com.example.avocado.db.dict_with_words.Dict;
 
 import java.util.ArrayList;
 import com.example.avocado.databinding.DictItemListBinding;
-
-import org.w3c.dom.Text;
 
 public class dictAdapter extends RecyclerView.Adapter<dictAdapter.ViewHolder>{
 

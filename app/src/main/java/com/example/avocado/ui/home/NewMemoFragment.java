@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Database;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,17 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.avocado.MainActivity;
 import com.example.avocado.databinding.FragmentNewMemoBinding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.Dict;
-import com.example.avocado.db.DictDao;
-import com.example.avocado.db.DictRepository;
-
-import io.reactivex.rxjava3.core.CompletableObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictDao;
+import com.example.avocado.db.dict_with_words.DictRepository;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -111,24 +104,6 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                 //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
                 DictRepository dRepo = new DictRepository(dao);
                 Dict dict1 = new Dict(memoName);
-                dRepo.insertDict(dict1)
-                        .subscribe(new CompletableObserver() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-                                // Called when the operation is subscribed to
-                            }
-                            @Override
-                            public void onComplete() {
-                                // Called when the operation is completed successfully
-                                Log.d("insertSuccess","네");
-                            }
-                            @Override
-                            public void onError(Throwable e) {
-                                // Called when an error occurs during the operation
-                                Log.d("insertFailed","d");
-                            }
-                        });
-
                 fragmentInterfacer.onButtonClick(memoName);
                 Log.e("change",memoName);
                 getDialog().dismiss();
