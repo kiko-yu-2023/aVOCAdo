@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.Memo">
+    tools:context=".ui.home.MemoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutTop"
@@ -14,20 +14,22 @@
         app:layout_constraintBottom_toTopOf="@+id/layoutBottom"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
+        <com.example.avocado.ui.home.PaintView
             android:id="@+id/handWrittingView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintVertical_weight="5"
             app:layout_constraintBottom_toTopOf="@+id/dictSearchButton"
-            app:layout_constraintTop_toTopOf="parent"></View>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="5"></com.example.avocado.ui.home.PaintView>
 
         <Button
             android:id="@+id/dictSearchButton"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:text="등록"
-            app:layout_constraintVertical_weight="1"
+            app:layout_constraintVertical_weight="0.8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

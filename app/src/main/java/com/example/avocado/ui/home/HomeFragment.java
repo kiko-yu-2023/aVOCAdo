@@ -1,32 +1,30 @@
 package com.example.avocado.ui.home;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.avocado.MemoActivity;
+import com.example.avocado.R;
+import com.example.avocado.databinding.FragmentHomeBinding;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.Dict;
 
-import com.example.avocado.databinding.FragmentHomeBinding;
 import com.example.avocado.db.DictDao;
 import com.example.avocado.db.DictRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,7 +34,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.functions.Consumer;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements DictAdapter.OnItemClickListener {
 
     private FragmentHomeBinding binding;
     public RecyclerView rc_dict;
@@ -73,6 +71,7 @@ public class HomeFragment extends Fragment {
         TextView noMemoText = binding.noMemoText;
 
         adapter_dict = new DictAdapter(total_items);
+        adapter_dict.setOnItemClickListener(this);
         rc_dict.setLayoutManager(new GridLayoutManager(getActivity(),3));
         rc_dict.setAdapter(adapter_dict);
 
@@ -161,6 +160,18 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public void onItemClick(int position, String dictName){
+        //아이템 클릭 시 실행될 코드
+        // MemoActivity로 이동하는 코드
+
+        Intent intent = new Intent(getActivity(), MemoActivity.class);
+
+        //Bundle을 사용하여 데이터 전달(제목으로 가져옴.)
+        intent.putExtra("dictName",dictName);
+
+        startActivity(intent);
     }
 
 }

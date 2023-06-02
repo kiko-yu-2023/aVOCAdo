@@ -25,7 +25,10 @@
         android:layout_height="700dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchText">
+        app:layout_constraintTop_toBottomOf="@id/searchText"
+        android:background="@drawable/background"
+        android:padding="30dp"
+        android:paddingBottom="35dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_dict"

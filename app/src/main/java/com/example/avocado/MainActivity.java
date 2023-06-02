@@ -2,11 +2,16 @@ package com.example.avocado;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.example.avocado.db.AppDatabase;
+import com.example.avocado.db.Dict;
+import com.example.avocado.db.DictDao;
+import com.example.avocado.db.DictRepository;
 import com.example.avocado.ui.home.HomeFragment;
 import com.example.avocado.ui.home.NewMemoFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,9 +28,14 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.avocado.databinding.ActivityMainBinding;
 
+import java.util.List;
+
+import io.reactivex.rxjava3.functions.Consumer;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private int NUM_PAGES= -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        //Memo 몇개 만들지 pageIndicator 받아오기?
 
         //배경화면 보이도록 패딩넣기
         ConstraintLayout mainLayout = binding.container;

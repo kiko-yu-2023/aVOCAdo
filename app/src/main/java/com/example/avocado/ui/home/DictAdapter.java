@@ -1,5 +1,6 @@
 package com.example.avocado.ui.home;
 
+import android.content.ClipData;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,8 @@ import com.example.avocado.databinding.DictItemListBinding;
 public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder>{
 
     private ArrayList<Dict> dictData;
+    private List<Dict> items;
+    private OnItemClickListener listener;
     private DictItemListBinding binding;
 
     public DictAdapter(ArrayList<Dict> dictData){
@@ -36,7 +39,21 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull DictAdapter.ViewHolder holder, int position) {
-        holder.dictNAme.setText(dictData.get(position).getTitle());
+
+        //아이템 바인딩, 클릭 이벤트 처리
+        Dict item = dictData.get(position);
+        holder.dictNAme.setText(item.getTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                if(listener !=null)
+                {
+                    listener.onItemClick(position,item.getTitle());
+                }
+            }
+        });
     }
 
     @Override
@@ -46,7 +63,6 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder>{
 
     public void setItems(ArrayList<Dict> newItems) {
         dictData = newItems; // 기존 데이터를 새로운 데이터로 교체
-
         notifyDataSetChanged(); // 어댑터에 데이터 변경을 알림
     }
 
@@ -55,8 +71,17 @@ public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder>{
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            dictNAme = (TextView)itemView.findViewById(R.id.dictName);
+            dictNAme = itemView.findViewById(R.id.dictName);
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener)
+    {
+        this.listener = listener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(int position,String dictName);
     }
 
 }
