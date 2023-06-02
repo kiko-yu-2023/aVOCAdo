@@ -32,15 +32,18 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
         TextView typeOneQuiz = binding.typeOneQuiz;
         TextView typeTwoQuiz = binding.typeTwoQuiz;
         TextView typeThreeQuiz = binding.typeThreeQuiz;
+        TextView addWord = binding.addWord;
 
 
         dashboardViewModel.getTypeOneQuiz().observe(getViewLifecycleOwner(), typeOneQuiz::setText);
         dashboardViewModel.getTypeTwoQuiz().observe(getViewLifecycleOwner(), typeTwoQuiz::setText);
         dashboardViewModel.getTypeThreeQuiz().observe(getViewLifecycleOwner(), typeThreeQuiz::setText);
+        dashboardViewModel.addWord().observe(getViewLifecycleOwner(), addWord::setText);
 
         typeOneQuiz.setOnClickListener(this);
         typeTwoQuiz.setOnClickListener(this);
         typeThreeQuiz.setOnClickListener(this);
+        addWord.setOnClickListener(this);
         return root;
     }
 
@@ -67,6 +70,8 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
             selectedFragment = new Quiz2Fragment();
         } else if (quizType.equals("TYPE 3 QUIZ")) {
             selectedFragment = new Quiz3Fragment();
+        } else if (quizType.equals("단어 추가하기")) {
+            selectedFragment = new AddWordFragment();
         }
         else {
             // Default to a fallback fragment if needed

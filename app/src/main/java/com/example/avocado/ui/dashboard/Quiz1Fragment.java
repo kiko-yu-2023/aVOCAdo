@@ -95,6 +95,7 @@ public class Quiz1Fragment extends Fragment {
                 .build();
 
         fillWord();
+
         fillOptions();
 
         return root;
@@ -124,11 +125,13 @@ public class Quiz1Fragment extends Fragment {
         // Shuffle the meanings list
         Collections.shuffle(meanings);
 
-        // Set the meanings to the buttons
-        button1.setText(meanings.get(0));
-        button2.setText(meanings.get(1));
-        button3.setText(meanings.get(2));
-        button4.setText(meanings.get(3));
+        if(allWords.size() >= 4) {
+            // Set the meanings to the buttons
+            button1.setText(meanings.get(0));
+            button2.setText(meanings.get(1));
+            button3.setText(meanings.get(2));
+            button4.setText(meanings.get(3));
+        }
     }
 
 
