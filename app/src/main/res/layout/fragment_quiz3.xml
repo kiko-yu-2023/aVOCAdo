@@ -15,6 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
 
+    <ImageView
+        android:id="@+id/next_video"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/next"/>
+
     <TextView
         android:id="@+id/subtitle_text_view"
         android:layout_width="match_parent"
