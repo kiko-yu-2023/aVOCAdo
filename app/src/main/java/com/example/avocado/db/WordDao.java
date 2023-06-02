@@ -31,18 +31,6 @@ public interface WordDao {
     * @Query("SELECT * FROM Word WHERE WORD = :userInput")
     * Word findWord(String userInput);
     * */
-    @Query("SELECT * FROM WORD WHERE CONTENT=:word AND DICTID=:dictId")
-    Single<Word> findWordByContentInDict(String word,int dictId);
-
-
-    /*
-    //index 번째 단어 보여주기
-    @Query("SELECT * FROM Word LIMIT 1 OFFSET :index")
-    Word getNthWord(int index);
-
-    //index 번째 문장 보여주기
-    @Query("SELECT * FROM Word LIMIT 1 OFFSET :index")
-    Word getNthExample(int index);
-
-    */
+    @Query("SELECT * FROM WORD WHERE CONTENT=:content AND DICTID=:dictId")
+    Single<Word> findWordByContentInDict(String content,int dictId);
 }

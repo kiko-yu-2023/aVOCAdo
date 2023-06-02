@@ -5,7 +5,9 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
@@ -16,22 +18,23 @@ import io.reactivex.rxjava3.core.Single;
 @Dao
 public interface DictDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    Single<Long> insert(Dict d);
+    Completable insert(Dict d);
 
     @Query("SELECT * FROM DICT WHERE title = :title")
     Single<Dict> getDictByTitle(String title);
 
-    @Query("DELETE FROM DICT")
-    Completable deleteAll();
+    @Query("DELETE FROM DICT WHERE TITLE= :title")
+    Completable deleteByTitle(String title);
 
     //수정일자 최신순 전체조회
     @Query("SELECT * FROM DICT ORDER BY modifiedTime")
     Flowable<List<Dict>> loadOrderByModified();
     @Transaction
     @Query("SELECT * FROM dict WHERE dictID = :dictId")
-    Flowable<DictWithWordsAndSentences> getDictWithWordsAndSentencesById(int dictId);
+    Flowable<DictWithWords> getDictWithWordsById(int dictId);
 
-    //updateUpdatedTime
+    @Query("UPDATE DICT SET MODIFIEDTIME=:modifiedTime WHERE DICTID=:dictId")
+    Completable updateModifiedTime(int dictId,Date modifiedTime);
 
     //mergeDict : 단어장 아이디를 받아 dict1에 dict2를 합친다.
 

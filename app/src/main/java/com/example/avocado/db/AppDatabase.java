@@ -5,12 +5,13 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
-@Database(entities = {Dict.class,Word.class, Sentence.class}, version = 1,exportSchema = false)
+@Database(entities = {Dict.class,Word.class}, version = 1,exportSchema = false)
+@TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract DictDao dictDao();
     public abstract WordDao wordDao();
-    public abstract SentenceDao sentenceDao();
     private static volatile AppDatabase INSTANCE;
 
     public static AppDatabase getDatabase(final Context context) {
@@ -18,7 +19,7 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "word_database")
+                                    AppDatabase.class, "avocado_db")
                             .build();
                 }
             }
