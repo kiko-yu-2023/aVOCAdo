@@ -134,6 +134,9 @@ public class PaintView extends View {
         reset();
     }
 
+    public boolean isCanvasEmpty() {
+        return PaintPathList.isEmpty();
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // If this is the first time the user has touched the drawable canvas, hide the text that

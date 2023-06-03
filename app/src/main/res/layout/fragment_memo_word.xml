@@ -1,64 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.MemoFragment">
+    tools:context=".ui.home.MemoWordFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutTop"
+        app:layout_constraintVertical_weight="0.4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/layoutBottom"
+        app:layout_constraintBottom_toTopOf="@+id/layoutMiddle"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.example.avocado.ui.home.PaintView
-            android:id="@+id/handWrittingView"
+        <FrameLayout
+            android:id="@+id/inputFixedLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/dictSearchButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_weight="5"></com.example.avocado.ui.home.PaintView>
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <Button
-            android:id="@+id/dictSearchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:text="등록"
-            app:layout_constraintVertical_weight="0.8"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/handWrittingView" />
+            <TextView
+                android:id="@+id/inputFixed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="gone"></TextView>
+
+        </FrameLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.utils.widget.ImageFilterView
-        android:id="@+id/middleLine"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutMiddle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/layoutTop"
-        app:layout_constraintTop_toBottomOf="@id/layoutBottom">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/layoutBottom"
+        app:layout_constraintTop_toBottomOf="@id/layoutTop"
+        app:layout_constraintVertical_weight="0.08">
 
-    </androidx.constraintlayout.utils.widget.ImageFilterView>
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/middleLine"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/middle_line"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+        </androidx.constraintlayout.utils.widget.ImageFilterView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutBottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/layoutTop"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintVertical_weight="0.4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutMiddle">
 
         <TextView
             android:id="@+id/wordMeaning"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/exampleSentenceLayout"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/exampleSentenceLayout"></TextView>
+            tools:layout_editor_absoluteX="0dp"></TextView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/exampleSentenceLayout"
@@ -71,9 +83,10 @@
                 android:id="@+id/exampleSentence"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/eaxmpleSentenceSpeaker"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintHorizontal_weight="4"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"></TextView>
 
             <ImageView
@@ -84,7 +97,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toEndOf="@+id/exampleSentence"
-                app:layout_constraintTop_toTopOf="parent"></ImageView>
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="invisible"></ImageView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -92,15 +106,15 @@
             android:id="@+id/exampleSentenceMeaning"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/exampleSentenceLayout"
-            app:layout_constraintBottom_toTopOf="@+id/placeholderView"></TextView>
+            app:layout_constraintBottom_toTopOf="@+id/placeholderView"
+            app:layout_constraintTop_toBottomOf="@+id/exampleSentenceLayout"></TextView>
 
         <View
             android:id="@+id/placeholderView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/exampleSentenceMeaning"
-            app:layout_constraintBottom_toBottomOf="parent"></View>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/exampleSentenceMeaning"></View>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -57,7 +57,6 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -75,9 +74,10 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
         rc_dict.setLayoutManager(new GridLayoutManager(getActivity(),3));
         rc_dict.setAdapter(adapter_dict);
 
-        DictDao dao = AppDatabase.getDatabase(getContext()).dictDao();
+        AppDatabase db= AppDatabase.getDatabase(getContext());
+        DictDao dao = db.dictDao();
         //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
-        DictRepository dRepo = new DictRepository(dao);
+        DictRepository dRepo = new DictRepository(dao,db.wordDao());
         dRepo.getDictsByModified()
                 .subscribe(new Consumer<List<Dict>>() {
                     @Override
@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
 
         //Bundle을 사용하여 데이터 전달(제목으로 가져옴.)
         intent.putExtra("dictName",dictName);
-
+        Log.d("dictName",dictName);
         startActivity(intent);
     }
 

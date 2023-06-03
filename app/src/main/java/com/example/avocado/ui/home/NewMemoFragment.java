@@ -51,7 +51,6 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-
      * @return A new instance of fragment NewMemoFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -73,13 +72,13 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
         }
     }
 
-    interface FragmentInterfacer{
+    interface FragmentInterfacer {
         void onButtonClick(String input);
     }
 
     private FragmentInterfacer fragmentInterfacer;
 
-    public void setFragmentInterfacer(FragmentInterfacer fragmentInterfacer){
+    public void setFragmentInterfacer(FragmentInterfacer fragmentInterfacer) {
         this.fragmentInterfacer = fragmentInterfacer;
     }
 
@@ -99,16 +98,11 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                 String memoName = null;
 
 
-                if(inputMemoName.getText().toString().length()==0)
-                {
-                    Toast.makeText(getActivity(),"새 메모장의 이름을 입력해주세요.",Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    memoName=inputMemoName.getText().toString();
-
-                DictDao dao = AppDatabase.getDatabase(getContext()).dictDao();
+                memoName = inputMemoName.getText().toString();
+                AppDatabase db= AppDatabase.getDatabase(getContext());
+                DictDao dao = db.dictDao();
                 //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
-                DictRepository dRepo = new DictRepository(dao);
+                DictRepository dRepo = new DictRepository(dao,db.wordDao());
                 Dict dict1 = new Dict(memoName);
                 dRepo.insertDict(dict1)
                         .subscribe(new CompletableObserver() {
@@ -116,23 +110,26 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                             public void onSubscribe(Disposable d) {
                                 // Called when the operation is subscribed to
                             }
+
                             @Override
                             public void onComplete() {
                                 // Called when the operation is completed successfully
-                                Log.d("insertSuccess","네");
+                                Log.d("insertSuccess", "네");
                             }
+
                             @Override
                             public void onError(Throwable e) {
                                 // Called when an error occurs during the operation
-                                Log.d("insertFailed","d");
+                                Log.e("로그 insert Dict", "same title");
+                                Toast.makeText(getContext(), "이미 있는 단어장 이름입니다.", Toast.LENGTH_SHORT).show();
                             }
                         });
 
                 fragmentInterfacer.onButtonClick(memoName);
-                Log.e("change",memoName);
+                Log.e("change", memoName);
                 getDialog().dismiss();
 
-            }}
+            }
         });
 
         return root;

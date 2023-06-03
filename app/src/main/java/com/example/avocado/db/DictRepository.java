@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.Flow;
 
 public class DictRepository {
     private DictDao dictDao;
-
-    public DictRepository(DictDao dictDao) {
+    private WordDao wordDao;
+    public DictRepository(DictDao dictDao,WordDao wordDao) {
+        this.wordDao=wordDao;
         this.dictDao = dictDao;
     }
 
@@ -39,9 +40,18 @@ public class DictRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
     public Flowable<DictWithWords> getWordsByDictId(int dictId)
     {
-        return dictDao.getDictWithWordsById(dictId)
+        return wordDao.dictHasWord(dictId)
+                .flatMapPublisher(hasWord -> {
+                    if (hasWord) {
+                        return dictDao.getDictWithWordsById(dictId);
+                    } else {
+                        // Return an empty Flowable if dictId has no associated words
+                        return Flowable.empty();
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
