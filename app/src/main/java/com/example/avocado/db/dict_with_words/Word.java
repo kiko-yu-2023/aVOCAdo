@@ -1,4 +1,4 @@
-package com.example.avocado.db;
+package com.example.avocado.db.dict_with_words;
 
 import android.util.Log;
 
@@ -20,20 +20,27 @@ public class Word {
     private String meaning;
 
     private String exampleSentence;
+
+    private String exampleMeaning;
     @NonNull
     private boolean isMemorized=false;
     @ColumnInfo(name = "dictID")
     private int dictID;
-    public Word(boolean isSentence, String content, String meaning, String exampleSentence, int dictID) {
-        if ((isSentence&&exampleSentence!=null)||(!isSentence&&exampleSentence==null))
-        {
-            Log.e("로그 Word/Sentence 선언","sentence는 exampleSentence null여야함");
-        }
+    public Word(boolean isSentence, String content, String meaning, String exampleSentence,String exampleMeaning, int dictID) {
         this.isSentence=isSentence;
         this.content=content;
         this.meaning=meaning;
         this.exampleSentence=exampleSentence;
+        this.exampleMeaning=exampleMeaning;
         this.dictID=dictID;
+    }
+
+    public String getExampleMeaning() {
+        return exampleMeaning;
+    }
+
+    public void setExampleMeaning(String exampleMeaning) {
+        this.exampleMeaning = exampleMeaning;
     }
 
     public void setWordID(int wordID) {

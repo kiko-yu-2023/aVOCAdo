@@ -1,6 +1,7 @@
-package com.example.avocado.db;
+package com.example.avocado.db.dict_with_words;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -19,12 +20,11 @@ public interface WordDao {
     @Update
     Completable update(Word word);
 
-    @Query("DELETE FROM Word")
-    Completable deleteAll();
+    @Delete
+    Completable delete(Word ... word);
 
-    //모든 단어장에 모든 단어 불러오기
-    @Query("SELECT * FROM Word")
-    Flowable<List<Word>> getAll();
+    @Query("SELECT EXISTS (SELECT * FROM WORD WHERE DICTID = :dictId)")
+    Single<Boolean> dictHasWord(int dictId);
 
     //userInput 단어의 예문 보여주기
     /* deprcated

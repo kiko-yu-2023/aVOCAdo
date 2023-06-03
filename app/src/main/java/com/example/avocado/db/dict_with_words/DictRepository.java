@@ -1,7 +1,6 @@
-package com.example.avocado.db;
+package com.example.avocado.db.dict_with_words;
 
 import androidx.room.Query;
-import androidx.room.Transaction;
 
 import java.util.Date;
 import java.util.List;
@@ -11,13 +10,12 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import kotlinx.coroutines.flow.Flow;
 
 public class DictRepository {
     private DictDao dictDao;
-
-    public DictRepository(DictDao dictDao) {
-        this.dictDao = dictDao;
+    private WordDao wordDao;
+    public DictRepository(DictDao dictDao,WordDao wordDao) {
+        this.dictDao = dictDao;this.wordDao=wordDao;
     }
 
     public Completable insertDict(Dict d) {
@@ -25,8 +23,22 @@ public class DictRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+//    public Completable delete(int dictId)
+//    {
+//        return dictDao.getDictWithWordsById(dictId)
+//                .flatMapCompletable(dictWithWords -> {
+//                    List<Word> words = dictWithWords.words;
+//                    // Delete the dict and words in a transaction
+//                    return Completable.fromAction(() -> {
+//                        dictDao.delete(dictWithWords.dict);
+//                        wordDao.delete());
+//                    });
+//                });
+//    }
 
-    public Flowable<List<Dict>> getDictsByModified()
+
+
+    public Single<List<Dict>> getDictsByModified()
     {
         return dictDao.loadOrderByModified()
                 .subscribeOn(Schedulers.io())
@@ -39,9 +51,17 @@ public class DictRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-    public Flowable<DictWithWords> getWordsByDictId(int dictId)
+    public Single<DictWithWords> getWordsByDictId(int dictId)
     {
-        return dictDao.getDictWithWordsById(dictId)
+        return wordDao.dictHasWord(dictId)
+                .flatMap(hasWord -> {
+                    if (hasWord) {
+                        return dictDao.getDictWithWordsById(dictId);
+                    } else {
+                        // Return an empty Flowable if dictId has no associated words
+                        return Single.error(new Throwable("해당하는 단어가 없습니다"));
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
