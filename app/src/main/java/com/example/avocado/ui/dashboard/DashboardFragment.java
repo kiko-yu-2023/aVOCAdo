@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +29,21 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        TextView typeOneQuiz = binding.typeOneQuiz;
+        TextView typeTwoQuiz = binding.typeTwoQuiz;
+        TextView typeThreeQuiz = binding.typeThreeQuiz;
+        TextView addWord = binding.addWord;
 
-        textView.setOnClickListener(this);
+
+        dashboardViewModel.getTypeOneQuiz().observe(getViewLifecycleOwner(), typeOneQuiz::setText);
+        dashboardViewModel.getTypeTwoQuiz().observe(getViewLifecycleOwner(), typeTwoQuiz::setText);
+        dashboardViewModel.getTypeThreeQuiz().observe(getViewLifecycleOwner(), typeThreeQuiz::setText);
+        dashboardViewModel.addWord().observe(getViewLifecycleOwner(), addWord::setText);
+
+        typeOneQuiz.setOnClickListener(this);
+        typeTwoQuiz.setOnClickListener(this);
+        typeThreeQuiz.setOnClickListener(this);
+        addWord.setOnClickListener(this);
         return root;
     }
 
@@ -48,9 +58,27 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Quiz3Fragment quiz3Fragment = new Quiz3Fragment();
+        TextView textView = (TextView) v;
+        String quizType = textView.getText().toString();
 
-        transaction.replace(R.id.nav_host_fragment_activity_main, quiz3Fragment);
+        Fragment selectedFragment;
+
+        // Choose the appropriate fragment based on the quiz type
+        if (quizType.equals("TYPE 1 QUIZ")) {
+            selectedFragment = new Quiz1Fragment();
+        } else if (quizType.equals("TYPE 2 QUIZ")) {
+            selectedFragment = new Quiz2Fragment();
+        } else if (quizType.equals("TYPE 3 QUIZ")) {
+            selectedFragment = new Quiz3Fragment();
+        } else if (quizType.equals("단어 추가하기")) {
+            selectedFragment = new AddWordFragment();
+        }
+        else {
+            // Default to a fallback fragment if needed
+            selectedFragment = new Quiz1Fragment();
+        }
+
+        transaction.replace(R.id.nav_host_fragment_activity_main, selectedFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
