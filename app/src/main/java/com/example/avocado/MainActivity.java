@@ -9,9 +9,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.Dict;
-import com.example.avocado.db.DictDao;
-import com.example.avocado.db.DictRepository;
 import com.example.avocado.ui.home.HomeFragment;
 import com.example.avocado.ui.home.NewMemoFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

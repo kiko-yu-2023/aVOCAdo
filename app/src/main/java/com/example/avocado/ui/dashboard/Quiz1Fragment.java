@@ -5,20 +5,31 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentQuiz1Binding;
 import com.example.avocado.db.Words;
 import com.example.avocado.db.WordsDao;
-import com.example.avocado.db.WordsDatabase;
+import com.example.avocado.db.AppDatabase;
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictRepository;
+import com.example.avocado.db.dict_with_words.DictWithWords;
+import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +44,9 @@ public class Quiz1Fragment extends Fragment {
     Button button1, button2, button3, button4;
 
     List<String> meanings;
-    private WordsDatabase db;
+    private AppDatabase db;
+    private WordRepository wr;
+    private DictRepository dr;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,47 +103,84 @@ public class Quiz1Fragment extends Fragment {
         button3 = binding.button3;
         button4 = binding.button4;
 
-        db = Room.databaseBuilder(requireContext(), WordsDatabase.class, "words")
-                .allowMainThreadQueries()
-                .build();
+        db = AppDatabase.getDatabase(getContext());
+        wr = new WordRepository(db.wordDao());
 
-        fillWord();
+        fillWord("abc");
 
-        fillOptions();
 
         return root;
     }
 
-    private void fillWord() {
-        Words word = db.getWordsDao().getNthWord(2);
-        if (word != null) {
-            // Word found, do something with it
-            textView.setText(word.word);
-        } else {
-            // Word not found
-            textView.setText("단어 들어오기 오류");
-        }
+    private void fillWord(String title) {
+        //무결성을 위해 title 이란 이름의 단어장 검색
+        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+            //성공적으로 단어장 검색
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어장과 연결된 단어리스트 찾기
+                dr.getWordsByDictId(dict.getDictID())
+                        .subscribe(new SingleObserver<DictWithWords>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+                            //성공 단어장-단어리스트 객체 - dictWithWords
+                            @Override
+                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
+                                Log.d("로그w&s","words si");
+                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
+
+                                Word word = dictWithWords.words.get(2);
+                                if (word != null) {
+                                    // Word found, do something with it
+                                    textView.setText(word.getContent());
+                                } else {
+                                    // Word not found
+                                    textView.setText("단어 들어오기 오류");
+                                }
+
+                                fillOptions(dictWithWords.words);
+                            }
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e("로그wordsInDict",t.toString());
+                            }
+
+                        });
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그getDictByTitle",e.toString());
+            }
+        });
+
     }
 
-    private void fillOptions() {
+    private void fillOptions(List<Word> words) {
         // Retrieve all Words from the database
-        List<Words> allWords =db.getWordsDao().getAll();
 
-        // Extract the meanings from the Words objects
+        // Extract the meanings from the Word objects
         meanings = new ArrayList<>();
-        for (Words word : allWords) {
-            meanings.add(word.meaning);
+        for (Word word : words) {
+            meanings.add(word.getMeaning());
         }
 
         // Shuffle the meanings list
         Collections.shuffle(meanings);
 
-        if(allWords.size() >= 4) {
+        if(words.size() >= 4) {
             // Set the meanings to the buttons
             button1.setText(meanings.get(0));
             button2.setText(meanings.get(1));
             button3.setText(meanings.get(2));
             button4.setText(meanings.get(3));
+        }else{
+            Toast.makeText(getActivity(), "단어 개수 부족", Toast.LENGTH_SHORT).show();
         }
     }
 

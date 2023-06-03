@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentNewMemoBinding;
 import com.example.avocado.db.AppDatabase;
@@ -99,9 +100,10 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                 else {
                     memoName=inputMemoName.getText().toString();
 
-                DictDao dao = AppDatabase.getDatabase(getContext()).dictDao();
+                AppDatabase db = AppDatabase.getDatabase(getContext());
                 //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
-                DictRepository dRepo = new DictRepository(dao);
+
+                DictRepository dRepo = new DictRepository(db.dictDao(),db.wordDao());
                 Dict dict1 = new Dict(memoName);
                 fragmentInterfacer.onButtonClick(memoName);
                 Log.e("change",memoName);

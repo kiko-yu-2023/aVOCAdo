@@ -70,9 +70,9 @@ public class DashboardFragment extends Fragment implements View.OnClickListener{
             selectedFragment = new Quiz2Fragment();
         } else if (quizType.equals("TYPE 3 QUIZ")) {
             selectedFragment = new Quiz3Fragment();
-        } else if (quizType.equals("단어 추가하기")) {
-            selectedFragment = new AddWordFragment();
-        }
+        } //else if (quizType.equals("단어 추가하기")) {
+            //selectedFragment = new AddWordFragment();
+        //}
         else {
             // Default to a fallback fragment if needed
             selectedFragment = new Quiz1Fragment();

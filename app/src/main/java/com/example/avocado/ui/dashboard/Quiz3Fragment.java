@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.example.avocado.api.SingletonRetrofitObject;
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz3Binding;
-import com.example.avocado.db.WordsDatabase;
+import com.example.avocado.db.AppDatabase;
 import com.example.avocado.models.Items;
 import com.example.avocado.models.VideoModel;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -56,7 +56,7 @@ public class Quiz3Fragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private WordsDatabase db;
+    private AppDatabase db;
 
     private List<String> videoIds;
 
@@ -103,11 +103,11 @@ public class Quiz3Fragment extends Fragment {
         subtitleTextView = binding.subtitleTextView;
         nextVideo = binding.nextVideo;
 
-        db = Room.databaseBuilder(requireContext(), WordsDatabase.class, "words")
+        db = Room.databaseBuilder(requireContext(), AppDatabase.class, "words")
                 .allowMainThreadQueries()
                 .build();
 
-//        Words word = db.getWordsDao().getNthExample(1);
+//        AppDatabase word = db.getWordsDao().getNthExample(1);
 //
 //        String searchWord;
 //        if (word != null) {//단어가 넣어진 경우 가정
