@@ -1,6 +1,7 @@
 package com.example.avocado.db.dict_with_words;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -17,23 +18,25 @@ import io.reactivex.rxjava3.core.Single;
 @Dao
 public interface DictDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    Completable insert(Dict d);
+    Completable insert(Dict ... dicts);
 
     @Query("SELECT * FROM DICT WHERE title = :title")
     Single<Dict> getDictByTitle(String title);
 
-    @Query("DELETE FROM DICT WHERE TITLE= :title")
-    Completable deleteByTitle(String title);
+
+    @Delete
+    Completable delete(Dict dict);
 
     //수정일자 최신순 전체조회
     @Query("SELECT * FROM DICT ORDER BY modifiedTime")
-    Flowable<List<Dict>> loadOrderByModified();
+    Single<List<Dict>> loadOrderByModified();
     @Transaction
     @Query("SELECT * FROM dict WHERE dictID = :dictId")
-    Flowable<DictWithWords> getDictWithWordsById(int dictId);
+    Single<DictWithWords> getDictWithWordsById(int dictId);
 
     @Query("UPDATE DICT SET MODIFIEDTIME=:modifiedTime WHERE DICTID=:dictId")
     Completable updateModifiedTime(int dictId,Date modifiedTime);
+
 
     //mergeDict : 단어장 아이디를 받아 dict1에 dict2를 합친다.
 
