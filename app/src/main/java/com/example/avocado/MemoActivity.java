@@ -22,9 +22,9 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.avocado.databinding.ActivityMemoBinding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.DictRepository;
-import com.example.avocado.db.Word;
-import com.example.avocado.db.WordRepository;
+import com.example.avocado.db.dict_with_words.DictRepository;
+import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordRepository;
 import com.example.avocado.ui.home.MemoWordAddFragment;
 import com.example.avocado.ui.home.MemoWordFragment;
 import com.example.avocado.ui.home.WordListFragment;

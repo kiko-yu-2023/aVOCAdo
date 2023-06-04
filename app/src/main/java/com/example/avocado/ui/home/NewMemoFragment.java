@@ -1,5 +1,6 @@
 package com.example.avocado.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
@@ -13,11 +14,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.avocado.MemoActivity;
 import com.example.avocado.databinding.FragmentNewMemoBinding;
 import com.example.avocado.db.AppDatabase;
+import com.example.avocado.db.Converters;
 import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictDao;
 import com.example.avocado.db.dict_with_words.DictRepository;
+
+import java.util.Date;
+
+import io.reactivex.rxjava3.core.CompletableObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -89,15 +97,22 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 EditText inputMemoName = binding.inputMemoName;
-                String memoName = null;
+                String dictName = null;
 
 
-                memoName = inputMemoName.getText().toString();
+                dictName = inputMemoName.getText().toString();
                 AppDatabase db= AppDatabase.getDatabase(getContext());
                 DictDao dao = db.dictDao();
                 //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
                 DictRepository dRepo = new DictRepository(dao,db.wordDao());
-                Dict dict1 = new Dict(memoName);
+
+                //빤스 코드 스틸
+                if(dictName==null||dictName.isEmpty())
+                {
+                    dictName= Converters.dateToTimestamp(new Date());
+                }
+
+                Dict dict1 = new Dict(dictName);
                 dRepo.insertDict(dict1)
                         .subscribe(new CompletableObserver() {
                             @Override
@@ -119,10 +134,16 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                             }
                         });
 
-                DictRepository dRepo = new DictRepository(db.dictDao(),db.wordDao());
-                Dict dict1 = new Dict(memoName);
-                fragmentInterfacer.onButtonClick(memoName);
-                Log.e("change", memoName);
+                fragmentInterfacer.onButtonClick(dictName);
+                Log.e("change", dictName);
+
+                Intent intent = new Intent(getActivity(), MemoActivity.class);
+
+                //Bundle을 사용하여 데이터 전달(제목으로 가져옴.)
+                intent.putExtra("dictName",dictName);
+                Log.d("dictName",dictName);
+                startActivity(intent);
+
                 getDialog().dismiss();
 
             }

@@ -18,10 +18,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.avocado.databinding.FragmentMemoWordAddBinding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.Dict;
-import com.example.avocado.db.DictRepository;
-import com.example.avocado.db.Word;
-import com.example.avocado.db.WordRepository;
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictRepository;
+import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordRepository;
 
 import java.util.Date;
 
@@ -179,7 +179,7 @@ public class MemoWordAddFragment extends Fragment {
                             @Override
                             public void onSuccess(@NonNull Dict dict) {
                                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                                wr.insert(new Word(false,inputFixedString,wordMeaningSt,exampleSentenceSt,dict.getDictID()))
+                                wr.insert(new Word(false,inputFixedString,wordMeaningSt,exampleSentenceSt,exampleSentenceMeaningSt,dict.getDictID()))
                                         .subscribe(new CompletableObserver() {
                                             @Override
                                             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
@@ -224,7 +224,7 @@ public class MemoWordAddFragment extends Fragment {
                             @Override
                             public void onSuccess(@NonNull Dict dict) {
                                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-                                wr.insert(new Word(true,inputFixedString,wordMeaningSt,null,dict.getDictID()))
+                                wr.insert(new Word(true,inputFixedString,wordMeaningSt,null,null,dict.getDictID()))
                                         .subscribe();
                                 //단어장이 수정되었으니 수정시간 업데이트
                                 dr.updateModifiedTime(dict.getDictID(),new Date());

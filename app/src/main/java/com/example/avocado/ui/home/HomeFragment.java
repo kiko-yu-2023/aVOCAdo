@@ -142,7 +142,7 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
                 newMemoFragment.setFragmentInterfacer(new NewMemoFragment.FragmentInterfacer() {
                     @Override
                     public void onButtonClick(String input) {
-
+                        rc_dict.getAdapter().notifyDataSetChanged();
                     }
                 });
                 newMemoFragment.show(getActivity().getSupportFragmentManager(),"NewMemoFragment");
