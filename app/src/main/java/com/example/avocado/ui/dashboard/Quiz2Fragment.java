@@ -3,7 +3,6 @@ package com.example.avocado.ui.dashboard;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz2Binding;
-import com.example.avocado.db.Words;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictRepository;
