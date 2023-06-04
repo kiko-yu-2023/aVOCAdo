@@ -103,9 +103,7 @@ public class Quiz3Fragment extends Fragment {
         subtitleTextView = binding.subtitleTextView;
         nextVideo = binding.nextVideo;
 
-        db = Room.databaseBuilder(requireContext(), AppDatabase.class, "words")
-                .allowMainThreadQueries()
-                .build();
+        db = AppDatabase.getDatabase(getContext());
 
 //        AppDatabase word = db.getWordsDao().getNthExample(1);
 //
