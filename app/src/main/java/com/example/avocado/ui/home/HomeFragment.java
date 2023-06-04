@@ -23,10 +23,10 @@ import com.example.avocado.MemoActivity;
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentHomeBinding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.Dict;
 
-import com.example.avocado.db.DictDao;
-import com.example.avocado.db.DictRepository;
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictDao;
+import com.example.avocado.db.dict_with_words.DictRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -74,10 +74,9 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
         rc_dict.setLayoutManager(new GridLayoutManager(getActivity(),3));
         rc_dict.setAdapter(adapter_dict);
 
-        AppDatabase db= AppDatabase.getDatabase(getContext());
-        DictDao dao = db.dictDao();
+        AppDatabase db=AppDatabase.getDatabase(getContext());
         //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
-        DictRepository dRepo = new DictRepository(dao,db.wordDao());
+        DictRepository dRepo = new DictRepository(db.dictDao(),db.wordDao());
         dRepo.getDictsByModified()
                 .subscribe(new Consumer<List<Dict>>() {
                     @Override

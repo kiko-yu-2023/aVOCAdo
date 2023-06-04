@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Database;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,15 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.avocado.MainActivity;
 import com.example.avocado.databinding.FragmentNewMemoBinding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.Dict;
-import com.example.avocado.db.DictDao;
-import com.example.avocado.db.DictRepository;
-
-import io.reactivex.rxjava3.core.CompletableObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictDao;
+import com.example.avocado.db.dict_with_words.DictRepository;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -125,6 +119,8 @@ public class NewMemoFragment extends DialogFragment implements View.OnClickListe
                             }
                         });
 
+                DictRepository dRepo = new DictRepository(db.dictDao(),db.wordDao());
+                Dict dict1 = new Dict(memoName);
                 fragmentInterfacer.onButtonClick(memoName);
                 Log.e("change", memoName);
                 getDialog().dismiss();
