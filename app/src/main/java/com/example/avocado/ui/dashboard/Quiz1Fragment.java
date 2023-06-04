@@ -3,7 +3,6 @@ package com.example.avocado.ui.dashboard;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentQuiz1Binding;
-import com.example.avocado.db.Words;
-import com.example.avocado.db.WordsDao;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictRepository;
@@ -162,7 +159,7 @@ public class Quiz1Fragment extends Fragment {
     }
 
     private void fillOptions(List<Word> words) {
-        // Retrieve all Words from the database
+        // Retrieve all Word from the database
 
         // Extract the meanings from the Word objects
         meanings = new ArrayList<>();
