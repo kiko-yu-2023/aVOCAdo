@@ -24,18 +24,19 @@ public class DictRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-//    public Completable delete(int dictId)
-//    {
-//        return dictDao.getDictWithWordsById(dictId)
-//                .flatMapCompletable(dictWithWords -> {
-//                    List<Word> words = dictWithWords.words;
-//                    // Delete the dict and words in a transaction
-//                    return Completable.fromAction(() -> {
-//                        dictDao.delete(dictWithWords.dict);
-//                        wordDao.delete());
-//                    });
-//                });
-//    }
+
+    public Completable delete(int dictId)
+    {
+        return dictDao.getDictWithWordsById(dictId)
+                .flatMapCompletable(dictWithWords -> {
+                    List<Word> words = dictWithWords.words;
+                    // Delete the dict and words in a transaction
+                    return Completable.fromAction(() -> {
+                        dictDao.delete(dictWithWords.dict);
+                        wordDao.delete(dictWithWords.words.toArray(new Word[dictWithWords.words.size()]));
+                    });
+                });
+    }
 
 
 

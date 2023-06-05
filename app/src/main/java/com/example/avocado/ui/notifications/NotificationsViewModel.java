@@ -6,14 +6,17 @@ import androidx.lifecycle.ViewModel;
 
 public class NotificationsViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+//    private final MutableLiveData<String> quizScore = new MutableLiveData<>();
+//
+//    private final MutableLiveData<String> testScore = new MutableLiveData<>();
+//
+//
+//    public NotificationsViewModel() {
+//        quizScore = new MutableLiveData<>();
+//        quizScore.setValue("Quiz Score");
+//    }
 
-    public NotificationsViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
-    }
-
-    public LiveData<String> getText() {
-        return mText;
-    }
+//    public LiveData<String> getText() {
+//        return mText;
+//    }
 }

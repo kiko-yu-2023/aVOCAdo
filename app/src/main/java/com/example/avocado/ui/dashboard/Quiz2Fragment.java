@@ -16,6 +16,7 @@ import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordRepository;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
@@ -34,6 +35,7 @@ public class Quiz2Fragment extends Fragment {
 
     private AppDatabase db;
     private DictRepository dr;
+    private WordRepository wr;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -86,7 +88,9 @@ public class Quiz2Fragment extends Fragment {
 
         textView = binding.textView;
 
-        db = AppDatabase.getDatabase(getContext());
+        db=AppDatabase.getDatabase(getContext());
+        dr=new DictRepository(db.dictDao(),db.wordDao());
+        wr=new WordRepository(db.wordDao());
 
         fillSentence("abc");
 

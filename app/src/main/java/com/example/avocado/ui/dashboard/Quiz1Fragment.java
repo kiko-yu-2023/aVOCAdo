@@ -105,7 +105,6 @@ public class Quiz1Fragment extends Fragment {
 
         fillWord("abc");
 
-
         return root;
     }
 
@@ -146,7 +145,6 @@ public class Quiz1Fragment extends Fragment {
                             public void onError(Throwable t) {
                                 Log.e("로그wordsInDict",t.toString());
                             }
-
                         });
             }
 

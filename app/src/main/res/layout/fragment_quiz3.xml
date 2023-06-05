@@ -1,30 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.dashboard.Quiz3Fragment"
     >
 
     <!-- TODO: Update blank fragment layout -->
 
-    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-        android:id="@+id/youtube_player_view"
-        android:layout_marginTop="100dp"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+<!--    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView-->
+<!--        android:id="@+id/youtube_player_view"-->
+<!--        android:layout_marginTop="100dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="300dp"/>-->
 
-    <ImageView
-        android:id="@+id/next_video"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/next"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/next_video"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:src="@drawable/next"/>-->
 
-    <TextView
-        android:id="@+id/subtitle_text_view"
+<!--    <TextView-->
+<!--        android:id="@+id/subtitle_text_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/login"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="로그인"/>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/get_token"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="토큰 받기"/>-->
+
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="여기다 입력하셈"/>
 
-</FrameLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

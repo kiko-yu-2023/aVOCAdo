@@ -6,4 +6,5 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="YoutubeAPIKey">AIzaSyC_aignp8RpKZpJczIJrQ3XDYNSaAjaMD8</string>
+    <string name="server_client_id">732248387011-5d417kramtqlcob6p1h7vivg6u91e7h9.apps.googleusercontent.com</string>
 </resources>

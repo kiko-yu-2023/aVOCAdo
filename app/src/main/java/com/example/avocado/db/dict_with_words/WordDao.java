@@ -34,4 +34,10 @@ public interface WordDao {
     * */
     @Query("SELECT * FROM WORD WHERE CONTENT=:content AND DICTID=:dictId")
     Single<Word> findWordByContentInDict(String content,int dictId);
+
+    @Query("SELECT * FROM WORD WHERE DICTID=:dictId AND NOT ISSENTENCE")
+    Single<List<Word>> getOnlyWordsInDict(int dictId);
+
+    @Query("SELECT * FROM WORD WHERE DICTID=:dictId AND ISSENTENCE")
+    Single<List<Word>> getOnlySentencesInDict(int dictId);
 }
