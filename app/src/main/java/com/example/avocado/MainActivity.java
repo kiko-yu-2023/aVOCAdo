@@ -2,8 +2,6 @@ package com.example.avocado;
 
 import android.os.Bundle;
 
-import com.example.avocado.ui.home.HomeFragment;
-import com.example.avocado.ui.home.NewMemoFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
     }
 
     public void replaceFragment(Fragment fragment){
@@ -45,5 +42,4 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container,fragment).commit();
     }
-
 }
