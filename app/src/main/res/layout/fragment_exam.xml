@@ -7,11 +7,19 @@
     tools:context=".ui.exam.ExamFragment"
     android:id="@+id/test_layout">
 
-    <TextView
-        android:id="@+id/test_start"
+    <ImageView
+        android:id="@+id/start_quiz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="시험 시작~~~~"
+        android:src="@drawable/quiz_score"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/start_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/test_score"
+        app:layout_constraintTop_toBottomOf="@+id/start_quiz"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
