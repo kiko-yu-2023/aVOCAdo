@@ -2,6 +2,10 @@ package com.example.avocado.db.dict_with_words;
 
 import android.util.Log;
 
+import androidx.room.Query;
+
+import java.util.List;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
@@ -40,6 +44,17 @@ public class WordRepository {
 
     public Single<Word> findWordByWordinDict(String word,int dictId){
         return wordDao.findWordByContentInDict(word,dictId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<List<Word>> getOnlyWordsInDict(int dictId)
+    {
+        return wordDao.getOnlyWordsInDict(dictId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+    Single<List<Word>> getOnlySentencesInDict(int dictId)
+    {
+        return wordDao.getOnlySentencesInDict(dictId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

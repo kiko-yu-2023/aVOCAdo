@@ -58,6 +58,9 @@ public class Quiz3Fragment extends Fragment {
 
         webView = binding.webview;
 
+
+        db = AppDatabase.getDatabase(getContext());
+
 //        AppDatabase word = db.getWordsDao().getNthExample(1);
 //
 //        String searchWord;

@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:17.0.0'
 
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-
+    implementation 'org.jsoup:jsoup:1.13.1'
 
     //retrofit (HTTP Request)
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

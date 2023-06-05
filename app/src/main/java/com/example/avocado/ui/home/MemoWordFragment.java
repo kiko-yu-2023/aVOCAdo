@@ -18,6 +18,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.avocado.databinding.FragmentMemoWordBinding;
+import com.example.avocado.db.AppDatabase;
 
 import java.util.Date;
 
@@ -46,7 +47,6 @@ public class MemoWordFragment extends Fragment {
     private TextView exampleSentence;
     private ImageView eaxmpleSentenceSpeaker;
     private TextView exampleSentenceMeaning;
-    private String dictName;
     private FragmentMemoWordBinding binding;
 
     public MemoWordFragment() {
@@ -78,10 +78,17 @@ public class MemoWordFragment extends Fragment {
         binding = FragmentMemoWordBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        String inputFixedString = "";
+        String wordMeaningSt = "";
+        String exampleSentenceSt= "";
+        String exampleSentenceMeaningSt= "";
+
         Bundle args = getArguments();
         if (args != null) {
-            dictName = args.getString("dictName", "");
-            Log.d("dictName", dictName);
+            inputFixedString = args.getString("inputFixedString");
+            wordMeaningSt = args.getString("wordMeaningSt");
+            exampleSentenceSt = args.getString("exampleSentenceSt");
+            exampleSentenceMeaningSt = args.getString("exampleSentenceMeaningSt");
         }
 
         inputFixed = binding.inputFixed;
@@ -91,16 +98,13 @@ public class MemoWordFragment extends Fragment {
         eaxmpleSentenceSpeaker = binding.eaxmpleSentenceSpeaker;
         exampleSentenceMeaning = binding.exampleSentenceMeaning;
 
-        String inputFixedString ;
-        String wordMeaningSt;
-        String exampleSentenceSt;
-        String exampleSentenceMeaningSt;
 
         //뜻이랑 단어 TextView들에 업데이트.
-//        wordMeaning.setText(wordMeaningSt);
-//        exampleSentence.setText(exampleSentenceSt);
-//        eaxmpleSentenceSpeaker.setVisibility(View.VISIBLE);
-//        exampleSentenceMeaning.setText(exampleSentenceMeaningSt);
+        inputFixed.setText(inputFixedString);
+        wordMeaning.setText(wordMeaningSt);
+        exampleSentence.setText(exampleSentenceSt);
+        eaxmpleSentenceSpeaker.setVisibility(View.VISIBLE);
+        exampleSentenceMeaning.setText(exampleSentenceMeaningSt);
 
         return root;
     }
