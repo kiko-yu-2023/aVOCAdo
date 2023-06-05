@@ -31,7 +31,7 @@ public class testActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
         final Bundle bundle = new Bundle();
 
-        url += "run";
+        url += "potato";
         url += "&dic=eng&search_first=Y";
         new Thread(){
             @Override
@@ -57,6 +57,9 @@ public class testActivity extends AppCompatActivity {
                 Element exampleSentenceMeaningStFirst = exampleSentenceMeaningSt.first(); //첫 예문
                 Log.d("content",exampleSentenceMeaningStFirst.text());
 
+
+                Elements sentenceMeaningEle = doc.select(".cont_speller");
+                Log.d("content",sentenceMeaningEle.text());
             }
         }.start();
     }
