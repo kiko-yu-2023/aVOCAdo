@@ -14,9 +14,19 @@ public class Record {
     private int score;
     private boolean relatedWithTest;
 
+    private int dictId;
+
     public Record(Date time, boolean relatedWithTest) {
         this.time = time;
         this.relatedWithTest = relatedWithTest;
+    }
+
+    public int getDictId() {
+        return dictId;
+    }
+
+    public void setDictId(int dictId) {
+        this.dictId = dictId;
     }
 
     public int getRecordId() {
