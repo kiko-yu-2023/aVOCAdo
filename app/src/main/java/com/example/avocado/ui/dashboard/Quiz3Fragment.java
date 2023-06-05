@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,17 @@ import android.webkit.WebViewClient;
 
 import com.example.avocado.databinding.FragmentQuiz3Binding;
 import com.example.avocado.db.AppDatabase;
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictRepository;
+import com.example.avocado.db.dict_with_words.DictWithWords;
+import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordRepository;
+
 import java.util.List;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public class Quiz3Fragment extends Fragment {
     private FragmentQuiz3Binding binding;
@@ -29,8 +40,8 @@ public class Quiz3Fragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private AppDatabase db;
-
-    private List<String> videoIds;
+    private DictRepository dr;
+    private WordRepository wr;
 
     private String searchWord;
 
@@ -58,8 +69,11 @@ public class Quiz3Fragment extends Fragment {
 
         webView = binding.webview;
 
-
         db = AppDatabase.getDatabase(getContext());
+        dr=new DictRepository(db.dictDao(),db.wordDao());
+        wr=new WordRepository(db.wordDao());
+
+        showVideos("example");
 
 //        AppDatabase word = db.getWordsDao().getNthExample(1);
 //
@@ -70,31 +84,69 @@ public class Quiz3Fragment extends Fragment {
 //            searchWord = "example";
 //        }
 
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setAllowFileAccess(true);
-
-        searchWord = "harry potter";
-
-        // Inject the JavaScript code to fetch the search word dynamically
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                String javascriptCode = "fetchSearchWord('" + searchWord + "');";
-                webView.evaluateJavascript(javascriptCode, null);
-            }
-        });
-
-        webView.loadUrl("file:///android_asset/youglish.html");
-
         return root;
     }
 
-    @Override
+    private void showVideos(String title) {
+        //무결성을 위해 title 이란 이름의 단어장 검색
+        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+
+            //성공적으로 단어장 검색
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어장과 연결된 단어리스트 찾기
+                dr.getWordsByDictId(dict.getDictID())
+                        .subscribe(new SingleObserver<DictWithWords>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+
+                            //성공 단어장-단어리스트 객체 - dictWithWords
+                            @Override
+                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
+                                Word word = dictWithWords.words.get(2);
+
+                                WebSettings webSettings = webView.getSettings();
+                                webSettings.setJavaScriptEnabled(true);
+                                webSettings.setAllowFileAccess(true);
+
+                                String searchWord = word.getContent();
+
+                                // Inject the JavaScript code to fetch the search word dynamically
+                                webView.setWebViewClient(new WebViewClient() {
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
+                                        super.onPageFinished(view, url);
+                                        String javascriptCode = "fetchSearchWord('" + searchWord + "');";
+                                        webView.evaluateJavascript(javascriptCode, null);
+                                    }
+                                });
+                                webView.loadUrl("file:///android_asset/youglish.html");
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e("로그wordsInDict", t.toString());
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그getDictByTitle", e.toString());
+            }
+        });
+    }
+
+        @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
+
 
 }

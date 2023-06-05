@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentQuiz2Binding;
 import com.example.avocado.db.AppDatabase;
@@ -92,7 +93,7 @@ public class Quiz2Fragment extends Fragment {
         dr=new DictRepository(db.dictDao(),db.wordDao());
         wr=new WordRepository(db.wordDao());
 
-        fillSentence("abc");
+        fillSentence("example");
 
         // Inflate the layout for this fragment
         return root;
@@ -124,7 +125,7 @@ public class Quiz2Fragment extends Fragment {
                                 String example;
                                 if (word != null) {
                                     example = word.getExampleSentence();
-                                    String modifiedExample = example.replace(word.getMeaning(), "_______");
+                                    String modifiedExample = example.replace(word.getContent(), "_______");
                                     textView.setText(modifiedExample);
                                 } else {
                                     // Example not found
