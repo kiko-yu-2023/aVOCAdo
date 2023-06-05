@@ -24,6 +24,8 @@ public interface DictDao {
     @Query("SELECT * FROM DICT WHERE title = :title")
     Single<Dict> getDictByTitle(String title);
 
+    @Query("SELECT * FROM DICT WHERE DICTID = :dictId")
+    Single<Dict> getDictById(String dictId);
 
     @Delete
     Completable delete(Dict dict);
