@@ -9,8 +9,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.ui.home.HomeFragment;
-import com.example.avocado.ui.home.NewMemoFragment;
+
+import com.example.avocado.db.dict_with_words.Dict;
+import com.example.avocado.db.dict_with_words.DictRepository;
+import com.example.avocado.db.dict_with_words.DictWithWords;
+import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.dict_with_words.WordRepository;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,15 +29,28 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.avocado.databinding.ActivityMainBinding;
 
+import org.reactivestreams.Subscription;
+
+import java.util.Date;
 import java.util.List;
 
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.CompletableObserver;
+import io.reactivex.rxjava3.core.FlowableSubscriber;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private int NUM_PAGES= -1;
-
+    static AppDatabase db;
+    static DictRepository dr;
+    static WordRepository wr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        db= AppDatabase.getDatabase(getApplicationContext());
+        dr=new DictRepository(db.dictDao(),db.wordDao());
+        wr=new WordRepository(db.wordDao());
+
 
     }
 
@@ -86,6 +108,182 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
+    static void deleteDict(int dictId)
+    {
+        dr.delete(1).doOnError(e->Log.e("로그 dict 삭제",e.toString())).subscribe();
+    }
+    //단어장에서 단어만 가져오기
+    static void getOnlyWords(int dictId)
+    {
+        wr.getOnlyWordsInDict(dictId).subscribe(new SingleObserver<List<Word>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull List<Word> words) {
+                Log.d("로그 words만",words.size()+" ");
+                for(Word word:words)
+                {
+                    Log.d("로그 words만",word.toString());
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그 words만","~");
+            }
+        });
+    }
+    //단어장 생성
+    static void dictInsert(String title)
+    {
+        Dict dict1= new Dict(title);
+        dr.insertDict(dict1).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                //생성이 성공적으로 된 경우 할일
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                //단어장 이름이 같아서 생성 안된 경우 할 일
+                Log.e("로그 insert Dict","same title");
+            }
+        });
+    }
+    //title이란 이름의  단어장에 문장 삽입
+    static void putSentence(String title)
+    {
+        //무결성을 위해 title 이란 이름의 단어장 검색
+        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+
+            //성공적으로 단어장 검색.=> 목표: 해당 단어장 id에 sentence 넣기
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
+                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
+                        .subscribe();
+                //단어장이 수정되었으니 수정시간 업데이트
+                dr.updateModifiedTime(dict.getDictID(),new Date());
+            }
+            //해당 단어장 검색 싪패
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그Sentence",e.toString());
+            }
+        });
+    }
+    //title이란 이름의  단어장에 단어 삽입
+    static void putWord(String title)
+    {
+        //무결성을 위해 title 이란 이름의 단어장 검색
+        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+
+            //성공적으로 단어장 검색.=> 목표: 해당 단어장 id에 word 넣기
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
+                wr.insert(new Word(false,"apple","사과","An apple is red","사과는 빨간색이다",dict.getDictID()))
+                        .subscribe();
+                //단어장이 수정되었으니 수정시간 업데이트
+                dr.updateModifiedTime(dict.getDictID(),new Date());
+            }
+            //해당 단어장 검색 싪패
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그Sentence",e.toString());
+            }
+        });
+    }
+    //특정 단어장 속 단어들 list 얻기
+    static void findWordsInDict(String title)
+    {
+        //무결성을 위해 title 이란 이름의 단어장 검색
+        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+            //성공적으로 단어장 검색
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어장과 연결된 단어리스트 찾기
+                dr.getWordsByDictId(dict.getDictID())
+                        .subscribe(new SingleObserver<DictWithWords>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+                            //성공 단어장-단어리스트 객체 - dictWithWords
+                            @Override
+                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
+
+                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
+                                if(dictWithWords.words.size()>0)
+                                {
+                                    for(Word w:dictWithWords.words)
+                                    {
+                                        Log.d("로그word",w.toString());
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e("로그wordsInDict",t.toString());
+                            }
+
+                        });
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그getDictByTitle",e.toString());
+            }
+        });
+    }
+    static void getAllDicts()
+    {
+        //모든 시간 순 dict 불러오기
+        dr.getDictsByModified().subscribe(new Consumer<List<Dict>>() {
+            @Override
+            public void accept(List<Dict> dicts) throws Throwable {
+                Log.d("로그","dicts : "+dicts.get(0));
+            }
+        });
+    }
+    //단어 이름으로 특정 사전(id로 구분) 속 단어 객체 찾기
+    static void findWordByContent()
+    {
+        //예시 : hello라는 이름의 1번 단어장에 들어간 객체 찾기
+        wr.findWordByWordinDict("hello",1)
+                .subscribe(new SingleObserver<Word>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull Word word) {
+
+                    }
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.e("로그findword","에러 하나는 정상 "+t.toString());
+                    }
+                });
+    }
 
 
 }
