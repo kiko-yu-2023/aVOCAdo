@@ -23,6 +23,12 @@ import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordRepository;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.Date;
 
 import io.reactivex.rxjava3.core.CompletableObserver;
@@ -49,8 +55,8 @@ public class MemoWordAddFragment extends Fragment {
     private EditText inputText;
     private ToggleButton inputChangeButton;
     private Button dictSearchButton;
-    private TextView inputFixed;
     private TextView wordMeaning;
+    private String url = "https://alldic.daum.net/search.do?q=";
     private TextView exampleSentence;
     private ImageView eaxmpleSentenceSpeaker;
     private TextView exampleSentenceMeaning;
@@ -125,14 +131,13 @@ public class MemoWordAddFragment extends Fragment {
             public void onClick(View view) {
                 inputText.setVisibility(View.GONE);
                 paintView.setVisibility(View.GONE);
-                inputFixed.setVisibility(View.VISIBLE);
                 inputChangeButton.setVisibility(View.GONE);
                 dictSearchButton.setVisibility(View.GONE);
 
                 String inputFixedString;
-                String wordMeaningSt;
-                String exampleSentenceSt;
-                String exampleSentenceMeaningSt;
+                final String[] wordMeaningSt = new String[1];
+                final String[] exampleSentenceSt = new String[1];
+                final String[] exampleSentenceMeaningSt = new String[1];
 
                 //1) 입력이 없는데 등록 버튼을 눌렀을 경우
                  //1-1) 현재 텍스트가 활성화 되어 있는 경우
@@ -151,15 +156,58 @@ public class MemoWordAddFragment extends Fragment {
 
                     }
 
-                    //TextView에 고정된 단어 표시.
-                    inputFixed.setText(inputFixedString);
 
                     //단어 뜻 등의 정보 사전 API로 얻어오기
-                    wordMeaningSt = "임시뜻";
-                    exampleSentenceSt = "임시예문";
-                    exampleSentenceMeaningSt = "임시예문의뜻";
+                    //검색할 단어를 검색하는 url 완성
+                    url += inputFixedString;
+                    url += "&dic=eng&search_first=Y";
 
 
+                    //웹크롤링을 수행하는 Thread
+                    Thread thread = new Thread(){
+                        @Override
+
+                        public void run() {
+                            Document doc = null;
+                            try {
+                                doc = Jsoup.connect(url).get();
+                                //Log.d("doc",doc.text());
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Elements wordMeaningEle = doc.select(".cleanword_type.kuek_type .list_search");
+                            Log.d("content",wordMeaningEle.text());
+
+                            Elements exampleSentenceEle = doc.select(".box_example.box_sound .txt_example .txt_ex");
+                            Element exampleSentenceStFirst = exampleSentenceEle.first(); //첫 예문
+                            Log.d("content",exampleSentenceStFirst.text());
+
+                            Elements exampleSentenceMeaningEle = doc.select(".box_example.box_sound .mean_example .txt_ex");
+                            Element exampleSentenceMeaningStFirst = exampleSentenceMeaningEle.first(); //첫 예문
+                            Log.d("content",exampleSentenceMeaningStFirst.text());
+
+
+                            wordMeaningSt[0] = wordMeaningEle.text();
+                            exampleSentenceSt[0] = exampleSentenceStFirst.text();
+                            exampleSentenceMeaningSt[0] = exampleSentenceMeaningStFirst.text();
+
+                        }
+                    };
+
+                    thread.start(); //웹크롤링 시작
+
+                    //웹크롤링 종료 기다리기
+                    try{
+                        Log.d("wait","기다리기 돌입");
+                        thread.join();
+                    }catch (InterruptedException e){
+                        Log.e("join","못 기다림");
+                    }
+
+
+                    Log.d("wait","기다리기 끝, 단어장 넣기");
                     //단어장에 넣기.
                     AppDatabase db= AppDatabase.getDatabase(getContext());
                     DictRepository dr = new DictRepository(db.dictDao(),db.wordDao());
@@ -179,7 +227,7 @@ public class MemoWordAddFragment extends Fragment {
                             @Override
                             public void onSuccess(@NonNull Dict dict) {
                                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                                wr.insert(new Word(false,inputFixedString,wordMeaningSt,exampleSentenceSt,exampleSentenceMeaningSt,dict.getDictID()))
+                                wr.insert(new Word(false,inputFixedString, wordMeaningSt[0], exampleSentenceSt[0], exampleSentenceMeaningSt[0],dict.getDictID()))
                                         .subscribe(new CompletableObserver() {
                                             @Override
                                             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
@@ -200,10 +248,10 @@ public class MemoWordAddFragment extends Fragment {
                                 dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
 
                                 //뜻이랑 단어 TextView들에 업데이트.
-                                wordMeaning.setText(wordMeaningSt);
-                                exampleSentence.setText(exampleSentenceSt);
+                                wordMeaning.setText(wordMeaningSt[0]);
+                                exampleSentence.setText(exampleSentenceSt[0]);
                                 eaxmpleSentenceSpeaker.setVisibility(View.VISIBLE);
-                                exampleSentenceMeaning.setText(exampleSentenceMeaningSt);
+                                exampleSentenceMeaning.setText(exampleSentenceMeaningSt[0]);
                             }
                             //해당 단어장 검색 실패
                             @Override
@@ -224,7 +272,7 @@ public class MemoWordAddFragment extends Fragment {
                             @Override
                             public void onSuccess(@NonNull Dict dict) {
                                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-                                wr.insert(new Word(true,inputFixedString,wordMeaningSt,null,null,dict.getDictID()))
+                                wr.insert(new Word(true,inputFixedString, wordMeaningSt[0],null,null,dict.getDictID()))
                                         .subscribe();
                                 //단어장이 수정되었으니 수정시간 업데이트
                                 dr.updateModifiedTime(dict.getDictID(),new Date());
