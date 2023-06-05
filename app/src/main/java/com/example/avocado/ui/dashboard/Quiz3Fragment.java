@@ -10,27 +10,13 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.avocado.databinding.FragmentQuiz3Binding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.models.Items;
-import com.example.avocado.models.VideoModel;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-
 import java.util.List;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 
 public class Quiz3Fragment extends Fragment {
     private FragmentQuiz3Binding binding;
-
 
     WebView webView;
 
@@ -70,10 +56,6 @@ public class Quiz3Fragment extends Fragment {
         binding = FragmentQuiz3Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-
-        db = Room.databaseBuilder(requireContext(), AppDatabase.class, "words")
-                .allowMainThreadQueries()
-                .build();
         webView = binding.webview;
 
 //        AppDatabase word = db.getWordsDao().getNthExample(1);
@@ -84,7 +66,6 @@ public class Quiz3Fragment extends Fragment {
 //        } else {//단어가 아무 것도 없는 경우(테스트용)
 //            searchWord = "example";
 //        }
-
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);

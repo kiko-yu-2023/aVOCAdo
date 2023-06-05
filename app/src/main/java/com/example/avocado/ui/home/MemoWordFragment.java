@@ -18,11 +18,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.avocado.databinding.FragmentMemoWordBinding;
-import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.Dict;
-import com.example.avocado.db.DictRepository;
-import com.example.avocado.db.Word;
-import com.example.avocado.db.WordRepository;
 
 import java.util.Date;
 
