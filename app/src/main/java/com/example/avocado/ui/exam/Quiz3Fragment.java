@@ -1,4 +1,4 @@
-package com.example.avocado.ui.dashboard;
+package com.example.avocado.ui.exam;
 
 import android.os.Bundle;
 
@@ -19,8 +19,6 @@ import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordRepository;
-
-import java.util.List;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;

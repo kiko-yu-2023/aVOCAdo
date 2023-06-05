@@ -1,10 +1,11 @@
-package com.example.avocado.ui.dashboard;
+package com.example.avocado.ui.exam;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,37 +14,48 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.avocado.R;
-import com.example.avocado.databinding.FragmentDashboardBinding;
+import com.example.avocado.databinding.FragmentExamBinding;
+import com.example.avocado.ui.home.HomeFragment;
 
-public class DashboardFragment extends Fragment implements View.OnClickListener{
+public class ExamFragment extends Fragment implements View.OnClickListener{
 
-    private FragmentDashboardBinding binding;
+    private FragmentExamBinding binding;
+    TextView testStart;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         container.removeAllViews();
 
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+//        ExamViewModel examViewModel =
+//                new ViewModelProvider(this).get(ExamViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentExamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        TextView typeOneQuiz = binding.typeOneQuiz;
-        TextView typeTwoQuiz = binding.typeTwoQuiz;
-        TextView typeThreeQuiz = binding.typeThreeQuiz;
-        TextView addWord = binding.addWord;
+        testStart = binding.testStart;
+        testStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //단어장 하나가 간다 치고!
 
+            }
+        });
 
-        dashboardViewModel.getTypeOneQuiz().observe(getViewLifecycleOwner(), typeOneQuiz::setText);
-        dashboardViewModel.getTypeTwoQuiz().observe(getViewLifecycleOwner(), typeTwoQuiz::setText);
-        dashboardViewModel.getTypeThreeQuiz().observe(getViewLifecycleOwner(), typeThreeQuiz::setText);
-        dashboardViewModel.addWord().observe(getViewLifecycleOwner(), addWord::setText);
-
-        typeOneQuiz.setOnClickListener(this);
-        typeTwoQuiz.setOnClickListener(this);
-        typeThreeQuiz.setOnClickListener(this);
-        addWord.setOnClickListener(this);
+//        TextView typeOneQuiz = binding.typeOneQuiz;
+//        TextView typeTwoQuiz = binding.typeTwoQuiz;
+//        TextView typeThreeQuiz = binding.typeThreeQuiz;
+//        TextView addWord = binding.addWord;
+//
+//
+//        examViewModel.getTypeOneQuiz().observe(getViewLifecycleOwner(), typeOneQuiz::setText);
+//        examViewModel.getTypeTwoQuiz().observe(getViewLifecycleOwner(), typeTwoQuiz::setText);
+//        examViewModel.getTypeThreeQuiz().observe(getViewLifecycleOwner(), typeThreeQuiz::setText);
+//        examViewModel.addWord().observe(getViewLifecycleOwner(), addWord::setText);
+//
+//        typeOneQuiz.setOnClickListener(this);
+//        typeTwoQuiz.setOnClickListener(this);
+//        typeThreeQuiz.setOnClickListener(this);
+//        addWord.setOnClickListener(this);
         return root;
     }
 

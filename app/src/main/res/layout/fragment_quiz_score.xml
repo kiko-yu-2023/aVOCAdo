@@ -3,16 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.exam.Quiz2Fragment">
+    tools:context=".ui.mypage.QuizScoreFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="QUIZ TWO FRAGMENT" />
-
+        android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>
