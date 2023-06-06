@@ -154,7 +154,8 @@ public class MemoWordAddFragment extends Fragment {
                 boolean isCanvasEmpty = paintView.isCanvasEmpty();
                 if (isCanvasEmpty && inputText.getText().length() == 0) {
                     Toast.makeText(getContext(), "입력이 없습니다.", Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else {
 
                     inputText.setVisibility(View.GONE);
                     paintView.setVisibility(View.GONE);
@@ -196,8 +197,8 @@ public class MemoWordAddFragment extends Fragment {
 
                                 @Override
                                 public void onComplete() {
-                                    Log.d("로그 getandinsert word data from dict", "success");
                                     if (interactionListener != null) {
+                                        Log.d("로그 getandinsert word data from dict", "success");
                                         interactionListener.moveToNextPageAndChangeFragment(word2);
                                     }
                                 }
@@ -208,13 +209,8 @@ public class MemoWordAddFragment extends Fragment {
                                 }
                             });
                 }
-
-
             }
-
-
         });
-
         return root;
     }
 

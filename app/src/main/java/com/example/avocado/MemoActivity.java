@@ -61,7 +61,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     private int currentPage;
     private String dictName;
     private int dictId;
-
+    FragmentManager fragmentManager;
     private List<Word> wordList;
     /**
      * The pager adapter, which provides the pages to the view pager widget.
@@ -84,6 +84,10 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
         // Instantiate a ViewPager2 and a PagerAdapter.
         viewPager = binding.viewPager2Container;
+
+
+        //popBackStack 할수있도록
+        fragmentManager = getSupportFragmentManager();
 
         toLeft = binding.beforeFragmentLayout;
         toRight = binding.nextFragmentLayout;
@@ -116,7 +120,15 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
                 currentPage = position;
 
-                if (position == 0) {
+                if(NUM_PAGES==1)
+                {
+                    toRight.setEnabled(false);
+                    toLeft.setEnabled(false);
+                    toLeft.setVisibility(View.INVISIBLE);
+                    toRight.setVisibility(View.INVISIBLE);
+                }
+                else
+                    if (position == 0) {
                     toRight.setEnabled(true);
                     toLeft.setEnabled(false);
                     toLeft.setVisibility(View.INVISIBLE);
@@ -136,8 +148,13 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     }
 
     @Override
-    public void onBackPressed() {
-        if (viewPager.getCurrentItem() == 0) {
+    public void onBackPressed(){
+        //WordListFragment 갔다가 돌아올 때 필요한 코드
+        if(fragmentManager.getBackStackEntryCount()>0)
+        {
+            fragmentManager.popBackStack();
+        }
+        else if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
@@ -221,6 +238,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             super(fa);
         }
 
+
         @Override
         public Fragment createFragment(int position) {
             // 마지막 인덱스인 경우 LastFragment 반환
@@ -250,7 +268,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
                 wordMeaningSt = word.getMeaning();
                 exampleSentenceSt = word.getExampleSentence();
                 exampleSentenceMeaningSt = word.getExampleMeaning();
-//                }
+
                 bundle.putString("inputFixedString", inputFixedString);
                 bundle.putString("wordMeaningSt", wordMeaningSt);
                 bundle.putString("exampleSentenceSt", exampleSentenceSt);
@@ -261,7 +279,10 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             }
         }
 
-
+//        public void replaceFragment(int index, Fragment fragment) {
+//            fragments.set(index, fragment);
+//            notifyDataSetChanged();
+//        }
         public void addItem(int index,Fragment fragment) {
             fragments.add(index,fragment);
             notifyDataSetChanged();
@@ -269,7 +290,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
         @Override
         public int getItemCount() {
-            return NUM_PAGES+1;
+            return fragments.size();
         }
     }
 
@@ -299,7 +320,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     @Override
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
         if (item.getItemId() == R.id.actionWordList) {//단어 리스트 fragment로 이동.
-            FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.memoLayout, WordListFragment.class, null)
                     .setReorderingAllowed(true)
@@ -320,8 +340,8 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         //현재 자리에 MemoWordFragment를 끼워넣기
         //DB로부터 가져올 필요 없지 않나?
 
+        Log.d("로그 FSadapter 이상",pagerAdapter.fragments.size()+" ");
         int currentPosition = viewPager.getCurrentItem();
-
 
         MemoWordFragment fragment = new MemoWordFragment();
 
@@ -333,13 +353,11 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
         fragment.setArguments(bundle);
 
-        Log.d("current page", String.valueOf(currentPosition));
+
+        Log.d("로그 current page", String.valueOf(currentPosition));
         pagerAdapter.addItem(currentPosition,fragment);
         viewPager.setCurrentItem(currentPosition);
-
-        //getDictWithWordsByTitle(dictName);
 
     }
 }
 
-    
