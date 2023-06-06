@@ -1,5 +1,6 @@
 package com.example.avocado.ui.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,11 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentMemoWordAddBinding;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
@@ -31,9 +36,12 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Date;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.CompletableObserver;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,16 +59,20 @@ public class MemoWordAddFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Boolean isSentence = false;
+
+    private ViewPagerInteractionListener interactionListener;
     private PaintView paintView;
     private EditText inputText;
     private ToggleButton inputChangeButton;
     private Button dictSearchButton;
     private TextView wordMeaning;
     private String url = "https://alldic.daum.net/search.do?q=";
-    private TextView exampleSentence;
-    private ImageView eaxmpleSentenceSpeaker;
-    private TextView exampleSentenceMeaning;
+
     private String dictName;
+    private Word word2;
+    private int position;
+    private int dictId;
     private FragmentMemoWordAddBinding binding;
 
     public MemoWordAddFragment() {
@@ -85,6 +97,10 @@ public class MemoWordAddFragment extends Fragment {
         return fragment;
     }
 
+    public interface ViewPagerInteractionListener {
+        void moveToNextPageAndChangeFragment(Word word);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -93,12 +109,14 @@ public class MemoWordAddFragment extends Fragment {
         View root = binding.getRoot();
 
         Bundle args = getArguments();
-        if(args!=null)
-        {
-            dictName = args.getString("dictName","");
-            Log.d("dictName",dictName);
-        }
+        if (args != null) {
 
+            position = args.getInt("position", position);
+            dictName = args.getString("dictName", "");
+            Log.d("args", dictName);
+            dictId = args.getInt("dictId", 0);
+            Log.d("args", Integer.toString(dictId));
+        }
 
 
         paintView = binding.handWrittingView;
@@ -111,12 +129,11 @@ public class MemoWordAddFragment extends Fragment {
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){ //toggle is enabled
+                if (b) { //toggle is enabled
                     inputText.setVisibility(View.VISIBLE);
                     paintView.setVisibility(View.GONE);
                     paintView.reset();
-                }
-                else { //toggle is disabled
+                } else { //toggle is disabled
                     inputText.setVisibility(View.GONE);
                     paintView.setVisibility(View.VISIBLE);
                     paintView.reset();
@@ -125,33 +142,29 @@ public class MemoWordAddFragment extends Fragment {
         });
 
         //DB에 데이터 넣고 MemoWordFragment로 이동하기.
-        dictSearchButton.setOnClickListener(new View.OnClickListener(){
+        dictSearchButton.setOnClickListener(new View.OnClickListener() {
             //문장이나 단어를 입력했을 때의 이벤트
             @Override
             public void onClick(View view) {
-                inputText.setVisibility(View.GONE);
-                paintView.setVisibility(View.GONE);
-                inputChangeButton.setVisibility(View.GONE);
-                dictSearchButton.setVisibility(View.GONE);
-
-                String inputFixedString;
-                final String[] wordMeaningSt = new String[1];
-                final String[] exampleSentenceSt = new String[1];
-                final String[] exampleSentenceMeaningSt = new String[1];
+                final String[] inputFixedString = new String[1];
 
                 //1) 입력이 없는데 등록 버튼을 눌렀을 경우
-                 //1-1) 현재 텍스트가 활성화 되어 있는 경우
-                 //1-2) 현재 캔버스가 활성화 되어 있는 경우
+                //1-1) 현재 텍스트가 활성화 되어 있는 경우
+                //1-2) 현재 캔버스가 활성화 되어 있는 경우
                 boolean isCanvasEmpty = paintView.isCanvasEmpty();
-                if (isCanvasEmpty && inputText.getText().length()==0) {
-                    Toast.makeText(getContext(),"입력이 없습니다.",Toast.LENGTH_SHORT).show();
+                if (isCanvasEmpty && inputText.getText().length() == 0) {
+                    Toast.makeText(getContext(), "입력이 없습니다.", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    if(true) //2) 텍스트로 입력했을 때
+                    inputText.setVisibility(View.GONE);
+                    paintView.setVisibility(View.GONE);
+                    inputChangeButton.setVisibility(View.GONE);
+                    dictSearchButton.setVisibility(View.GONE);
+
+                    if (true) //2) 텍스트로 입력했을 때
                     {
-                        inputFixedString = String.valueOf(inputText.getText());
-                    }
-                    else //3) 손글씨로 입력했을 때
+                        inputFixedString[0] = String.valueOf(inputText.getText());
+                    } else //3) 손글씨로 입력했을 때
                     {
 
                     }
@@ -159,142 +172,119 @@ public class MemoWordAddFragment extends Fragment {
 
                     //단어 뜻 등의 정보 사전 API로 얻어오기
                     //검색할 단어를 검색하는 url 완성
-                    url += inputFixedString;
-                    url += "&dic=eng&search_first=Y";
 
+                    AppDatabase db = AppDatabase.getDatabase(getContext());
+                    DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
+                    WordRepository wr = new WordRepository(db.wordDao());
+
+                    Log.d("word", "웹크롤링 수행전 : " + inputFixedString[0]);
 
                     //웹크롤링을 수행하는 Thread
-                    Thread thread = new Thread(){
-                        @Override
+                    getWordData(inputFixedString[0], dictId)
+                            .flatMapCompletable(word ->
+                            {
+                                Log.d("로그 getandinsert word data from dict", word.toString());
+                                word2 = word;
+                                return wr.insert(word);
+                            }).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new CompletableObserver() {
+                                @Override
+                                public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
 
-                        public void run() {
-                            Document doc = null;
-                            try {
-                                doc = Jsoup.connect(url).get();
-                                //Log.d("doc",doc.text());
+                                }
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                                @Override
+                                public void onComplete() {
+                                    Log.d("로그 getandinsert word data from dict", "success");
+                                    if (interactionListener != null) {
+                                        interactionListener.moveToNextPageAndChangeFragment(word2);
+                                    }
+                                }
 
-                            Elements wordMeaningEle = doc.select(".cleanword_type.kuek_type .list_search");
-                            Log.d("content",wordMeaningEle.text());
-
-                            Elements exampleSentenceEle = doc.select(".box_example.box_sound .txt_example .txt_ex");
-                            Element exampleSentenceStFirst = exampleSentenceEle.first(); //첫 예문
-                            Log.d("content",exampleSentenceStFirst.text());
-
-                            Elements exampleSentenceMeaningEle = doc.select(".box_example.box_sound .mean_example .txt_ex");
-                            Element exampleSentenceMeaningStFirst = exampleSentenceMeaningEle.first(); //첫 예문
-                            Log.d("content",exampleSentenceMeaningStFirst.text());
-
-
-                            wordMeaningSt[0] = wordMeaningEle.text();
-                            exampleSentenceSt[0] = exampleSentenceStFirst.text();
-                            exampleSentenceMeaningSt[0] = exampleSentenceMeaningStFirst.text();
-
-                        }
-                    };
-
-                    thread.start(); //웹크롤링 시작
-
-                    //웹크롤링 종료 기다리기
-                    try{
-                        Log.d("wait","기다리기 돌입");
-                        thread.join();
-                    }catch (InterruptedException e){
-                        Log.e("join","못 기다림");
-                    }
-
-
-                    Log.d("wait","기다리기 끝, 단어장 넣기");
-                    //단어장에 넣기.
-                    AppDatabase db= AppDatabase.getDatabase(getContext());
-                    DictRepository dr = new DictRepository(db.dictDao(),db.wordDao());
-                    WordRepository wr=new WordRepository(db.wordDao());
-
-                    if(true) //입력이 단어인가?
-                    {
-                        Log.d("word",inputFixedString);
-                        //case 1) 입력이 단어일 경우
-                        //무결성을 위해 title 이란 이름의 단어장 검색
-                        dr.getDictByTitle(dictName).subscribe(new SingleObserver<Dict>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
-                            }
-
-                            //성공적으로 단어장 검색.=> 목표: 해당 단어장 id에 word 넣기
-                            @Override
-                            public void onSuccess(@NonNull Dict dict) {
-                                //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                                wr.insert(new Word(false,inputFixedString, wordMeaningSt[0], exampleSentenceSt[0], exampleSentenceMeaningSt[0],dict.getDictID()))
-                                        .subscribe(new CompletableObserver() {
-                                            @Override
-                                            public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-
-                                            }
-
-                                            @Override
-                                            public void onComplete() {
-                                                Log.d("word Insert",inputFixedString);
-                                            }
-
-                                            @Override
-                                            public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                                                Log.e("word Insert",inputFixedString);
-                                            }
-                                        });
-                                //단어장이 수정되었으니 수정시간 업데이트
-                                dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
-
-                                //뜻이랑 단어 TextView들에 업데이트.
-                                wordMeaning.setText(wordMeaningSt[0]);
-                                exampleSentence.setText(exampleSentenceSt[0]);
-                                eaxmpleSentenceSpeaker.setVisibility(View.VISIBLE);
-                                exampleSentenceMeaning.setText(exampleSentenceMeaningSt[0]);
-                            }
-                            //해당 단어장 검색 실패
-                            @Override
-                            public void onError(@NonNull Throwable e) {
-                                Log.e("로그Sentence",e.toString());
-                            }
-                        });
-                    }
-                    else {
-                        //case 2) 입력이 문장일 경우
-                        //무결성을 위해 title 이란 이름의 단어장 검색
-                        dr.getDictByTitle(dictName).subscribe(new SingleObserver<Dict>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
-                            }
-
-                            //성공적으로 단어장 검색.=> 목표: 해당 단어장 id에 sentence 넣기
-                            @Override
-                            public void onSuccess(@NonNull Dict dict) {
-                                //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-                                wr.insert(new Word(true,inputFixedString, wordMeaningSt[0],null,null,dict.getDictID()))
-                                        .subscribe();
-                                //단어장이 수정되었으니 수정시간 업데이트
-                                dr.updateModifiedTime(dict.getDictID(),new Date());
-                            }
-                            //해당 단어장 검색 싪패
-                            @Override
-                            public void onError(@NonNull Throwable e) {
-                                Log.e("로그Sentence",e.toString());
-                            }
-                        });
-                    }
-
-
+                                @Override
+                                public void onError(Throwable e) {
+                                    Log.e("로그 getandinsert word data from dict", e.toString());
+                                }
+                            });
                 }
 
 
-
-
             }
+
+
         });
 
         return root;
+    }
+
+    Single<Word> getWordData(String wordContent, int dictId) {
+        return Single.fromCallable(() -> {
+
+            url += wordContent;
+            url += "&dic=eng&search_first=Y";
+
+
+            Log.d("word", url);
+            Document doc = null;
+            try {
+                doc = Jsoup.connect(url).get();
+            } catch (IOException e) {
+                Log.e("로그 word add", e.toString());
+                e.printStackTrace();
+            }
+
+            Log.d("doc", doc.text());
+
+            if (doc != null) {
+
+                //문장일 경우 해석이 나옴
+                Elements sentenceMeaningEle = doc.select(".cont_speller");
+                Elements wordMeaningEle = null;
+                Element exampleSentenceStFirst = null;
+                Element exampleSentenceMeaningStFirst = null;
+
+                Log.d("sentence", String.valueOf(sentenceMeaningEle.text().length()));
+
+                if (sentenceMeaningEle.text().length() == 0) //단어인 경우
+                {
+                    isSentence = false;
+                } else {
+                    isSentence = true;
+                }
+
+                Log.d("word", String.valueOf(isSentence));
+
+                wordMeaningEle = doc.select(".cleanword_type.kuek_type .list_search");
+                Log.d("word", wordMeaningEle.text());
+
+                Elements exampleSentenceEle = doc.select(".box_example.box_sound .txt_example .txt_ex");
+                exampleSentenceStFirst = exampleSentenceEle.first(); //첫 예문
+                Log.d("word", exampleSentenceStFirst.text());
+
+                Elements exampleSentenceMeaningEle = doc.select(".box_example.box_sound .mean_example .txt_ex");
+                exampleSentenceMeaningStFirst = exampleSentenceMeaningEle.first(); //첫 예문
+                Log.d("word", exampleSentenceMeaningStFirst.text());
+
+                String wordMeaningSt;
+                String exampleSentenceSt = null;
+                String exampleSentenceMeaningSt = null;
+
+                if (isSentence == false) //단어일 경우
+                {
+                    wordMeaningSt = wordMeaningEle.text();
+                    exampleSentenceSt = exampleSentenceStFirst.text();
+                    exampleSentenceMeaningSt = exampleSentenceMeaningStFirst.text();
+                } else { //문장일 경우
+                    wordMeaningSt = sentenceMeaningEle.text();
+                }
+
+                return new Word(isSentence, wordContent, wordMeaningSt, exampleSentenceSt, exampleSentenceMeaningSt, dictId);
+            }
+
+            // Handle the case when the document is null or an exception occurred
+            throw new RuntimeException("Failed to retrieve word data");
+        });
     }
 
     @Override
@@ -307,5 +297,16 @@ public class MemoWordAddFragment extends Fragment {
     public void onPause() {
         paintView.onPause();
         super.onPause();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof ViewPagerInteractionListener) {
+            interactionListener = (ViewPagerInteractionListener) context;
+        } else {
+            throw new IllegalStateException("The hosting Activity must implement ViewPagerInteractionListener");
+        }
     }
 }
