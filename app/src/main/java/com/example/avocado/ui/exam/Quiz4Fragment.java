@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz4Binding;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
@@ -23,57 +25,27 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Quiz4Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Quiz4Fragment extends Fragment {
 
     private FragmentQuiz4Binding binding;
     TextView exampleMeaning;
+    EditText inputSentenceQuiz4;
+    Button completeQuiz4;
+
     private AppDatabase db;
     private DictRepository dr;
     private WordRepository wr;
+    private String title;
+    private Word word;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Quiz4Fragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Quiz4Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Quiz4Fragment newInstance(String param1, String param2) {
-        Quiz4Fragment fragment = new Quiz4Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public Quiz4Fragment(String title, Word word) {
+        this.title = title;
+        this.word = word;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -85,17 +57,34 @@ public class Quiz4Fragment extends Fragment {
         View root = binding.getRoot();
 
         exampleMeaning = binding.exampleMeaning;
+        inputSentenceQuiz4 = binding.inputSentenceQuiz4;
+        completeQuiz4 = binding.completeQuiz4;
 
         db=AppDatabase.getDatabase(getContext());
-        dr=new DictRepository(db.dictDao(),db.wordDao());
         wr=new WordRepository(db.wordDao());
+        dr=new DictRepository(db.dictDao(),db.wordDao());
 
-        showExampleMeaning("example");
+        showExampleMeaning();
+
+        completeQuiz4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isCorrect(inputSentenceQuiz4.getText().toString())) {
+                    // Correct answer
+                    ExamFragment parentFragment = (ExamFragment) getParentFragment();
+                    if (parentFragment != null) {
+                        parentFragment.openNextQuizFragment();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Incorrect answer", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         return root;
     }
 
-    private void showExampleMeaning(String title) {
+    private void showExampleMeaning() {
         //무결성을 위해 title 이란 이름의 단어장 검색
         dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
             @Override
@@ -117,15 +106,8 @@ public class Quiz4Fragment extends Fragment {
                                 Log.d("로그w&s","words si");
                                 Log.d("로그w&s","words size: "+dictWithWords.words.size());
 
-                                Word word = dictWithWords.words.get(2);
-                                String example;
-                                if (word != null) {
-                                    example = word.getExampleMeaning();
-                                    exampleMeaning.setText(example);
-                                } else {
-                                    // Example not found
-                                    exampleMeaning.setText("예문 해석 가져오기 실패");
-                                }
+                                showMeaning();
+
                             }
                             @Override
                             public void onError(Throwable t) {
@@ -141,6 +123,26 @@ public class Quiz4Fragment extends Fragment {
             }
         });
 
+    }
+
+
+    private void showMeaning() {
+        if (word != null) {
+            String example = word.getMeaning();
+            exampleMeaning.setText(example);
+        } else {
+            // Example not found
+            exampleMeaning.setText("예문 해석 가져오기 실패");
+        }
+    }
+
+
+    private boolean isCorrect(String inputWord) {
+        if(inputWord.equals(word.getContent())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override

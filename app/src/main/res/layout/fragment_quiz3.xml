@@ -1,52 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.exam.Quiz3Fragment"
-    >
-
-    <!-- TODO: Update blank fragment layout -->
-
-<!--    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView-->
-<!--        android:id="@+id/youtube_player_view"-->
-<!--        android:layout_marginTop="100dp"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="300dp"/>-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/next_video"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:src="@drawable/next"/>-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/subtitle_text_view"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"/>-->
-
-<!--    <Button-->
-<!--        android:id="@+id/login"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="로그인"/>-->
-
-<!--    <Button-->
-<!--        android:id="@+id/get_token"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="토큰 받기"/>-->
+    tools:context=".ui.exam.Quiz3Fragment">
 
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints" />
 
     <EditText
+        android:id="@+id/input_word_quiz3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="여기다 입력하셈"/>
+        android:hint="동영상 퀴즈 여기 입력"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/webview" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+    <Button
+        android:id="@+id/complete_quiz3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="확인스"
+        app:layout_constraintEnd_toEndOf="@+id/input_word_quiz3"
+        app:layout_constraintStart_toStartOf="@+id/input_word_quiz3"
+        app:layout_constraintTop_toBottomOf="@+id/input_word_quiz3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

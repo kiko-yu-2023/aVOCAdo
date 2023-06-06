@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="aVOCAdo">#94C100</color>
     <color name="dark_gray">#a9a9a9</color>
+    <color name="correct_button">#E0EDB5</color>
+    <color name="incorrect_button">#F4CAC0</color>
 </resources>

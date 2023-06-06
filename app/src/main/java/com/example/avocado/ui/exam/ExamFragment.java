@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentExamBinding;
@@ -35,31 +32,36 @@ public class ExamFragment extends Fragment{
     ImageView startQuiz, startTest;
     private AppDatabase db;
     private DictRepository dr;
+    private DictWithWords dictWithWords;
+
+    private String title = "hello";
+    private int currentIndex;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        container.removeAllViews();
 
         binding = FragmentExamBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        db=AppDatabase.getDatabase(getContext());
+        dr=new DictRepository(db.dictDao(),db.wordDao());
+
         startQuiz = binding.startQuiz;
         startTest = binding.startTest;
+
         startQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //단어장 하나가 간다 치고!
-                openQuiz("example");
+                //String title = "hello";
+                playQuiz(title);
             }
         });
-
-        db=AppDatabase.getDatabase(getContext());
-        dr=new DictRepository(db.dictDao(),db.wordDao());
 
         return root;
     }
 
-    private void openQuiz(String title) {
+    private void playQuiz(String title) {
         //무결성을 위해 title 이란 이름의 단어장 검색
         dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
             @Override
@@ -75,46 +77,21 @@ public class ExamFragment extends Fragment{
                             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
 
                             }
+
                             //성공 단어장-단어리스트 객체 - dictWithWords
                             @Override
                             public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull DictWithWords dictWithWords) {
-                                Log.d("로그w&s","words si");
-                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
+                                Log.d("로그w&s", "words si");
+                                Log.d("로그w&s", "words size: " + dictWithWords.words.size());
 
-                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                ExamFragment.this.dictWithWords = dictWithWords;
 
-                                Fragment selectedFragment = null;
-
-                                for(int i=0; i<dictWithWords.words.size(); i++){
-                                    Word word = dictWithWords.words.get(i);
-
-                                    if (word.isSentence()){
-                                        //문장이 들어온 경우
-                                        selectedFragment = new Quiz4Fragment();
-                                    }else{
-                                        int randomFragment = new Random().nextInt(3) + 1;
-
-                                        switch (randomFragment){
-                                            case 1:
-                                                selectedFragment = new Quiz1Fragment();
-                                                break;
-                                            case 2:
-                                                selectedFragment = new Quiz2Fragment();
-                                                break;
-                                            case 3:
-                                                selectedFragment = new Quiz3Fragment();
-                                                break;
-                                        }
-                                    }
-                                }
-                                transaction.replace(R.id.nav_host_fragment_activity_main, selectedFragment);
-                                transaction.addToBackStack(null);
-                                transaction.commit();
+                                openQuizFragment(dictWithWords, title, 0);
                             }
+
                             @Override
                             public void onError(Throwable t) {
-                                Log.e("로그wordsInDict",t.toString());
+                                Log.e("로그wordsInDict", t.toString());
                             }
 
                         });
@@ -125,13 +102,88 @@ public class ExamFragment extends Fragment{
                 Log.e("로그getDictByTitle",e.toString());
             }
         });
-
     }
+
+    private void openQuizFragment(DictWithWords dictWithWords, String title, int currentIndex) {
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        int containerId = R.id.test_layout;
+
+        if (currentIndex < dictWithWords.words.size()) {
+            Word word = dictWithWords.words.get(currentIndex);
+            Fragment selectedFragment;
+
+            if (word.isSentence()) {
+                selectedFragment = new Quiz4Fragment(title, word);
+            } else {
+                int randomFragment = new Random().nextInt(3) + 1;
+
+                switch (randomFragment) {
+                    case 1:
+                        selectedFragment = new Quiz1Fragment(title, word);
+                        break;
+                    case 2:
+                        selectedFragment = new Quiz2Fragment(title, word);
+                        break;
+                    case 3:
+                        selectedFragment = new Quiz3Fragment(title, word);
+                        break;
+                    default:
+                        selectedFragment = new HomeFragment();
+                        break;
+                }
+            }
+
+            transaction.replace(containerId, selectedFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+            currentIndex++;
+
+        }
+    }
+
+
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
+
+    public void openNextQuizFragment() {
+        int currentIndex = getChildFragmentManager().getBackStackEntryCount();
+
+        if (currentIndex < dictWithWords.words.size()) {
+            Word word = dictWithWords.words.get(currentIndex);
+
+            Fragment selectedFragment;
+            if (word.isSentence()) {
+                selectedFragment = new Quiz4Fragment(title, word);
+            } else {
+                int randomFragment = new Random().nextInt(3) + 1;
+                switch (randomFragment) {
+                    case 1:
+                        selectedFragment = new Quiz1Fragment(title, word);
+                        break;
+                    case 2:
+                        selectedFragment = new Quiz2Fragment(title, word);
+                        break;
+                    case 3:
+                        selectedFragment = new Quiz3Fragment(title, word);
+                        break;
+                    default:
+                        selectedFragment = new HomeFragment();
+                        break;
+                }
+            }
+
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.test_layout, selectedFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+
 
 }

@@ -3,6 +3,8 @@ package com.example.avocado.ui.exam;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz1Binding;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
@@ -23,73 +26,42 @@ import com.example.avocado.db.dict_with_words.WordRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Quiz1Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class Quiz1Fragment extends Fragment {
+public class Quiz1Fragment extends Fragment implements View.OnClickListener {
 
     private FragmentQuiz1Binding binding;
 
     TextView textView;
     Button button1, button2, button3, button4;
-
+    private ArrayList<Button> buttons;
     List<String> meanings;
     private AppDatabase db;
     private WordRepository wr;
     private DictRepository dr;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private String title;
+    private Word word;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Quiz1Fragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Quiz1Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Quiz1Fragment newInstance(String param1, String param2) {
-        Quiz1Fragment fragment = new Quiz1Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public Quiz1Fragment(String title, Word word) {
+        this.title = title;
+        this.word = word;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        container.removeAllViews();
+        //container.removeAllViews();
 
         binding = FragmentQuiz1Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -100,15 +72,44 @@ public class Quiz1Fragment extends Fragment {
         button3 = binding.button3;
         button4 = binding.button4;
 
+        buttons = new ArrayList<>();
+        buttons.add(button1);
+        buttons.add(button2);
+        buttons.add(button3);
+        buttons.add(button4);
+
+        button1.setOnClickListener(this);
+        button2.setOnClickListener(this);
+        button3.setOnClickListener(this);
+        button4.setOnClickListener(this);
+
         db = AppDatabase.getDatabase(getContext());
         wr = new WordRepository(db.wordDao());
+        dr = new DictRepository(db.dictDao(), db.wordDao());
 
-        fillWord("abc");
+        wordAccess(title);
 
         return root;
     }
 
-    private void fillWord(String title) {
+    @Override
+    public void onClick(View v) {
+        if(v instanceof Button){
+            Button clickedButton = (Button) v;
+            boolean isCorrectAnswer = clickedButton.getText().toString().equals(word.getMeaning());
+
+            if (isCorrectAnswer) {
+                v.setBackgroundResource(R.color.correct_button);
+                removeFragment(this);
+                ((ExamFragment) getParentFragment()).openNextQuizFragment(); // Call the method in ExamFragment to open the next quiz fragment
+            } else {
+                v.setBackgroundResource(R.color.incorrect_button);
+                removeFragment(this);
+            }
+        }
+    }
+
+    private void wordAccess(String title) {
         //무결성을 위해 title 이란 이름의 단어장 검색
         dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
             @Override
@@ -130,14 +131,7 @@ public class Quiz1Fragment extends Fragment {
                                 Log.d("로그w&s","words si");
                                 Log.d("로그w&s","words size: "+dictWithWords.words.size());
 
-                                Word word = dictWithWords.words.get(2);
-                                if (word != null) {
-                                    // Word found, do something with it
-                                    textView.setText(word.getContent());
-                                } else {
-                                    // Word not found
-                                    textView.setText("단어 들어오기 오류");
-                                }
+                                showWord();
 
                                 fillOptions(dictWithWords.words);
                             }
@@ -152,37 +146,51 @@ public class Quiz1Fragment extends Fragment {
             public void onError(@NonNull Throwable e) {
                 Log.e("로그getDictByTitle",e.toString());
             }
+
         });
 
     }
 
-    private void fillOptions(List<Word> words) {
-        // Retrieve all Word from the database
+    private void showWord() {
+        if (word != null) {
+            textView.setText(word.getContent());
+        } else {
+            textView.setText("단어 들어오기 오류");
+        }
+    }
 
-        // Extract the meanings from the Word objects
+    private void fillOptions(List<Word> words) {
         meanings = new ArrayList<>();
-        for (Word word : words) {
-            meanings.add(word.getMeaning());
+
+        for (Word sample : words) {
+            if(!sample.isSentence() && !sample.getMeaning().equals(word.getMeaning()))
+                    meanings.add(sample.getMeaning());
         }
 
-        // Shuffle the meanings list
-        Collections.shuffle(meanings);
+        int randomIndex = new Random().nextInt(4);
+        buttons.get(randomIndex).setText(word.getMeaning());
 
-        if(words.size() >= 4) {
-            // Set the meanings to the buttons
-            button1.setText(meanings.get(0));
-            button2.setText(meanings.get(1));
-            button3.setText(meanings.get(2));
-            button4.setText(meanings.get(3));
+        if(meanings.size() >= 3){
+            Collections.shuffle(meanings);
+
+            for(int i = 0; i < 4; i++){
+                if(i != randomIndex){
+                    buttons.get(i).setText(meanings.get(i));
+                }
+            }
         }else{
             Toast.makeText(getActivity(), "단어 개수 부족", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void removeFragment(Quiz1Fragment quiz1Fragment) {
+        FragmentManager fragmentManager = getParentFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.test_layout);
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        if (currentFragment != null && currentFragment instanceof Quiz4Fragment && currentFragment.isAdded()) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.remove(currentFragment).commitAllowingStateLoss();
+        }
     }
+
 }
