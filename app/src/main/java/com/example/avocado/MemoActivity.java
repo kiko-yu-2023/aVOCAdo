@@ -163,7 +163,7 @@ public class MemoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsByDictId(dict.getDictID())
+                dr.getWordsBydictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             //성공 단어장-단어리스트 객체 - dicWithWords
                             @Override
@@ -217,7 +217,7 @@ public class MemoActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
             // 마지막 인덱스인 경우 LastFragment 반환
-            if (position == getItemCount() - 1||getItemCount()==0) {
+            if (position == getItemCount() - 1) {
                 return new MemoWordAddFragment();
             } else {
                 // 나머지 인덱스인 경우 기존에 사용하던 Fragment 반환
@@ -251,7 +251,7 @@ public class MemoActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return NUM_PAGES;
+            return NUM_PAGES+1;
         }
     }
 

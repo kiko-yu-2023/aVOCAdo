@@ -15,6 +15,11 @@ import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
+import com.example.avocado.db.record_with_quizes_and_tests.QuizRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.Record;
+import com.example.avocado.db.record_with_quizes_and_tests.RecordRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.TestRepository;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,10 +52,15 @@ import io.reactivex.rxjava3.functions.Consumer;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
     private int NUM_PAGES= -1;
     static AppDatabase db;
     static DictRepository dr;
     static WordRepository wr;
+
+    static RecordRepository rr;
+    static QuizRepository qr;
+    static TestRepository tr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +90,18 @@ public class MainActivity extends AppCompatActivity {
         db= AppDatabase.getDatabase(getApplicationContext());
         dr=new DictRepository(db.dictDao(),db.wordDao());
         wr=new WordRepository(db.wordDao());
+        rr=new RecordRepository(db.recordDao());
+        qr=new QuizRepository(db.quizDao());
+        tr=new TestRepository(db.testDao());
+
+
+
+        //dictInsert("abc");
+        //putWord("abc");
+        //putSentence("abc");
+        //deleteWord(2);
+        //insertRecordAndQuiz(1);
+
 
 
     }
@@ -108,14 +130,70 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
-    static void deleteDict(int dictId)
+    //레코드를 만들고 그 안에 퀴즈 리스트를 넣고 퀴즈 리스트의 점수로 레코드 업데이트
+    static void insertRecordAndQuiz(int dictID)
+    {
+        Record rec=new Record(true,dictID);
+        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull Integer recordID) {
+                Quiz q1=new Quiz(true,1,"random","abdf",1,recordID);
+                Quiz q2=new Quiz(true,1,"random","abdf",2,recordID);
+                qr.insert(q1,q2).subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+                    @Override
+                    public void onComplete() {
+                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
+                    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.e("로그 quiz insert mainActivity",e.toString());
+                    }
+                });
+            }
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+        });
+
+    }
+    //deleteWord or Sentence
+    static void deleteWord(int wordID)
+    {
+        wr.delete(wordID).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                Log.e("로그 word delete","success");
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그 word delete",e.toString());
+            }
+        });
+    }
+    static void deleteDict(int dictID)
     {
         dr.delete(1).doOnError(e->Log.e("로그 dict 삭제",e.toString())).subscribe();
     }
     //단어장에서 단어만 가져오기
-    static void getOnlyWords(int dictId)
+    static void getOnlyWords(int dictID)
     {
-        wr.getOnlyWordsInDict(dictId).subscribe(new SingleObserver<List<Word>>() {
+        wr.getOnlyWordsInDict(dictID).subscribe(new SingleObserver<List<Word>>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
 
@@ -220,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsByDictId(dict.getDictID())
+                dr.getWordsBydictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {

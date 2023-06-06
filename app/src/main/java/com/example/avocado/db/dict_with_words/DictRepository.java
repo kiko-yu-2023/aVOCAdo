@@ -25,9 +25,9 @@ public class DictRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Completable delete(int dictId)
+    public Completable delete(int dictID)
     {
-        return dictDao.getDictWithWordsById(dictId)
+        return dictDao.getDictWithWordsById(dictID)
                 .flatMapCompletable(dictWithWords -> {
                     List<Word> words = dictWithWords.words;
                     // Delete the dict and words in a transaction
@@ -53,14 +53,14 @@ public class DictRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-    public Single<DictWithWords> getWordsByDictId(int dictId)
+    public Single<DictWithWords> getWordsBydictID(int dictID)
     {
-        return wordDao.dictHasWord(dictId)
+        return wordDao.dictHasWord(dictID)
                 .flatMap(hasWord -> {
                     if (hasWord) {
-                        return dictDao.getDictWithWordsById(dictId);
+                        return dictDao.getDictWithWordsById(dictID);
                     } else {
-                        // Return an empty Flowable if dictId has no associated words
+                        // Return an empty Flowable if dictID has no associated words
                         return Single.error(new Throwable("해당하는 단어가 없습니다"));
                     }
                 })
@@ -68,9 +68,9 @@ public class DictRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Completable updateModifiedTime(int dictId,Date date)
+    public Completable updateModifiedTime(int dictID,Date date)
     {
-        return dictDao.updateModifiedTime(dictId,date)
+        return dictDao.updateModifiedTime(dictID,date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

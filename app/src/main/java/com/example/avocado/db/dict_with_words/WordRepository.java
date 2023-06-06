@@ -32,9 +32,13 @@ public class WordRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Completable delete(Word word)
+    public Completable delete(Word...words)
     {
-        return wordDao.delete(word).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        return wordDao.delete(words).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+    public Completable delete(int wordID)
+    {
+        return wordDao.delete(wordID).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
     public Completable update(Word word)
     {
@@ -42,19 +46,19 @@ public class WordRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<Word> findWordByWordinDict(String word,int dictId){
-        return wordDao.findWordByContentInDict(word,dictId).subscribeOn(Schedulers.io())
+    public Single<Word> findWordByWordinDict(String word,int dictID){
+        return wordDao.findWordByContentInDict(word,dictID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<List<Word>> getOnlyWordsInDict(int dictId)
+    public Single<List<Word>> getOnlyWordsInDict(int dictID)
     {
-        return wordDao.getOnlyWordsInDict(dictId).subscribeOn(Schedulers.io())
+        return wordDao.getOnlyWordsInDict(dictID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-    Single<List<Word>> getOnlySentencesInDict(int dictId)
+    Single<List<Word>> getOnlySentencesInDict(int dictID)
     {
-        return wordDao.getOnlySentencesInDict(dictId).subscribeOn(Schedulers.io())
+        return wordDao.getOnlySentencesInDict(dictID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

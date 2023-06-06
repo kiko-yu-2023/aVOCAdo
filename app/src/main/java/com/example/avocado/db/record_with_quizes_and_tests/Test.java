@@ -7,21 +7,15 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Test {
     @PrimaryKey(autoGenerate = true)
-    private int testId;
+    private int testID;
     private boolean engIsCorrect;
     private boolean korIsCorrect;
     private String engAnswer;
     private String korAnswer;
-    private int wordId;
-    private int recordId;
+    private int wordID;
+    private int recordID;
 
-    public int getTestId() {
-        return testId;
-    }
 
-    public void setTestId(int testId) {
-        this.testId = testId;
-    }
 
     public boolean isEngIsCorrect() {
         return engIsCorrect;
@@ -55,25 +49,33 @@ public class Test {
         this.korAnswer = korAnswer;
     }
 
-    public int getWordId() {
-        return wordId;
+    public int getWordID() {
+        return wordID;
     }
 
-    public void setWordId(int wordId) {
-        this.wordId = wordId;
+    public void setWordID(int wordID) {
+        this.wordID = wordID;
     }
 
-    public int getRecordId() {
-        return recordId;
+    public int getTestID() {
+        return testID;
     }
 
-    public void setRecordId(int recordId) {
-        this.recordId = recordId;
+    public void setTestID(int testID) {
+        this.testID = testID;
+    }
+
+    public int getRecordID() {
+        return recordID;
+    }
+
+    public void setRecordID(int recordID) {
+        this.recordID = recordID;
     }
 
     @NonNull
     @Override
     public String toString() {
-        return testId+" "+engIsCorrect+" "+korIsCorrect+" "+engAnswer+" "+korAnswer+" "+wordId+" "+recordId;
+        return testID+" "+engIsCorrect+" "+korIsCorrect+" "+engAnswer+" "+korAnswer+" "+wordID+" "+recordID;
     }
 }

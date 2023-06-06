@@ -12,7 +12,7 @@ public class QuizRepository {
 
     private QuizDao qd;
 
-    QuizRepository(QuizDao qd)
+    public QuizRepository(QuizDao qd)
     {
         this.qd=qd;
     }
@@ -27,10 +27,10 @@ public class QuizRepository {
         return qd.delete(quizzes).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-    public Completable delete(int ... quizIds)
+    public Completable delete(int quizID)
     {
 
-        return qd.delete(quizIds).subscribeOn(Schedulers.io())
+        return qd.delete(quizID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

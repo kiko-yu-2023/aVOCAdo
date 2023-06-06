@@ -11,10 +11,21 @@ import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictDao;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordDao;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
+import com.example.avocado.db.record_with_quizes_and_tests.QuizDao;
+import com.example.avocado.db.record_with_quizes_and_tests.Record;
+import com.example.avocado.db.record_with_quizes_and_tests.RecordDao;
+import com.example.avocado.db.record_with_quizes_and_tests.Test;
+import com.example.avocado.db.record_with_quizes_and_tests.TestDao;
 
-@Database(entities = {Dict.class, Word.class}, version = 1,exportSchema = false)
+@Database(entities = {Dict.class, Word.class, Record.class, Quiz.class, Test.class}, version = 1,exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
+    public abstract RecordDao recordDao();
+
+    public abstract QuizDao quizDao();
+
+    public abstract TestDao testDao();
     public abstract DictDao dictDao();
     public abstract WordDao wordDao();
     private static volatile AppDatabase INSTANCE;

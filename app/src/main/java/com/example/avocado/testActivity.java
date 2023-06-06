@@ -56,7 +56,7 @@ public class testActivity extends AppCompatActivity {
                 .doOnError(e->Log.e("로그insertWord",e.toString()))
                 .subscribe();
     }
-    Single<Word> getWordData(String wordContent, int dictId) {
+    Single<Word> getWordData(String wordContent, int dictID) {
         return Single.fromCallable(() -> {
 
             url += wordContent;
@@ -81,7 +81,7 @@ public class testActivity extends AppCompatActivity {
                 Element exampleSentenceMeaningStFirst = exampleSentenceMeaningSt.first(); // First example sentence meaning
                 Log.d("content", exampleSentenceMeaningStFirst.text());
 
-                return new Word(false, wordContent, wordMeaningSt.text(), exampleSentenceStFirst.text(), exampleSentenceMeaningStFirst.text(), dictId);
+                return new Word(false, wordContent, wordMeaningSt.text(), exampleSentenceStFirst.text(), exampleSentenceMeaningStFirst.text(), dictID);
             }
 
             // Handle the case when the document is null or an exception occurred

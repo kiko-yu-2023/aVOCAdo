@@ -21,10 +21,12 @@ public interface WordDao {
     Completable update(Word word);
 
     @Delete
-    Completable delete(Word ... word);
+    Completable delete(Word ... words);
+    @Query("DELETE FROM WORD WHERE WORDID=:wordID")
+    Completable delete(int wordID);
 
-    @Query("SELECT EXISTS (SELECT * FROM WORD WHERE DICTID = :dictId)")
-    Single<Boolean> dictHasWord(int dictId);
+    @Query("SELECT EXISTS (SELECT * FROM WORD WHERE dictID = :dictID)")
+    Single<Boolean> dictHasWord(int dictID);
 
 
     //userInput 단어의 예문 보여주기
@@ -32,12 +34,12 @@ public interface WordDao {
     * @Query("SELECT * FROM Word WHERE WORD = :userInput")
     * Word findWord(String userInput);
     * */
-    @Query("SELECT * FROM WORD WHERE CONTENT=:content AND DICTID=:dictId")
-    Single<Word> findWordByContentInDict(String content,int dictId);
+    @Query("SELECT * FROM WORD WHERE CONTENT=:content AND dictID=:dictID")
+    Single<Word> findWordByContentInDict(String content,int dictID);
 
-    @Query("SELECT * FROM WORD WHERE DICTID=:dictId AND NOT ISSENTENCE")
-    Single<List<Word>> getOnlyWordsInDict(int dictId);
+    @Query("SELECT * FROM WORD WHERE dictID=:dictID AND NOT ISSENTENCE")
+    Single<List<Word>> getOnlyWordsInDict(int dictID);
 
-    @Query("SELECT * FROM WORD WHERE DICTID=:dictId AND ISSENTENCE")
-    Single<List<Word>> getOnlySentencesInDict(int dictId);
+    @Query("SELECT * FROM WORD WHERE dictID=:dictID AND ISSENTENCE")
+    Single<List<Word>> getOnlySentencesInDict(int dictID);
 }

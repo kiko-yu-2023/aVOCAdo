@@ -8,27 +8,36 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.internal.operators.flowable.FlowableError;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RecordRepository {
     private RecordDao rd;
-
-    public Completable insert(Record ... record)
+    public RecordRepository(RecordDao rd)
     {
-        return rd.insert(record).subscribeOn(Schedulers.io())
+        this.rd=rd;
+    }
+    public Single<Integer> insert(Record record)
+    {
+        return rd.insert(record).map(new Function<Long, Integer>() {
+            @Override
+            public Integer apply(Long insertedId) throws Throwable {
+                return insertedId.intValue();
+            }
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Completable updateScore(int recordId)
+    public Completable updateScore(int recordID)
     {
-        return rd.updateScore(recordId).subscribeOn(Schedulers.io())
+        return rd.updateQuizScore(recordID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Completable delete(int ... recordId)
+    public Completable delete(int recordID)
     {
-        return rd.delete(recordId).subscribeOn(Schedulers.io()).
+        return rd.delete(recordID).subscribeOn(Schedulers.io()).
                 observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -44,7 +53,7 @@ public class RecordRepository {
         {
             return Single.error(new Throwable("Quiz Record가 아닙니다"));
         }
-        return rd.getRecordWithQuizs(record.getRecordId()).subscribeOn(Schedulers.io())
+        return rd.getRecordWithQuizs(record.getRecordID()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -54,7 +63,7 @@ public class RecordRepository {
         {
             return Single.error(new Throwable("Test Record가 아닙니다"));
         }
-        return rd.getRecordWithTests(record.getRecordId()).subscribeOn(Schedulers.io())
+        return rd.getRecordWithTests(record.getRecordID()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

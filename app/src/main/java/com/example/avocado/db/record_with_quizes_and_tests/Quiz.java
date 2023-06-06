@@ -7,21 +7,23 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Quiz {
     @PrimaryKey(autoGenerate = true)
-    private int quizId;
+    private int quizID;
     private boolean isCorrect;
     private int type;
     //주관식의 경우 예문, 객관식의 경우 *로 나눠진 선지 4개 입력
     private String question;
     private String userAnswer;
-    private int wordId;
-    private int recordId;
+    private int wordID;
+    private int recordID;
 
-    public int getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(int quizId) {
-        this.quizId = quizId;
+    public Quiz (boolean isCorrect,int type,String question,String userAnswer,int wordID,int recordID)
+    {
+        this.isCorrect=isCorrect;
+        this.type=type;
+        this.question=question;
+        this.userAnswer=userAnswer;
+        this.wordID=wordID;
+        this.recordID=recordID;
     }
 
     public boolean isCorrect() {
@@ -56,25 +58,33 @@ public class Quiz {
         this.userAnswer = userAnswer;
     }
 
-    public int getWordId() {
-        return wordId;
+    public int getQuizID() {
+        return quizID;
     }
 
-    public void setWordId(int wordId) {
-        this.wordId = wordId;
+    public void setQuizID(int quizID) {
+        this.quizID = quizID;
     }
 
-    public int getRecordId() {
-        return recordId;
+    public int getWordID() {
+        return wordID;
     }
 
-    public void setRecordId(int recordId) {
-        this.recordId = recordId;
+    public void setWordID(int wordID) {
+        this.wordID = wordID;
+    }
+
+    public int getRecordID() {
+        return recordID;
+    }
+
+    public void setRecordID(int recordID) {
+        this.recordID = recordID;
     }
 
     @NonNull
     @Override
     public String toString() {
-        return quizId+" "+isCorrect+" "+type+" "+question+" "+userAnswer+" "+wordId+" "+recordId;
+        return quizID+" "+isCorrect+" "+type+" "+question+" "+userAnswer+" "+wordID+" "+recordID;
     }
 }

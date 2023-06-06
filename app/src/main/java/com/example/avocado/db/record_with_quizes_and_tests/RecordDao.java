@@ -17,26 +17,32 @@ import kotlinx.coroutines.flow.Flow;
 @Dao
 public interface RecordDao {
     @Insert
-    Completable insert(Record ... record);
+    Single<Long> insert(Record record);
 
     @Query("UPDATE Record SET score = "+
-            "(SELECT SUM(isCorrect) FROM Quiz WHERE recordId = :recordId)"+
-            " WHERE recordId = :recordId")
-    Completable updateScore(int recordId);
+            "(SELECT COUNT(*) FROM Quiz WHERE recordID = :recordID AND ISCORRECT=1)"+
+            " WHERE recordID = :recordID")
+    Completable updateQuizScore(int recordID);
 
-    @Delete
-    Completable delete(int ... recordId);
+    @Query("UPDATE Record SET score = "+
+            "(SELECT COUNT(*)" +
+            " FROM Test WHERE recordID = :recordID AND ENGISCORRECT=1 AND KORISCORRECT=1)"+
+            " WHERE recordID = :recordID")
+    Completable updateTestScore(int recordID);
+
+    @Query("DELETE FROM RECORD WHERE RECORDID=:recordID")
+    Completable delete(int recordID);
 
     @Delete
     Completable delete(Record ... records);
 
     @Transaction
-    @Query("SELECT * FROM RECORD WHERE RECORDID=:recordId")
-    Single<RecordWithTests> getRecordWithTests(int recordId);
+    @Query("SELECT * FROM RECORD WHERE recordID=:recordID")
+    Single<RecordWithTests> getRecordWithTests(int recordID);
 
     @Transaction
-    @Query("SELECT * FROM RECORD WHERE RECORDID=:recordId")
-    Single<RecordWithQuizs> getRecordWithQuizs(int recordId);
+    @Query("SELECT * FROM RECORD WHERE recordID=:recordID")
+    Single<RecordWithQuizs> getRecordWithQuizs(int recordID);
 
     @Query("SELECT * FROM RECORD WHERE RELATEDWITHTEST = 1 ORDER BY TIME DESC")
     Single<List<Record>> getTestRecords();

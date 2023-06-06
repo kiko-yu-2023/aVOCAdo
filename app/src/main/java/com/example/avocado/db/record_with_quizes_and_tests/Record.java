@@ -9,32 +9,32 @@ import java.util.Date;
 @Entity
 public class Record {
     @PrimaryKey(autoGenerate = true)
-    private int recordId;
+    private int recordID;
     private Date time;
     private int score;
     private boolean relatedWithTest;
+    private int dictID;
 
-    private int dictId;
-
-    public Record(Date time, boolean relatedWithTest) {
-        this.time = time;
+    public Record(boolean relatedWithTest,int dictID) {
+        this.time = new Date();
         this.relatedWithTest = relatedWithTest;
+        this.dictID=dictID;
     }
 
-    public int getDictId() {
-        return dictId;
+    public int getDictID() {
+        return dictID;
     }
 
-    public void setDictId(int dictId) {
-        this.dictId = dictId;
+    public void setDictID(int dictID) {
+        this.dictID = dictID;
     }
 
-    public int getRecordId() {
-        return recordId;
+    public int getRecordID() {
+        return recordID;
     }
 
-    public void setRecordId(int recordId) {
-        this.recordId = recordId;
+    public void setRecordID(int recordID) {
+        this.recordID = recordID;
     }
 
     public Date getTime() {
@@ -64,6 +64,6 @@ public class Record {
     @NonNull
     @Override
     public String toString() {
-        return this.recordId+" "+this.score+" "+this.time+" "+this.relatedWithTest;
+        return this.recordID+" "+this.score+" "+this.time+" "+this.relatedWithTest;
     }
 }

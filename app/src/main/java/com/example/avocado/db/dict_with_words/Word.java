@@ -43,13 +43,22 @@ public class Word {
         this.exampleMeaning = exampleMeaning;
     }
 
+    public int getWordID() {
+        return wordID;
+    }
+
     public void setWordID(int wordID) {
         this.wordID = wordID;
     }
 
-    public int getWordID() {
-        return wordID;
+    public int getDictID() {
+        return dictID;
     }
+
+    public void setDictID(int dictID) {
+        this.dictID = dictID;
+    }
+
     public String getContent() {
         return content;
     }
@@ -82,9 +91,7 @@ public class Word {
         isMemorized = memorized;
     }
 
-    public int getDictID() {
-        return dictID;
-    }
+
 
     public boolean isSentence() {
         return isSentence;
@@ -94,9 +101,6 @@ public class Word {
         isSentence = sentence;
     }
 
-    public void setDictID(int dictID) {
-        this.dictID = dictID;
-    }
 
     @NonNull
     @Override

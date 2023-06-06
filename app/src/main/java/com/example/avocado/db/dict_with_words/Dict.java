@@ -36,6 +36,10 @@ public class Dict {
         this.createdTime=new Date();
         this.modifiedTime=new Date();
     }
+    public int getDictID() {
+        return dictID;
+    }
+
     public void setDictID(int dictID) {
         this.dictID = dictID;
     }
@@ -49,9 +53,6 @@ public class Dict {
     }
     public void setCreatedTime(Date createdTime) {
         this.createdTime=createdTime;
-    }
-    public int getDictID() {
-        return dictID;
     }
 
     public String getTitle() {

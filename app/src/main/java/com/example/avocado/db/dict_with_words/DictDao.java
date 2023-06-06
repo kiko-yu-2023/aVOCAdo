@@ -24,8 +24,8 @@ public interface DictDao {
     @Query("SELECT * FROM DICT WHERE title = :title")
     Single<Dict> getDictByTitle(String title);
 
-    @Query("SELECT * FROM DICT WHERE DICTID = :dictId")
-    Single<Dict> getDictById(String dictId);
+    @Query("SELECT * FROM DICT WHERE dictID = :dictID")
+    Single<Dict> getDictById(int dictID);
 
     @Delete
     Completable delete(Dict dict);
@@ -34,11 +34,11 @@ public interface DictDao {
     @Query("SELECT * FROM DICT ORDER BY modifiedTime")
     Single<List<Dict>> loadOrderByModified();
     @Transaction
-    @Query("SELECT * FROM dict WHERE dictID = :dictId")
-    Single<DictWithWords> getDictWithWordsById(int dictId);
+    @Query("SELECT * FROM dict WHERE dictID = :dictID")
+    Single<DictWithWords> getDictWithWordsById(int dictID);
 
-    @Query("UPDATE DICT SET MODIFIEDTIME=:modifiedTime WHERE DICTID=:dictId")
-    Completable updateModifiedTime(int dictId,Date modifiedTime);
+    @Query("UPDATE DICT SET MODIFIEDTIME=:modifiedTime WHERE dictID=:dictID")
+    Completable updateModifiedTime(int dictID,Date modifiedTime);
 
 
     //mergeDict : 단어장 아이디를 받아 dict1에 dict2를 합친다.

@@ -8,6 +8,6 @@ import java.util.List;
 public class RecordWithQuizs {
     @Embedded
     Record record;
-    @Relation(parentColumn = "recordId",entityColumn = "recordId",entity = Quiz.class)
+    @Relation(parentColumn = "recordID",entityColumn = "recordID",entity = Quiz.class)
     public List<Quiz> quizs;
 }
