@@ -35,7 +35,6 @@ public class ExamFragment extends Fragment{
     private DictWithWords dictWithWords;
 
     private String title = "hello";
-    private int currentIndex;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -139,7 +138,6 @@ public class ExamFragment extends Fragment{
             transaction.commit();
 
             currentIndex++;
-
         }
     }
 
@@ -180,6 +178,11 @@ public class ExamFragment extends Fragment{
 
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.test_layout, selectedFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }else{
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.test_layout, new ExamResultFragment());
             transaction.addToBackStack(null);
             transaction.commit();
         }

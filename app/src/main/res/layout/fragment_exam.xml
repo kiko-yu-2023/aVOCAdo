@@ -11,14 +11,14 @@
         android:id="@+id/start_quiz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/quiz_score"
+        android:src="@drawable/start_quiz"
         tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/start_test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/test_score"
+        android:src="@drawable/start_test"
         app:layout_constraintTop_toBottomOf="@+id/start_quiz"
         tools:ignore="MissingConstraints" />
 
