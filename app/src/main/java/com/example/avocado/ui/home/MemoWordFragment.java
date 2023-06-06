@@ -85,10 +85,10 @@ public class MemoWordFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            inputFixedString = args.getString("inputFixedString");
-            wordMeaningSt = args.getString("wordMeaningSt");
-            exampleSentenceSt = args.getString("exampleSentenceSt");
-            exampleSentenceMeaningSt = args.getString("exampleSentenceMeaningSt");
+            inputFixedString = args.getString("inputFixedString","");
+            wordMeaningSt = args.getString("wordMeaningSt","");
+            exampleSentenceSt = args.getString("exampleSentenceSt","");
+            exampleSentenceMeaningSt = args.getString("exampleSentenceMeaningSt","");
         }
 
         inputFixed = binding.inputFixed;

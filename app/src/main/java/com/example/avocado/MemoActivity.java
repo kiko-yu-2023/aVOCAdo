@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -29,9 +30,11 @@ import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordRepository;
 import com.example.avocado.ui.home.MemoWordAddFragment;
 import com.example.avocado.ui.home.MemoWordFragment;
+import com.example.avocado.ui.home.NewMemoFragment;
 import com.example.avocado.ui.home.WordListFragment;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -41,11 +44,11 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
-public class MemoActivity extends AppCompatActivity {
+public class MemoActivity extends AppCompatActivity implements MemoWordAddFragment.ViewPagerInteractionListener {
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
-    private static int NUM_PAGES = 0;
+    private static int NUM_PAGES = -1;
 
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -57,12 +60,13 @@ public class MemoActivity extends AppCompatActivity {
     private ConstraintLayout toRight;
     private int currentPage;
     private String dictName;
+    private int dictId;
 
     private List<Word> wordList;
     /**
      * The pager adapter, which provides the pages to the view pager widget.
      */
-    private FragmentStateAdapter pagerAdapter;
+    private ScreenSlidePagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,23 +89,22 @@ public class MemoActivity extends AppCompatActivity {
         toRight = binding.nextFragmentLayout;
 
 
-
         viewPager.setUserInputEnabled(false);
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
 
-        toLeft.setOnClickListener(new View.OnClickListener(){
+        toLeft.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                viewPager.setCurrentItem(currentPage-1);
+                viewPager.setCurrentItem(currentPage - 1);
             }
         });
 
         toRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewPager.setCurrentItem(currentPage+1);
+                viewPager.setCurrentItem(currentPage + 1);
             }
         });
 
@@ -112,20 +115,17 @@ public class MemoActivity extends AppCompatActivity {
                 super.onPageSelected(position);
 
                 currentPage = position;
-                
-                if(position ==0)
-                {
+
+                if (position == 0) {
                     toRight.setEnabled(true);
                     toLeft.setEnabled(false);
                     toLeft.setVisibility(View.INVISIBLE);
-                } else if (position == NUM_PAGES-1) { //마지막 페이지
+                } else if (position == NUM_PAGES - 1) { //마지막 페이지
                     toRight.setEnabled(false);
                     toLeft.setEnabled(true);
                     toLeft.setVisibility(View.VISIBLE);
                     toRight.setVisibility(View.INVISIBLE);
-                }
-                else
-                {
+                } else {
                     toRight.setEnabled(true);
                     toLeft.setEnabled(true);
                     toLeft.setVisibility(View.VISIBLE);
@@ -146,19 +146,20 @@ public class MemoActivity extends AppCompatActivity {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
-    void getDictWithWordsByTitle(String title)
-    {
+
+    void getDictWithWordsByTitle(String title) {
         //NUM_PAGES와 LIST 받아오기
 
-        AppDatabase db= AppDatabase.getDatabase(getApplicationContext());
-        DictRepository dr = new DictRepository(db.dictDao(),db.wordDao());
-        WordRepository wr=new WordRepository(db.wordDao());
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
+        WordRepository wr = new WordRepository(db.wordDao());
 
         //무결성을 위해 title 이란 이름의 단어장 검색
         dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
             }
+
             //성공적으로 단어장 검색
             @Override
             public void onSuccess(@NonNull Dict dict) {
@@ -174,25 +175,29 @@ public class MemoActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(@NonNull DictWithWords dictWithWords) {
                                 //단어리스트(List) 불러오기 - dictWithWords.words
-                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
+                                Log.d("로그w&s", "words size: " + dictWithWords.words.size());
                                 //내용이 있을 경우
-                                if(dictWithWords.words.size()>0)
-                                {
-                                    for(Word w:dictWithWords.words)
-                                    {
-                                        Log.d("로그word",w.toString());
+                                if (dictWithWords.words.size() > 0) {
+                                    for (Word w : dictWithWords.words) {
+                                        Log.d("로그word", w.toString());
 
                                     }
                                 }
-                                NUM_PAGES = dictWithWords.words.size();
-                                wordList=dictWithWords.words;
+                                dictId = dict.getDictID();
+                                NUM_PAGES = dictWithWords.words.size()+1;
+                                wordList = dictWithWords.words;
+
+                                Log.d("setting", String.valueOf(NUM_PAGES));
+
+
                                 pagerAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onError(Throwable t) {
-                                Log.e("로그word",t.toString());
-                                NUM_PAGES = 0;
+                                Log.e("로그word", t.toString());
+                                dictId=dict.getDictID();
+                                NUM_PAGES = 1;
                                 pagerAdapter.notifyDataSetChanged();
                             }
                         });
@@ -200,15 +205,17 @@ public class MemoActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull Throwable e) {
-                Log.e("로그getDictByTitle",e.toString());
+                Log.e("로그getDictByTitle", e.toString());
             }
         });
     }
+
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
      */
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+        private List<Fragment> fragments = new ArrayList<>();
 
         public ScreenSlidePagerAdapter(FragmentActivity fa) {
             super(fa);
@@ -217,37 +224,48 @@ public class MemoActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
             // 마지막 인덱스인 경우 LastFragment 반환
-            if (position == getItemCount() - 1||getItemCount()==0) {
-                return new MemoWordAddFragment();
+            if (position == getItemCount() - 1 || getItemCount() == 1) {
+
+                MemoWordAddFragment memoWordAddFragment = new MemoWordAddFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", position);
+                bundle.putString("dictName", dictName);
+                bundle.putInt("dictId", dictId);
+                memoWordAddFragment.setArguments(bundle);
+                return memoWordAddFragment;
+
             } else {
                 // 나머지 인덱스인 경우 기존에 사용하던 Fragment 반환
                 MemoWordFragment wordFragment = new MemoWordFragment();
                 Bundle bundle = new Bundle();
 
-                String inputFixedString="";
-                String wordMeaningSt="";
-                String exampleSentenceSt="";
-                String exampleSentenceMeaningSt="";
+                String inputFixedString = "";
+                String wordMeaningSt = "";
+                String exampleSentenceSt = "";
+                String exampleSentenceMeaningSt = "";
 
-                Word word=wordList.get(position);
-                if(word.isSentence()) {
-                    inputFixedString = word.getContent();
-                    wordMeaningSt = word.getMeaning();
-                }
-                else {
-                    inputFixedString = word.getContent();
-                    wordMeaningSt = word.getMeaning();
-                    exampleSentenceSt = word.getExampleSentence();
-                    exampleSentenceMeaningSt = word.getExampleMeaning();
-                }
-                bundle.putString("inputFixedString",inputFixedString);
-                bundle.putString("wordMeaningSt",wordMeaningSt);
-                bundle.putString("exampleSentenceSt",exampleSentenceSt);
-                bundle.putString("exampleSentenceMeaningSt",exampleSentenceMeaningSt);
+                Word word = wordList.get(position);
+
+                inputFixedString = word.getContent();
+                wordMeaningSt = word.getMeaning();
+                exampleSentenceSt = word.getExampleSentence();
+                exampleSentenceMeaningSt = word.getExampleMeaning();
+//                }
+                bundle.putString("inputFixedString", inputFixedString);
+                bundle.putString("wordMeaningSt", wordMeaningSt);
+                bundle.putString("exampleSentenceSt", exampleSentenceSt);
+                bundle.putString("exampleSentenceMeaningSt", exampleSentenceMeaningSt);
 
                 wordFragment.setArguments(bundle);
                 return wordFragment;
-        }}
+            }
+        }
+
+
+        public void addItem(int index,Fragment fragment) {
+            fragments.add(index,fragment);
+            notifyDataSetChanged();
+        }
 
         @Override
         public int getItemCount() {
@@ -273,15 +291,13 @@ public class MemoActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.actionbar_actions,menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbar_actions, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
         if (item.getItemId() == R.id.actionWordList) {//단어 리스트 fragment로 이동.
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -293,5 +309,37 @@ public class MemoActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    @Override
+    public void moveToNextPageAndChangeFragment(Word word) {
+        // ViewPager2의 페이지 수를 증가시키고 새로운 Fragment를 추가하는 작업을 수행합니다.
+        // 이 작업은 Activity에서 처리해야 합니다.
+
+        // MemoWordAddFragment를 다음 페이지로 넘기기
+        //현재 자리에 MemoWordFragment를 끼워넣기
+        //DB로부터 가져올 필요 없지 않나?
+
+        int currentPosition = viewPager.getCurrentItem();
+
+
+        MemoWordFragment fragment = new MemoWordFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("inputFixedString", word.getContent());
+        bundle.putString("wordMeaningSt", word.getMeaning());
+        bundle.putString("exampleSentenceSt", word.getExampleSentence());
+        bundle.putString("exampleSentenceMeaningSt", word.getExampleMeaning());
+
+        fragment.setArguments(bundle);
+
+        Log.d("current page", String.valueOf(currentPosition));
+        pagerAdapter.addItem(currentPosition,fragment);
+        viewPager.setCurrentItem(currentPosition);
+
+        //getDictWithWordsByTitle(dictName);
+
+    }
 }
+
     
