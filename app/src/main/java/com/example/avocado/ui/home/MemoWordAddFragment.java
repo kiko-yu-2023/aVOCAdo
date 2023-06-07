@@ -1,6 +1,9 @@
 package com.example.avocado.ui.home;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+
+import com.example.avocado.MainActivity;
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentMemoWordAddBinding;
 import com.example.avocado.db.AppDatabase;
@@ -32,8 +37,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.tensorflow.lite.Interpreter;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Date;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -61,11 +73,13 @@ public class MemoWordAddFragment extends Fragment {
     private String mParam2;
     private Boolean isSentence = false;
 
+    private Interpreter tflite;
+
     private ViewPagerInteractionListener interactionListener;
     private PaintView paintView;
     private EditText inputText;
     private ToggleButton inputChangeButton;
-    private Button dictSearchButton;
+    private ImageView dictSearchButton;
     private TextView wordMeaning;
     private String url = "https://alldic.daum.net/search.do?q=";
 
@@ -118,6 +132,11 @@ public class MemoWordAddFragment extends Fragment {
             Log.d("args", Integer.toString(dictId));
         }
 
+        if (!OpenCVLoader.initDebug()) {
+            // OpenCV 초기화 실패
+            Log.e("OpenCV", "Failed to initialize OpenCV");
+        }
+
 
         paintView = binding.handWrittingView;
         inputChangeButton = binding.inputChangeButton;
@@ -162,11 +181,24 @@ public class MemoWordAddFragment extends Fragment {
                     inputChangeButton.setVisibility(View.GONE);
                     dictSearchButton.setVisibility(View.GONE);
 
-                    if (true) //2) 텍스트로 입력했을 때
+                    if (isCanvasEmpty) //2) 텍스트로 입력했을 때
                     {
                         inputFixedString[0] = String.valueOf(inputText.getText());
                     } else //3) 손글씨로 입력했을 때
                     {
+
+                        //tensorflow lite 모델 가져오기
+                        tflite = getTfliteInterpreter("model.tflite");
+
+                        Mat mat = new Mat();
+                        Utils.bitmapToMat(paintView.convertToPNG(),mat);
+
+
+                        ImageProcessing ip = new ImageProcessing();
+
+
+                        //얘를 트렌젝션으로 감싸주세요
+                        inputFixedString[0] = ip.processImage(mat,tflite);
 
                     }
 
@@ -304,5 +336,25 @@ public class MemoWordAddFragment extends Fragment {
         } else {
             throw new IllegalStateException("The hosting Activity must implement ViewPagerInteractionListener");
         }
+    }
+
+    private Interpreter getTfliteInterpreter(String modelPath) {
+        try {
+            Log.d("model","가져옴");
+            return new Interpreter(loadModelFile(modelPath));
+        }
+        catch (Exception e) {
+            Log.d("model","실패");
+        }
+        return null;
+    }
+
+    private MappedByteBuffer loadModelFile(String modelPath) throws IOException {
+        AssetFileDescriptor fileDescriptor = getContext().getAssets().openFd(modelPath);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 }

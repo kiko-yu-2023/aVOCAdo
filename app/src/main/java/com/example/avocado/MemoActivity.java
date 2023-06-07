@@ -68,12 +68,15 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
      */
     private ScreenSlidePagerAdapter pagerAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMemoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
 
         Intent intent = getIntent();
         dictName = intent.getStringExtra("dictName");
@@ -290,7 +293,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
         @Override
         public int getItemCount() {
-            return fragments.size();
+            return NUM_PAGES;
         }
     }
 
