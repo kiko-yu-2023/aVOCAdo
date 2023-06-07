@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ public class Quiz2Fragment extends Fragment {
 
     TextView textView;
     EditText inputWordQuiz2;
-    Button completeQuiz2;
+    ImageView completeQuiz2;
 
     private AppDatabase db;
     private DictRepository dr;
@@ -64,6 +65,7 @@ public class Quiz2Fragment extends Fragment {
         textView = binding.textView;
         inputWordQuiz2 = binding.inputWordQuiz2;
         completeQuiz2 = binding.completeQuiz2;
+
         completeQuiz2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

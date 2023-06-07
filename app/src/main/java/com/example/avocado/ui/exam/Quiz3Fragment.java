@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentQuiz3Binding;
@@ -32,7 +33,7 @@ public class Quiz3Fragment extends Fragment {
 
     WebView webView;
     EditText inputWordQuiz3;
-    Button completeQuiz3;
+    ImageView completeQuiz3;
 
     private AppDatabase db;
     private DictRepository dr;

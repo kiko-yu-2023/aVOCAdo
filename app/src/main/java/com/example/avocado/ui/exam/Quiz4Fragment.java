@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +31,7 @@ public class Quiz4Fragment extends Fragment {
     private FragmentQuiz4Binding binding;
     TextView exampleMeaning;
     EditText inputSentenceQuiz4;
-    Button completeQuiz4;
+    ImageView completeQuiz4;
 
     private AppDatabase db;
     private DictRepository dr;
