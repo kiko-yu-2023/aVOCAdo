@@ -62,6 +62,8 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
+        container.removeAllViews();
+
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 

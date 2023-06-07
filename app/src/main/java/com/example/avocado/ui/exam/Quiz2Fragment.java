@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +32,7 @@ public class Quiz2Fragment extends Fragment {
 
     TextView textView;
     EditText inputWordQuiz2;
-    Button completeQuiz2;
+    ImageView completeQuiz2;
 
     private AppDatabase db;
     private DictRepository dr;
@@ -56,12 +57,15 @@ public class Quiz2Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        container.removeAllViews();
+
         binding = FragmentQuiz2Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         textView = binding.textView;
         inputWordQuiz2 = binding.inputWordQuiz2;
         completeQuiz2 = binding.completeQuiz2;
+
         completeQuiz2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +135,7 @@ public class Quiz2Fragment extends Fragment {
     private void showExampleWithBlank() {
         if (word != null) {
             String example = word.getExampleSentence();
-            String modifiedExample = example.replace(word.getContent(), "_______");
+            String modifiedExample = example.toLowerCase().replace(word.getContent(), "_______");
             textView.setText(modifiedExample + "\n" + word.getExampleMeaning());
         } else {
             // Example not found

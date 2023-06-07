@@ -339,11 +339,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                wr.insert(new Word(false,"kiwi","키위","I'm allergic to kiwi","난 키위에 알레르기 있어",dict.getDictID()))
+                wr.insert(new Word(false,"cat","고양이","Cat is my favorite animal","고양이는 내가 좋아하는 동물이야",dict.getDictID()))
                         .subscribe();
-                wr.insert(new Word(false,"marry","결혼하다","Marry me","결혼해줘",dict.getDictID()))
-                        .subscribe();
-                wr.insert(new Word(false,"hola","안녕","hola hello","안녕 안녕",dict.getDictID()))
+                wr.insert(new Word(false,"piano","피아노","Are you good at playing the piano?","너 피아노 잘쳐?",dict.getDictID()))
                         .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
                 dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
