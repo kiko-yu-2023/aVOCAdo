@@ -10,11 +10,12 @@
 
     <TextView
         android:id="@+id/dictName"
+        android:textStyle="italic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="hi"
-        android:textSize="30dp"
+        android:textSize="23dp"
         android:textAlignment="center"></TextView>
 
 </FrameLayout>

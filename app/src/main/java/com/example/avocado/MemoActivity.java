@@ -167,72 +167,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         }
     }
 
-    //키보드 나왔을 때 다른 곳을 터치하면 키보드 내리기
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        View view = getCurrentFocus();
-        if (view != null && (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_MOVE) &&
-                view instanceof EditText && !view.getClass().getName().startsWith("android.webkit.")) {
-            int[] sourceCoordinates = new int[2];
-            view.getLocationOnScreen(sourceCoordinates);
-            float x = event.getRawX() + view.getLeft() - sourceCoordinates[0];
-            float y = event.getRawY() + view.getTop() - sourceCoordinates[1];
-            if (x < view.getLeft() || x > view.getRight() || y < view.getTop() || y > view.getBottom()) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.actionbar_actions, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
-        if (item.getItemId() == R.id.actionWordList) {//단어 리스트 fragment로 이동.
-            fragmentManager.beginTransaction()
-                    .replace(R.id.memoLayout, WordListFragment.class, null)
-                    .setReorderingAllowed(true)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void moveToNextPageAndChangeFragment(Word word) {
-        // ViewPager2의 페이지 수를 증가시키고 새로운 Fragment를 추가하는 작업을 수행합니다.
-        // 이 작업은 Activity에서 처리해야 합니다.
-
-        // MemoWordAddFragment를 다음 페이지로 넘기기
-        //현재 자리에 MemoWordFragment를 끼워넣기
-        //DB로부터 가져올 필요 없지 않나?
-
-        Log.d("로그 FSadapter 이상",pagerAdapter.fragments.size()+" ");
-        int currentPosition = viewPager.getCurrentItem();
-
-        MemoWordFragment fragment = new MemoWordFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putString("inputFixedString", word.getContent());
-        bundle.putString("wordMeaningSt", word.getMeaning());
-        bundle.putString("exampleSentenceSt", word.getExampleSentence());
-        bundle.putString("exampleSentenceMeaningSt", word.getExampleMeaning());
-
-        fragment.setArguments(bundle);
-
-
-        Log.d("로그 current page", String.valueOf(currentPosition));
-        pagerAdapter.addItem(currentPosition,fragment);
-        viewPager.setCurrentItem(currentPosition);
-
-    }
-
     void getDictWithWordsByTitle(String title) {
         //NUM_PAGES와 LIST 받아오기
 
@@ -361,5 +295,81 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             return NUM_PAGES;
         }
     }
+
+
+    //키보드 나왔을 때 다른 곳을 터치하면 키보드 내리기
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        View view = getCurrentFocus();
+        if (view != null && (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_MOVE) &&
+                view instanceof EditText && !view.getClass().getName().startsWith("android.webkit.")) {
+            int[] sourceCoordinates = new int[2];
+            view.getLocationOnScreen(sourceCoordinates);
+            float x = event.getRawX() + view.getLeft() - sourceCoordinates[0];
+            float y = event.getRawY() + view.getTop() - sourceCoordinates[1];
+            if (x < view.getLeft() || x > view.getRight() || y < view.getTop() || y > view.getBottom()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbar_actions, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        if (item.getItemId() == R.id.actionWordList) {//단어 리스트 fragment로 이동.
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            WordListFragment fragment = new WordListFragment();
+            Bundle bundle = new Bundle();
+
+            bundle.putString("dictName",dictName);
+            fragment.setArguments(bundle);
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.memoLayout, fragment)
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void moveToNextPageAndChangeFragment(Word word) {
+        // ViewPager2의 페이지 수를 증가시키고 새로운 Fragment를 추가하는 작업을 수행합니다.
+        // 이 작업은 Activity에서 처리해야 합니다.
+
+        // MemoWordAddFragment를 다음 페이지로 넘기기
+        //현재 자리에 MemoWordFragment를 끼워넣기
+        //DB로부터 가져올 필요 없지 않나?
+
+        int currentPosition = viewPager.getCurrentItem();
+
+
+        MemoWordFragment fragment = new MemoWordFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("inputFixedString", word.getContent());
+        bundle.putString("wordMeaningSt", word.getMeaning());
+        bundle.putString("exampleSentenceSt", word.getExampleSentence());
+        bundle.putString("exampleSentenceMeaningSt", word.getExampleMeaning());
+
+        fragment.setArguments(bundle);
+
+        Log.d("current page", String.valueOf(currentPosition));
+        pagerAdapter.addItem(currentPosition,fragment);
+        viewPager.setCurrentItem(currentPosition);
+
+        //getDictWithWordsByTitle(dictName);
+
+    }
+
 }
 
