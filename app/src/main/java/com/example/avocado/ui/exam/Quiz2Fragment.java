@@ -37,13 +37,11 @@ public class Quiz2Fragment extends Fragment {
     private DictRepository dr;
     private WordRepository wr;
     private String title;
-    private int correctAnswer;
     private Word word;
 
-    public Quiz2Fragment(String title, Word word, int correctAnswer) {
+    public Quiz2Fragment(String title, Word word) {
         this.title = title;
         this.word = word;
-        this.correctAnswer = correctAnswer;
     }
 
 
@@ -67,14 +65,13 @@ public class Quiz2Fragment extends Fragment {
             public void onClick(View v) {
                 if (isCorrect(inputWordQuiz2.getText().toString())) {
                     // Correct answer
-                    correctAnswer ++;
+                    ExamFragment parentFragment = (ExamFragment) getParentFragment();
+                    if (parentFragment != null) {
+                        parentFragment.openNextQuizFragment();
+                    }
                 } else {
                     // Incorrect answer
                     Toast.makeText(getContext(), "Incorrect answer", Toast.LENGTH_SHORT).show();
-                }
-                ExamFragment parentFragment = (ExamFragment) getParentFragment();
-                if (parentFragment != null) {
-                    parentFragment.openNextQuizFragment(correctAnswer);
                 }
             }
         });

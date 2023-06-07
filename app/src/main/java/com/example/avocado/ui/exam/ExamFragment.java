@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentExamBinding;
@@ -34,11 +33,8 @@ public class ExamFragment extends Fragment{
     private AppDatabase db;
     private DictRepository dr;
     private DictWithWords dictWithWords;
-    private HomeFragment.OnItemClickListener listener;
 
-
-    private int correctAnswer = 0;
-    private String title;
+    private String title = "hello";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -56,34 +52,8 @@ public class ExamFragment extends Fragment{
         startQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //단어장 선택 화면 보여주기
-                HomeFragment homeFragment = (new HomeFragment());
-                getChildFragmentManager().findFragmentById(R.id.test_layout);
-                homeFragment.setOnItemClickListener(new HomeFragment.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position, String dictName) {
-                        title = dictName;
-                        playQuiz(title);
-                    }
-                });
-
-                FragmentManager fragmentManager = getChildFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-                transaction.replace(R.id.test_layout, homeFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
-
-        startTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fragmentManager = getChildFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.test_layout, new TestFragment());
-                transaction.addToBackStack(null);
-                transaction.commit();
+                //String title = "hello";
+                playQuiz(title);
             }
         });
 
@@ -143,19 +113,19 @@ public class ExamFragment extends Fragment{
             Fragment selectedFragment;
 
             if (word.isSentence()) {
-                selectedFragment = new Quiz4Fragment(title, word, correctAnswer);
+                selectedFragment = new Quiz4Fragment(title, word);
             } else {
                 int randomFragment = new Random().nextInt(3) + 1;
 
                 switch (randomFragment) {
                     case 1:
-                        selectedFragment = new Quiz1Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz1Fragment(title, word);
                         break;
                     case 2:
-                        selectedFragment = new Quiz2Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz2Fragment(title, word);
                         break;
                     case 3:
-                        selectedFragment = new Quiz3Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz3Fragment(title, word);
                         break;
                     default:
                         selectedFragment = new HomeFragment();
@@ -179,7 +149,7 @@ public class ExamFragment extends Fragment{
         binding = null;
     }
 
-    public void openNextQuizFragment(int correctAnswer) {
+    public void openNextQuizFragment() {
         int currentIndex = getChildFragmentManager().getBackStackEntryCount();
 
         if (currentIndex < dictWithWords.words.size()) {
@@ -187,18 +157,18 @@ public class ExamFragment extends Fragment{
 
             Fragment selectedFragment;
             if (word.isSentence()) {
-                selectedFragment = new Quiz4Fragment(title, word, correctAnswer);
+                selectedFragment = new Quiz4Fragment(title, word);
             } else {
                 int randomFragment = new Random().nextInt(3) + 1;
                 switch (randomFragment) {
                     case 1:
-                        selectedFragment = new Quiz1Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz1Fragment(title, word);
                         break;
                     case 2:
-                        selectedFragment = new Quiz2Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz2Fragment(title, word);
                         break;
                     case 3:
-                        selectedFragment = new Quiz3Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz3Fragment(title, word);
                         break;
                     default:
                         selectedFragment = new HomeFragment();
@@ -212,9 +182,11 @@ public class ExamFragment extends Fragment{
             transaction.commit();
         }else{
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.test_layout, new ExamResultFragment(correctAnswer, dictWithWords));
+            transaction.replace(R.id.test_layout, new ExamResultFragment());
             transaction.addToBackStack(null);
             transaction.commit();
         }
     }
+
+
 }

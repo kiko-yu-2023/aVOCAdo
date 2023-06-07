@@ -36,13 +36,11 @@ public class Quiz4Fragment extends Fragment {
     private DictRepository dr;
     private WordRepository wr;
     private String title;
-    private int correctAnswer;
     private Word word;
 
-    public Quiz4Fragment(String title, Word word, int correctAnswer) {
+    public Quiz4Fragment(String title, Word word) {
         this.title = title;
         this.word = word;
-        this.correctAnswer = correctAnswer;
     }
 
     @Override
@@ -73,13 +71,12 @@ public class Quiz4Fragment extends Fragment {
             public void onClick(View v) {
                 if (isCorrect(inputSentenceQuiz4.getText().toString())) {
                     // Correct answer
-                    correctAnswer ++;
+                    ExamFragment parentFragment = (ExamFragment) getParentFragment();
+                    if (parentFragment != null) {
+                        parentFragment.openNextQuizFragment();
+                    }
                 } else {
                     Toast.makeText(getContext(), "Incorrect answer", Toast.LENGTH_SHORT).show();
-                }
-                ExamFragment parentFragment = (ExamFragment) getParentFragment();
-                if (parentFragment != null) {
-                    parentFragment.openNextQuizFragment(correctAnswer);
                 }
             }
         });
