@@ -1,15 +1,12 @@
 package com.example.avocado.ui.home;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,18 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-
-import com.example.avocado.MainActivity;
-import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentMemoWordAddBinding;
 import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordRepository;
@@ -46,12 +35,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Date;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -181,27 +170,6 @@ public class MemoWordAddFragment extends Fragment {
                     inputChangeButton.setVisibility(View.GONE);
                     dictSearchButton.setVisibility(View.GONE);
 
-                    if (isCanvasEmpty) //2) 텍스트로 입력했을 때
-                    {
-                        inputFixedString[0] = String.valueOf(inputText.getText());
-                    } else //3) 손글씨로 입력했을 때
-                    {
-
-                        //tensorflow lite 모델 가져오기
-                        tflite = getTfliteInterpreter("model.tflite");
-
-                        Mat mat = new Mat();
-                        Utils.bitmapToMat(paintView.convertToPNG(),mat);
-
-
-                        ImageProcessing ip = new ImageProcessing();
-
-
-                        //얘를 트렌젝션으로 감싸주세요
-                        inputFixedString[0] = ip.processImage(mat,tflite);
-
-                    }
-
 
                     //단어 뜻 등의 정보 사전 API로 얻어오기
                     //검색할 단어를 검색하는 url 완성
@@ -210,27 +178,35 @@ public class MemoWordAddFragment extends Fragment {
                     DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
                     WordRepository wr = new WordRepository(db.wordDao());
 
-                    Log.d("word", "웹크롤링 수행전 : " + inputFixedString[0]);
+                    getInputFixedString(isCanvasEmpty,inputFixedString)
+                            //웹크롤링을 수행하는 Thread
+                            .flatMap(fixedString->{
+                        inputFixedString[0]=fixedString;
+                        //[0] 배열 형태인 이유는 뭘까
+                        Log.d("word", "웹크롤링 수행전 : " + inputFixedString[0]);
+                        return getWordData(inputFixedString[0],dictId);
+                    }).flatMapCompletable(word ->
+                    {
+                        if(word==null)
+                        {
+                            Toast.makeText(getContext(),"존재하지 않는 단어입니다",Toast.LENGTH_SHORT);
+                            return Completable.error(new Throwable("존재하지 않는 단어 검색"));
+                        }
+                        Log.d("로그 getandinsert word data from dict", word.toString());
 
-                    //웹크롤링을 수행하는 Thread
-                    getWordData(inputFixedString[0], dictId)
-                            .flatMapCompletable(word ->
-                            {
-                                Log.d("로그 getandinsert word data from dict", word.toString());
-                                word2 = word;
-                                return wr.insert(word);
-                            }).subscribeOn(Schedulers.io())
+                        word2 = word;
+                        return wr.insert(word);})
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new CompletableObserver() {
                                 @Override
                                 public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-
                                 }
-
                                 @Override
                                 public void onComplete() {
                                     if (interactionListener != null) {
                                         Log.d("로그 getandinsert word data from dict", "success");
+                                        //super.getDict
                                         interactionListener.moveToNextPageAndChangeFragment(word2);
                                     }
                                 }
@@ -245,7 +221,26 @@ public class MemoWordAddFragment extends Fragment {
         });
         return root;
     }
+    Single<String> getInputFixedString(boolean isCanvasEmpty,String[] inputFixedString)
+    {
+        if (isCanvasEmpty) //2) 텍스트로 입력했을 때
+        {
+            return Single.just(String.valueOf(inputText.getText()));
+        } else //3) 손글씨로 입력했을 때
+        {
+            //tensorflow lite 모델 가져오기
+            tflite = getTfliteInterpreter("model.tflite");
 
+            Mat mat = new Mat();
+            Utils.bitmapToMat(paintView.convertToPNG(),mat);
+
+            ImageProcessing ip = new ImageProcessing();
+            String res=ip.processImage(mat,tflite);
+            Log.d("로그 img 인식",res);
+            //얘를 트렌젝션으로 감싸주세요
+            return Single.just(res);
+        }
+    }
     Single<Word> getWordData(String wordContent, int dictId) {
         return Single.fromCallable(() -> {
 

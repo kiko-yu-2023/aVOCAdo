@@ -167,136 +167,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         }
     }
 
-    void getDictWithWordsByTitle(String title) {
-        //NUM_PAGES와 LIST 받아오기
-
-        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-        DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
-        WordRepository wr = new WordRepository(db.wordDao());
-
-        //무결성을 위해 title 이란 이름의 단어장 검색
-        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
-
-            //성공적으로 단어장 검색
-            @Override
-            public void onSuccess(@NonNull Dict dict) {
-                //단어장과 연결된 단어리스트 찾기
-                dr.getWordsBydictID(dict.getDictID())
-                        .subscribe(new SingleObserver<DictWithWords>() {
-                            //성공 단어장-단어리스트 객체 - dicWithWords
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
-                                //단어리스트(List) 불러오기 - dictWithWords.words
-                                Log.d("로그w&s", "words size: " + dictWithWords.words.size());
-                                //내용이 있을 경우
-                                if (dictWithWords.words.size() > 0) {
-                                    for (Word w : dictWithWords.words) {
-                                        Log.d("로그word", w.toString());
-
-                                    }
-                                }
-                                dictId = dict.getDictID();
-                                NUM_PAGES = dictWithWords.words.size()+1;
-                                wordList = dictWithWords.words;
-
-                                Log.d("setting", String.valueOf(NUM_PAGES));
-
-
-                                pagerAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                Log.e("로그word", t.toString());
-                                dictId=dict.getDictID();
-                                NUM_PAGES = 1;
-                                pagerAdapter.notifyDataSetChanged();
-                            }
-                        });
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("로그getDictByTitle", e.toString());
-            }
-        });
-    }
-
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
-    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
-        private List<Fragment> fragments = new ArrayList<>();
-
-        public ScreenSlidePagerAdapter(FragmentActivity fa) {
-            super(fa);
-        }
-
-
-        @Override
-        public Fragment createFragment(int position) {
-            // 마지막 인덱스인 경우 LastFragment 반환
-            if (position == getItemCount() - 1 || getItemCount() == 1) {
-
-                MemoWordAddFragment memoWordAddFragment = new MemoWordAddFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("position", position);
-                bundle.putString("dictName", dictName);
-                bundle.putInt("dictId", dictId);
-                memoWordAddFragment.setArguments(bundle);
-                return memoWordAddFragment;
-
-            } else {
-                // 나머지 인덱스인 경우 기존에 사용하던 Fragment 반환
-                MemoWordFragment wordFragment = new MemoWordFragment();
-                Bundle bundle = new Bundle();
-
-                String inputFixedString = "";
-                String wordMeaningSt = "";
-                String exampleSentenceSt = "";
-                String exampleSentenceMeaningSt = "";
-
-                Word word = wordList.get(position);
-
-                inputFixedString = word.getContent();
-                wordMeaningSt = word.getMeaning();
-                exampleSentenceSt = word.getExampleSentence();
-                exampleSentenceMeaningSt = word.getExampleMeaning();
-
-                bundle.putString("inputFixedString", inputFixedString);
-                bundle.putString("wordMeaningSt", wordMeaningSt);
-                bundle.putString("exampleSentenceSt", exampleSentenceSt);
-                bundle.putString("exampleSentenceMeaningSt", exampleSentenceMeaningSt);
-
-                wordFragment.setArguments(bundle);
-                return wordFragment;
-            }
-        }
-
-//        public void replaceFragment(int index, Fragment fragment) {
-//            fragments.set(index, fragment);
-//            notifyDataSetChanged();
-//        }
-        public void addItem(int index,Fragment fragment) {
-            fragments.add(index,fragment);
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getItemCount() {
-            return NUM_PAGES;
-        }
-    }
-
     //키보드 나왔을 때 다른 곳을 터치하면 키보드 내리기
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -361,6 +231,135 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         pagerAdapter.addItem(currentPosition,fragment);
         viewPager.setCurrentItem(currentPosition);
 
+    }
+
+    void getDictWithWordsByTitle(String title) {
+        //NUM_PAGES와 LIST 받아오기
+
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
+        WordRepository wr = new WordRepository(db.wordDao());
+
+        //무결성을 위해 title 이란 이름의 단어장 검색
+        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+
+            //성공적으로 단어장 검색
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어장과 연결된 단어리스트 찾기
+                dr.getWordsBydictID(dict.getDictID())
+                        .subscribe(new SingleObserver<DictWithWords>() {
+                            //성공 단어장-단어리스트 객체 - dicWithWords
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
+                                //단어리스트(List) 불러오기 - dictWithWords.words
+                                Log.d("로그w&s", "words size: " + dictWithWords.words.size());
+                                //내용이 있을 경우
+                                if (dictWithWords.words.size() > 0) {
+                                    for (Word w : dictWithWords.words) {
+                                        Log.d("로그word", w.toString());
+
+                                    }
+                                }
+                                dictId = dict.getDictID();
+                                NUM_PAGES = dictWithWords.words.size()+1;
+                                wordList = dictWithWords.words;
+
+                                Log.d("setting", String.valueOf(NUM_PAGES));
+
+
+                                pagerAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e("로그word", t.toString());
+                                dictId=dict.getDictID();
+                                NUM_PAGES = 1;
+                                pagerAdapter.notifyDataSetChanged();
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그getDictByTitle", e.toString());
+            }
+        });
+    }
+    /**
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
+     */
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+        private List<Fragment> fragments = new ArrayList<>();
+
+        public ScreenSlidePagerAdapter(FragmentActivity fa) {
+            super(fa);
+        }
+
+
+        @Override
+        public Fragment createFragment(int position) {
+            // 마지막 인덱스인 경우 LastFragment 반환
+            if (position == getItemCount() - 1 || getItemCount() == 1) {
+
+                MemoWordAddFragment memoWordAddFragment = new MemoWordAddFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", position);
+                bundle.putString("dictName", dictName);
+                bundle.putInt("dictId", dictId);
+                memoWordAddFragment.setArguments(bundle);
+                return memoWordAddFragment;
+
+            } else {
+                // 나머지 인덱스인 경우 기존에 사용하던 Fragment 반환
+                MemoWordFragment wordFragment = new MemoWordFragment();
+                Bundle bundle = new Bundle();
+
+                String inputFixedString = "";
+                String wordMeaningSt = "";
+                String exampleSentenceSt = "";
+                String exampleSentenceMeaningSt = "";
+
+                Word word = wordList.get(position);
+
+                inputFixedString = word.getContent();
+                wordMeaningSt = word.getMeaning();
+                exampleSentenceSt = word.getExampleSentence();
+                exampleSentenceMeaningSt = word.getExampleMeaning();
+
+                bundle.putString("inputFixedString", inputFixedString);
+                bundle.putString("wordMeaningSt", wordMeaningSt);
+                bundle.putString("exampleSentenceSt", exampleSentenceSt);
+                bundle.putString("exampleSentenceMeaningSt", exampleSentenceMeaningSt);
+
+                wordFragment.setArguments(bundle);
+                return wordFragment;
+            }
+        }
+
+        //        public void replaceFragment(int index, Fragment fragment) {
+//            fragments.set(index, fragment);
+//            notifyDataSetChanged();
+//        }
+        public void addItem(int index,Fragment fragment) {
+            fragments.add(index,fragment);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemCount() {
+            return NUM_PAGES;
+        }
     }
 }
 
