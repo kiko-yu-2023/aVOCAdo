@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
         //insertRecordAndQuiz(1);
 
 
-
+//        putSentence("hello");
+//        putWord("hello");
     }
 
     public void replaceFragment(Fragment fragment){
@@ -249,10 +250,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
-                        .subscribe();
+//                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
+//                        .subscribe();
+//                wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
+//                        .subscribe();
+//                wr.insert(new Word(true,"Where are you from?","넌 어디서 왔니?",null,null,dict.getDictID()))
+//                        .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
-                dr.updateModifiedTime(dict.getDictID(),new Date());
+                dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
             //해당 단어장 검색 싪패
             @Override
@@ -274,10 +279,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                wr.insert(new Word(false,"apple","사과","An apple is red","사과는 빨간색이다",dict.getDictID()))
+                wr.insert(new Word(false,"kiwi","키위","I'm allergic to kiwi","난 키위에 알레르기 있어",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"marry","결혼하다","Marry me","결혼해줘",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"hola","안녕","hola hello","안녕 안녕",dict.getDictID()))
                         .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
-                dr.updateModifiedTime(dict.getDictID(),new Date());
+                dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
             //해당 단어장 검색 싪패
             @Override

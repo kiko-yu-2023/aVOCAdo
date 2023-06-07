@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.exam.ExamFragment"
+    android:id="@+id/test_layout">
+
+    <ImageView
+        android:id="@+id/start_quiz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/start_quiz"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/start_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/start_test"
+        app:layout_constraintTop_toBottomOf="@+id/start_quiz"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

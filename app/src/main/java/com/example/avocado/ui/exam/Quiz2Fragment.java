@@ -1,4 +1,4 @@
-package com.example.avocado.ui.dashboard;
+package com.example.avocado.ui.exam;
 
 import android.os.Bundle;
 
@@ -8,7 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentQuiz2Binding;
 import com.example.avocado.db.AppDatabase;
@@ -22,79 +25,63 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Quiz2Fragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Quiz2Fragment extends Fragment {
 
     private FragmentQuiz2Binding binding;
 
     TextView textView;
+    EditText inputWordQuiz2;
+    Button completeQuiz2;
 
     private AppDatabase db;
     private DictRepository dr;
     private WordRepository wr;
+    private String title;
+    private Word word;
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Quiz2Fragment() {
-        // Required empty public constructor
+    public Quiz2Fragment(String title, Word word) {
+        this.title = title;
+        this.word = word;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Quiz2Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Quiz2Fragment newInstance(String param1, String param2) {
-        Quiz2Fragment fragment = new Quiz2Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        container.removeAllViews();
 
         binding = FragmentQuiz2Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         textView = binding.textView;
+        inputWordQuiz2 = binding.inputWordQuiz2;
+        completeQuiz2 = binding.completeQuiz2;
+        completeQuiz2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isCorrect(inputWordQuiz2.getText().toString())) {
+                    // Correct answer
+                    ExamFragment parentFragment = (ExamFragment) getParentFragment();
+                    if (parentFragment != null) {
+                        parentFragment.openNextQuizFragment();
+                    }
+                } else {
+                    // Incorrect answer
+                    Toast.makeText(getContext(), "Incorrect answer", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         db=AppDatabase.getDatabase(getContext());
-        dr=new DictRepository(db.dictDao(),db.wordDao());
         wr=new WordRepository(db.wordDao());
+        dr=new DictRepository(db.dictDao(),db.wordDao());
 
-        fillSentence("abc");
+        fillSentence(title);
 
-        // Inflate the layout for this fragment
         return root;
     }
 
@@ -120,16 +107,7 @@ public class Quiz2Fragment extends Fragment {
                                 Log.d("로그w&s","words si");
                                 Log.d("로그w&s","words size: "+dictWithWords.words.size());
 
-                                Word word = dictWithWords.words.get(2);
-                                String example;
-                                if (word != null) {
-                                    example = word.getExampleSentence();
-                                    String modifiedExample = example.replace(word.getMeaning(), "_______");
-                                    textView.setText(modifiedExample);
-                                } else {
-                                    // Example not found
-                                    textView.setText("예문 들어오기 오류");
-                                }
+                                showExampleWithBlank();
                             }
                             @Override
                             public void onError(Throwable t) {
@@ -145,6 +123,25 @@ public class Quiz2Fragment extends Fragment {
             }
         });
 
+    }
+
+    private void showExampleWithBlank() {
+        if (word != null) {
+            String example = word.getExampleSentence();
+            String modifiedExample = example.replace(word.getContent(), "_______");
+            textView.setText(modifiedExample + "\n" + word.getExampleMeaning());
+        } else {
+            // Example not found
+            textView.setText("예문 들어오기 오류");
+        }
+    }
+
+    private boolean isCorrect(String inputWord) {
+        if(inputWord.equals(word.getContent())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override
