@@ -19,6 +19,7 @@ import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 import com.example.avocado.db.record_with_quizes_and_tests.QuizRepository;
 import com.example.avocado.db.record_with_quizes_and_tests.Record;
 import com.example.avocado.db.record_with_quizes_and_tests.RecordRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.Test;
 import com.example.avocado.db.record_with_quizes_and_tests.TestRepository;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        putSentence("hello");
 //        putWord("hello");
+        insertRecordAndTest(4);
     }
 
     public void replaceFragment(Fragment fragment){
@@ -180,6 +182,41 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         Log.e("로그 quiz insert mainActivity",e.toString());
+                    }
+                });
+            }
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+        });
+
+    }
+    static void insertRecordAndTest(int dictID)
+    {
+        Record rec=new Record(true,dictID);
+        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull Integer recordID) {
+                Test t1=new Test(true,true,"hi","안녕",5,recordID);
+                Test t2=new Test(true,false,"good","나쁜",6,recordID);
+                  tr.insert(t1,t2).subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+                    @Override
+                    public void onComplete() {
+                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
+                    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.e("로그 test insert mainActivity",e.toString());
                     }
                 });
             }

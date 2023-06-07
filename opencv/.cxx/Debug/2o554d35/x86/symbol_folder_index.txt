@@ -1,1 +1,1 @@
-C:\Users\mmow1\imsiproject\aVOCAdo\opencv\build\intermediates\cxx\Debug\2o554d35\obj\x86
+C:\Users\qkdo1\AndroidStudioProjects\aVOCAdo\opencv\build\intermediates\cxx\Debug\2o554d35\obj\x86

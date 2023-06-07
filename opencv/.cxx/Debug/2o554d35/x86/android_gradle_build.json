@@ -1,19 +1,19 @@
 {
   "buildFiles": [
-    "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\libcxx_helper\\CMakeLists.txt"
+    "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\libcxx_helper\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "C:\\Users\\qkdo1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
+      "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "C:\\Users\\qkdo1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
+    "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
@@ -21,13 +21,13 @@
       "toolchain": "toolchain",
       "abi": "x86",
       "artifactName": "opencv_jni_shared",
-      "output": "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86\\libopencv_jni_shared.a"
+      "output": "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86\\libopencv_jni_shared.a"
     }
   },
   "toolchains": {
     "toolchain": {
-      "cCompilerExecutable": "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
-      "cppCompilerExecutable": "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+      "cCompilerExecutable": "C:\\Users\\qkdo1\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\qkdo1\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

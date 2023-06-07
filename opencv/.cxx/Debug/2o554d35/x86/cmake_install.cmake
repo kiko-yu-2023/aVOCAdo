@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/mmow1/imsiproject/aVOCAdo/opencv/libcxx_helper
+# Install script for directory: C:/Users/qkdo1/AndroidStudioProjects/aVOCAdo/opencv/libcxx_helper
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "C:/Users/mmow1/AppData/Local/Android/Sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-objdump.exe")
+  set(CMAKE_OBJDUMP "C:/Users/qkdo1/AppData/Local/Android/Sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-objdump.exe")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/mmow1/imsiproject/aVOCAdo/opencv/.cxx/Debug/2o554d35/x86/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/qkdo1/AndroidStudioProjects/aVOCAdo/opencv/.cxx/Debug/2o554d35/x86/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
