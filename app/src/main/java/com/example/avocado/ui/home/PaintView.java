@@ -2,6 +2,7 @@ package com.example.avocado.ui.home;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,6 +17,8 @@ import android.graphics.Path;
 
 import androidx.annotation.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -232,4 +235,42 @@ public class PaintView extends View {
             this.paint = paint;
         }
     }
+
+    public Bitmap convertToPNG() {
+        // Create a bitmap with the same dimensions as the PaintView
+        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+
+        // Create a canvas with the bitmap
+        Canvas canvas = new Canvas(bitmap);
+
+        // Draw the PaintView on the canvas
+        draw(canvas);
+
+        // Create a ByteArrayOutputStream to write the bitmap data
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Compress the bitmap into PNG format and write it to the output stream
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+        // Create a byte array from the output stream
+        byte[] pngData = outputStream.toByteArray();
+
+        // Recycle the bitmap
+        bitmap.recycle();
+
+        // Decode the byte array into a PNG formatted Bitmap
+        Bitmap pngBitmap = BitmapFactory.decodeByteArray(pngData, 0, pngData.length);
+
+        // Close the output stream
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Return the PNG formatted Bitmap
+        return pngBitmap;
+    }
+
+
 }
