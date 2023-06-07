@@ -45,11 +45,13 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
     private DictRepository dr;
 
     private String title;
+    private int correctAnswer;
     private Word word;
 
-    public Quiz1Fragment(String title, Word word) {
+    public Quiz1Fragment(String title, Word word, int correctAnswer) {
         this.title = title;
         this.word = word;
+        this.correctAnswer = correctAnswer;
     }
 
     @Override
@@ -99,12 +101,16 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
 
             if (isCorrectAnswer) {
                 v.setBackgroundResource(R.color.correct_button);
-                removeFragment(this);
-                ((ExamFragment) getParentFragment()).openNextQuizFragment(); // Call the method in ExamFragment to open the next quiz fragment
+                correctAnswer++;
             } else {
                 v.setBackgroundResource(R.color.incorrect_button);
-                removeFragment(this);
             }
+            ExamFragment parentFragment = (ExamFragment) getParentFragment();
+            if (parentFragment != null) {
+                parentFragment.openNextQuizFragment(correctAnswer); // Pass the updated correctAnswer value
+            }
+            removeFragment(this);
+
         }
     }
 
