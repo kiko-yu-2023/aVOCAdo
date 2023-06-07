@@ -55,7 +55,7 @@ public class Quiz3Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //container.removeAllViews();
+        container.removeAllViews();
 
         binding = FragmentQuiz3Binding.inflate(inflater, container, false);
         View root = binding.getRoot();

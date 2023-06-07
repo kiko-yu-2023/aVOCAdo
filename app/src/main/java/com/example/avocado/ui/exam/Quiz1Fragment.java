@@ -62,7 +62,7 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //container.removeAllViews();
+        container.removeAllViews();
 
         binding = FragmentQuiz1Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -172,10 +172,10 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
                     meanings.add(sample.getMeaning());
         }
 
-        int randomIndex = new Random().nextInt(4);
-        buttons.get(randomIndex).setText(word.getMeaning());
-
         if(meanings.size() >= 3){
+            int randomIndex = new Random().nextInt(4);
+            buttons.get(randomIndex).setText(word.getMeaning());
+
             Collections.shuffle(meanings);
 
             for(int i = 0; i < 4; i++){

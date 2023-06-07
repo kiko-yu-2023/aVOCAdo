@@ -56,6 +56,8 @@ public class Quiz2Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        container.removeAllViews();
+
         binding = FragmentQuiz2Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -131,7 +133,7 @@ public class Quiz2Fragment extends Fragment {
     private void showExampleWithBlank() {
         if (word != null) {
             String example = word.getExampleSentence();
-            String modifiedExample = example.replace(word.getContent(), "_______");
+            String modifiedExample = example.toLowerCase().replace(word.getContent(), "_______");
             textView.setText(modifiedExample + "\n" + word.getExampleMeaning());
         } else {
             // Example not found
