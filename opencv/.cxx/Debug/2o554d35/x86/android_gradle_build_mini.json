@@ -1,26 +1,26 @@
 {
   "buildFiles": [
-    "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\libcxx_helper\\CMakeLists.txt"
+    "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\libcxx_helper\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "C:\\Users\\qkdo1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
+      "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "C:\\Users\\qkdo1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
+    "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
     "opencv_jni_shared::@6890427a1f51a3e7e1df": {
       "artifactName": "opencv_jni_shared",
       "abi": "x86",
-      "output": "C:\\Users\\qkdo1\\AndroidStudioProjects\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86\\libopencv_jni_shared.a",
+      "output": "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\x86\\libopencv_jni_shared.a",
       "runtimeFiles": []
     }
   }
