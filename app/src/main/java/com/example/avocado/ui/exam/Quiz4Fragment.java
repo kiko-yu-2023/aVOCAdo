@@ -97,7 +97,7 @@ public class Quiz4Fragment extends Fragment {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsBydictID(dict.getDictID())
+                dr.getWordsByDictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
