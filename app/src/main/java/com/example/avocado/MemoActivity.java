@@ -250,7 +250,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsBydictID(dict.getDictID())
+                dr.getWordsByDictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             //성공 단어장-단어리스트 객체 - dicWithWords
                             @Override

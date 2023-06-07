@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         db= AppDatabase.getDatabase(getApplicationContext());
         dr=new DictRepository(db.dictDao(),db.wordDao());
         wr=new WordRepository(db.wordDao());
-        rr=new RecordRepository(db.recordDao());
+        rr=new RecordRepository(db.recordDao(),db.quizDao(),db.testDao());
         qr=new QuizRepository(db.quizDao());
         tr=new TestRepository(db.testDao());
 
@@ -130,6 +130,29 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
+    //1. dictId있는 특정 dict에 대한 모든 record를 가져오는 기능
+    static void getRecordsByDictID(int dictID)
+    {
+        //종류 상관없이면 getAllRecords, 아니면 getQuizRecords 혹은 getTestRecords
+        //함수명 제외 코드는 다 같음
+        rr.getAllRecordsByDictID(dictID).subscribe(new SingleObserver<List<Record>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull List<Record> records) {
+                Log.d("로그 record get"," "+records.size());
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그 record get",e.toString());
+            }
+        });
+    }
+    //2. 특정 dict 하나에 record insert하는거 함수로
     //레코드를 만들고 그 안에 퀴즈 리스트를 넣고 퀴즈 리스트의 점수로 레코드 업데이트
     static void insertRecordAndQuiz(int dictID)
     {
@@ -298,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsBydictID(dict.getDictID())
+                dr.getWordsByDictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {

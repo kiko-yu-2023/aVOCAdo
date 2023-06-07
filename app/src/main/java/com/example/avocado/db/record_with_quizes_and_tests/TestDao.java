@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface TestDao {
@@ -18,6 +19,10 @@ public interface TestDao {
 
     @Query("DELETE FROM TEST WHERE TESTID=:testID")
     Completable delete(int testID);
+
+
+    @Query("SELECT EXISTS (SELECT * FROM TEST WHERE RECORDID = :recordID)")
+    Single<Boolean> RecordHasTest(int recordID);
 
 
 }
