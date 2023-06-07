@@ -303,8 +303,14 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
         if (item.getItemId() == R.id.actionWordList) {//단어 리스트 fragment로 이동.
             FragmentManager fragmentManager = getSupportFragmentManager();
+            WordListFragment fragment = new WordListFragment();
+            Bundle bundle = new Bundle();
+
+            bundle.putString("dictName",dictName);
+            fragment.setArguments(bundle);
+
             fragmentManager.beginTransaction()
-                    .replace(R.id.memoLayout, WordListFragment.class, null)
+                    .replace(R.id.memoLayout, fragment)
                     .setReorderingAllowed(true)
                     .addToBackStack(null)
                     .commit();

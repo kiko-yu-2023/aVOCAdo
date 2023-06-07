@@ -7,21 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.avocado.ui.home.placeholder.PlaceholderContent.PlaceholderItem;
+import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.databinding.FragmentWordListBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
+ * {@link RecyclerView.Adapter} that can display a {@link }.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlaceholderItem> mValues;
+    private ArrayList<Word> wordData;
 
-    public MyItemRecyclerViewAdapter(List<PlaceholderItem> items) {
-        mValues = items;
+    public MyItemRecyclerViewAdapter(ArrayList<Word> items) {
+        wordData = items;
     }
 
     @Override
@@ -31,32 +32,32 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     }
 
+    public void setWordList(ArrayList<Word> wordData) {
+        this.wordData = wordData;
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = wordData.get(position);
+        holder.content.setText(wordData.get(position).getContent());
+        holder.meaning.setText(wordData.get(position).getMeaning());
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return wordData.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public PlaceholderItem mItem;
+        public final TextView content;
+        public final TextView meaning;
+        public Word mItem;
 
         public ViewHolder(FragmentWordListBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.content;
-            mContentView = binding.meaning;
+            content = binding.content;
+            meaning = binding.meaning;
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
     }
 }

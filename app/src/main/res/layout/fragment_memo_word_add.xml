@@ -38,6 +38,7 @@
                 android:id="@+id/inputText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="normal"
                 android:layout_gravity="center"
                 android:padding="30dp"
                 android:gravity="center"
@@ -81,6 +82,7 @@
             android:textColor="@color/white"
             android:textOff="텍스트로 입력"
             android:textOn="손글씨로 입력"
+            android:textStyle="normal"
 
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginRight="30dp"

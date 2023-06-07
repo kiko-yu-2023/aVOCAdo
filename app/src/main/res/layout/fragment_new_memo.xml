@@ -14,9 +14,9 @@
 </FrameLayout>-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
-android:background="#eeeeee"
+android:background="@drawable/layout_round"
 android:orientation="vertical"
-android:layout_width="300dp"
+android:layout_width="400dp"
 android:layout_height="wrap_content"
     tools:context=".ui.home.NewMemoFragment">
 
@@ -24,15 +24,17 @@ android:layout_height="wrap_content"
 <LinearLayout
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#66FFFFFF">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:text="새 메모장 이름을 입력하세요"
-        android:textSize="20sp"
-        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:textStyle="normal"
         android:gravity="center"
-        android:background="#ff7a00"
+        android:background="#66FFFFFF"
         >
     </TextView>
 </LinearLayout>
@@ -42,6 +44,7 @@ android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="24dp"
+    android:background="#66FFFFFF"
     android:orientation="vertical">
     <EditText
         android:layout_width="match_parent"
@@ -49,6 +52,7 @@ android:layout_height="wrap_content"
         android:id="@+id/inputMemoName"
         android:inputType="text"
         android:textSize="24sp"
+        android:textStyle="normal"
         android:layout_marginBottom="3dp"
         android:contentDescription="메모1">
     </EditText>
@@ -62,13 +66,12 @@ android:layout_height="wrap_content"
 
     <Button
         android:id="@+id/createNewMemo"
-        android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:background="#00000000"
+        android:background="@drawable/button_check"
+        android:backgroundTint="#4C2717"
         android:padding="16dp"
-        android:text="확인"
-        android:textColor="#ff7a00"
         android:textSize="15sp"></Button>
 </LinearLayout>
 
