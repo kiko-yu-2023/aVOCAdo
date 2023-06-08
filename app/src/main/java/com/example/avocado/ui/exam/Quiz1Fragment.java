@@ -16,23 +16,16 @@ import android.widget.Toast;
 
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz1Binding;
-import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.dict_with_words.Dict;
-import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
-import com.example.avocado.db.dict_with_words.WordRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.SingleObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
 
-public class Quiz1Fragment extends Fragment implements View.OnClickListener {
+public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListener {
 
     private FragmentQuiz1Binding binding;
 
@@ -40,9 +33,6 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
     Button button1, button2, button3, button4;
     private ArrayList<Button> buttons;
     List<String> meanings;
-    private AppDatabase db;
-    private WordRepository wr;
-    private DictRepository dr;
 
     private String title;
     private int correctAnswer;
@@ -84,14 +74,12 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
 
-        db = AppDatabase.getDatabase(getContext());
-        wr = new WordRepository(db.wordDao());
-        dr = new DictRepository(db.dictDao(), db.wordDao());
 
-        wordAccess(title);
+        loadData(title);
 
         return root;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -114,47 +102,11 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void wordAccess(String title) {
-        //무결성을 위해 title 이란 이름의 단어장 검색
-        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
-            //성공적으로 단어장 검색
-            @Override
-            public void onSuccess(@NonNull Dict dict) {
-                //단어장과 연결된 단어리스트 찾기
-                dr.getWordsByDictID(dict.getDictID())
-                        .subscribe(new SingleObserver<DictWithWords>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
-
-                            }
-                            //성공 단어장-단어리스트 객체 - dictWithWords
-                            @Override
-                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
-                                Log.d("로그w&s","words si");
-                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
-
-                                showWord();
-
-                                fillOptions(dictWithWords.words);
-                            }
-                            @Override
-                            public void onError(Throwable t) {
-                                Log.e("로그wordsInDict",t.toString());
-                            }
-                        });
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("로그getDictByTitle",e.toString());
-            }
-
-        });
-
+    protected void handleData(DictWithWords dictWithWords) {
+        showWord();
+        fillOptions(dictWithWords.words);
     }
+
 
     private void showWord() {
         if (word != null) {

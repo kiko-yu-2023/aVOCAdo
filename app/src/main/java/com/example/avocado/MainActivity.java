@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //배경화면 보이도록 패딩넣기
         ConstraintLayout mainLayout = binding.container;
         int padding = getResources().getDimensionPixelSize(R.dimen.fragment_padding);
-        mainLayout.setPadding(padding,0,padding,padding);
+        mainLayout.setPadding(padding, 0, padding, padding);
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -88,13 +88,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        db= AppDatabase.getDatabase(getApplicationContext());
-        dr=new DictRepository(db.dictDao(),db.wordDao());
-        wr=new WordRepository(db.wordDao());
-        rr=new RecordRepository(db.recordDao(),db.quizDao(),db.testDao());
-        qr=new QuizRepository(db.quizDao());
-        tr=new TestRepository(db.testDao());
-
+        db = AppDatabase.getDatabase(getApplicationContext());
+        dr = new DictRepository(db.dictDao(), db.wordDao());
+        wr = new WordRepository(db.wordDao());
+        rr = new RecordRepository(db.recordDao(), db.quizDao(), db.testDao());
+        qr = new QuizRepository(db.quizDao());
+        tr = new TestRepository(db.testDao());
 
 
         //dictInsert("abc");
@@ -104,9 +103,8 @@ public class MainActivity extends AppCompatActivity {
         //insertRecordAndQuiz(1);
 
 
-//        putSentence("hello");
-//        putWord("hello");
-        insertRecordAndTest(4);
+        //putSentence("The Little Prince");
+        //putWord("The Little Prince");
     }
 
     public void replaceFragment(Fragment fragment){
@@ -310,12 +308,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-//                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
-//                        .subscribe();
-//                wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
-//                        .subscribe();
-//                wr.insert(new Word(true,"Where are you from?","넌 어디서 왔니?",null,null,dict.getDictID()))
-//                        .subscribe();
+                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(true,"Where are you from?","넌 어디서 왔니?",null,null,dict.getDictID()))
+                        .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
                 dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
@@ -339,10 +337,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                wr.insert(new Word(false,"cat","고양이","Cat is my favorite animal","고양이는 내가 좋아하는 동물이야",dict.getDictID()))
+                wr.insert(new Word(false,"cat","고양이","Cat is my favorite animal","고양이는 내가 좋아하는 동물이야.",dict.getDictID()))
                         .subscribe();
                 wr.insert(new Word(false,"piano","피아노","Are you good at playing the piano?","너 피아노 잘쳐?",dict.getDictID()))
                         .subscribe();
+                wr.insert(new Word(false,"apple","사과","I love apple.","난 사과를 좋아해.",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"coffee","커피","I need coffee.","나 커피가 필요해.",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"phone","폰","I need to get a new phone.","새 휴대폰을 사야겠어.",dict.getDictID()))
+                        .subscribe();
+
                 //단어장이 수정되었으니 수정시간 업데이트
                 dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
