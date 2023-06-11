@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
     //검색한 데이터 리스트
     public ArrayList<Dict> search_list = new ArrayList<>();
     public EditText editText;
+    private TextView noMemoText;
     //리스너 오버라이딩
     private OnItemClickListener listener;
 
@@ -71,7 +72,7 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
         rc_dict = binding.recyclerviewDict;
         rc_dict.setHasFixedSize(true);
 
-        TextView noMemoText = binding.noMemoText;
+        noMemoText = binding.noMemoText;
 
         adapter_dict = new DictAdapter(total_items);
         adapter_dict.setOnItemClickListener(this);
@@ -178,7 +179,7 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
                         }
                         else
                         {
-                            //noMemoText.setText("");
+                            noMemoText.setText("");
                             Log.d("dicts size",Integer.toString(dicts.size()));
                             total_items.clear(); // total_items 리스트 초기화
                             total_items.addAll(dicts); // 데이터 추가
