@@ -36,6 +36,7 @@ import io.reactivex.rxjava3.functions.Consumer;
 
 public class HomeFragment extends Fragment implements DictAdapter.OnItemClickListener {
 
+    private boolean hasAddMemo;
     private FragmentHomeBinding binding;
     public RecyclerView rc_dict;
     public DictAdapter adapter_dict;
@@ -49,11 +50,13 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
     private OnItemClickListener listener;
 
 
-    public static Fragment newInstance() {
+    //메모 추가 floating button이 있는가?
+    public HomeFragment(){
+    }
+    public static Fragment newInstance(boolean hasAddMemo) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-/*        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);*/
+        args.putBoolean("hasAddMemo", hasAddMemo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +70,18 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        //hasAddMemo일 경우 보이도록
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("hasAddMemo")) {
+            boolean hasSpecialElement = args.getBoolean("hasAddMemo");
+            FloatingActionButton addMemo = binding.floatingActionButton;
+            if (hasSpecialElement) {
+                addMemo.setVisibility(View.VISIBLE);
+            } else {
+                addMemo.setVisibility(View.GONE);
+            }
+        }
 
         //리사이클려뷰 초기화
         rc_dict = binding.recyclerviewDict;

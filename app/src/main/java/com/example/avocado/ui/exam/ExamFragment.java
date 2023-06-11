@@ -57,7 +57,8 @@ public class ExamFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 //단어장 선택 화면 보여주기
-                HomeFragment homeFragment = (new HomeFragment());
+                boolean hasAddMemo = false;
+                HomeFragment homeFragment = (HomeFragment) HomeFragment.newInstance(hasAddMemo);
                 getChildFragmentManager().findFragmentById(R.id.test_layout);
                 homeFragment.setOnItemClickListener(new HomeFragment.OnItemClickListener() {
                     @Override
