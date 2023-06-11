@@ -5,8 +5,8 @@
         android:icon="@drawable/trash_can"
         android:title="휴지통" />
 
-<!--    <item-->
-<!--        android:id="@+id/navigation_dashboard"-->
-<!--        android:icon="@drawable/exam_selector"-->
-<!--        android:title="@string/title_exam" />-->
+    <item
+        android:id="@+id/navigation_move"
+        android:icon="@drawable/baseline_drive_file_move_24"
+        android:title="이동하기" />
 </menu>

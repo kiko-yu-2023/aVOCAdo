@@ -195,7 +195,7 @@ public class WordListFragment extends Fragment {
                 // 클릭된 메뉴 아이템을 기반으로 처리 로직을 구현합니다.
                 int itemId = item.getItemId();
                 if (itemId == R.id.navigation_trash) {// 휴지통 클릭했을 때의 로직
-                    Log.d("pressed","navigation_trash pressed");
+                    //Log.d("pressed","navigation_trash pressed");
 
                     AppDatabase db=AppDatabase.getDatabase(getContext());
                     //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
@@ -226,11 +226,17 @@ public class WordListFragment extends Fragment {
                     }
 
                     return true;
-//                    case R.id.menu_item2:
-//                        // 메뉴 아이템 2 클릭 시 처리할 로직
-//                        return true;
-                    // 다른 메뉴 아이템들에 대한 처리도 추가합니다.
                 }
+                else if(itemId == R.id.navigation_move)
+                {
+                    //Bundle로 현재 받은 선택 리스트 넘기기 -> 단어장 이름,
+                    //RecyclerView로 단어장 선택하는 화면으로 아이템 선택
+                    // 다시 WordListFragment로 돌아오기
+                }
+//                case R.id.navigation_move:
+                // 메뉴 아이템 2 클릭 시 처리할 로직
+                return true;
+//                     다른 메뉴 아이템들에 대한 처리도 추가합니다.
                 return false;
             }
         });
