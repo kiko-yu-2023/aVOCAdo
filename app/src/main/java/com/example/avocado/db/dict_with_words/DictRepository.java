@@ -53,7 +53,7 @@ public class DictRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-    public Single<DictWithWords> getWordsBydictID(int dictID)
+    public Single<DictWithWords> getWordsByDictID(int dictID)
     {
         return wordDao.dictHasWord(dictID)
                 .flatMap(hasWord -> {

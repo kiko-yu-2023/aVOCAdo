@@ -15,7 +15,15 @@ public class Test {
     private int wordID;
     private int recordID;
 
-
+    public Test(boolean engIsCorrect,boolean korIsCorrect,String engAnswer,String korAnswer,int wordID,int recordID)
+    {
+        this.engIsCorrect=engIsCorrect;
+        this.korIsCorrect=korIsCorrect;
+        this.engAnswer=engAnswer;
+        this.korAnswer=korAnswer;
+        this.wordID=wordID;
+        this.recordID=recordID;
+    }
 
     public boolean isEngIsCorrect() {
         return engIsCorrect;

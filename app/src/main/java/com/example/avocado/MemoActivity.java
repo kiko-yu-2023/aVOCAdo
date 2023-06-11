@@ -60,7 +60,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     private int currentPage;
     private String dictName;
     private int dictId;
-
     /**
      * The pager adapter, which provides the pages to the view pager widget.
      */
@@ -86,6 +85,11 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
         // Instantiate a ViewPager2 and a PagerAdapter.
         viewPager = binding.viewPager2Container;
+
+
+        //popBackStack 할수있도록
+        fragmentManager = getSupportFragmentManager();
+
         toLeft = binding.beforeFragmentLayout;
         toRight = binding.nextFragmentLayout;
 
@@ -116,7 +120,15 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
                 currentPage = position;
 
-                if (position == 0) {
+                if(NUM_PAGES==1)
+                {
+                    toRight.setEnabled(false);
+                    toLeft.setEnabled(false);
+                    toLeft.setVisibility(View.INVISIBLE);
+                    toRight.setVisibility(View.INVISIBLE);
+                }
+                else
+                    if (position == 0) {
                     toRight.setEnabled(true);
                     toLeft.setEnabled(false);
                     toLeft.setVisibility(View.INVISIBLE);
@@ -136,8 +148,13 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     }
 
     @Override
-    public void onBackPressed() {
-        if (viewPager.getCurrentItem() == 0) {
+    public void onBackPressed(){
+        //WordListFragment 갔다가 돌아올 때 필요한 코드
+        if(fragmentManager.getBackStackEntryCount()>0)
+        {
+            fragmentManager.popBackStack();
+        }
+        else if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
@@ -164,7 +181,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsBydictID(dict.getDictID())
+                dr.getWordsByDictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             //성공 단어장-단어리스트 객체 - dicWithWords
                             @Override
@@ -205,7 +222,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             }
         });
     }
-
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
@@ -217,6 +233,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         public ViewPagerAdapter(FragmentActivity fa) {
             super(fa);
         }
+
 
         @Override
         public Fragment createFragment(int position) {
@@ -248,7 +265,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
                 wordMeaningSt = word.getMeaning();
                 exampleSentenceSt = word.getExampleSentence();
                 exampleSentenceMeaningSt = word.getExampleMeaning();
-//                }
+
                 bundle.putString("inputFixedString", inputFixedString);
                 bundle.putString("wordMeaningSt", wordMeaningSt);
                 bundle.putString("exampleSentenceSt", exampleSentenceSt);
@@ -259,7 +276,10 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             }
         }
 
-
+        //        public void replaceFragment(int index, Fragment fragment) {
+//            fragments.set(index, fragment);
+//            notifyDataSetChanged();
+//        }
         public void addItem(int index,Fragment fragment) {
             fragments.add(index,fragment);
             notifyDataSetChanged();
@@ -270,6 +290,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             return wordList.size();
         }
     }
+
 
     //키보드 나왔을 때 다른 곳을 터치하면 키보드 내리기
     @Override
@@ -344,6 +365,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         pagerAdapter.notifyDataSetChanged();
 
     }
+
 }
 
-    

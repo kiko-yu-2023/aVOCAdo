@@ -18,7 +18,8 @@ import kotlinx.coroutines.flow.Flow;
 public interface RecordDao {
     @Insert
     Single<Long> insert(Record record);
-
+    @Query("SELECT * FROM RECORD WHERE RECORDID=:recordID")
+    Single<Record> getRecord(int recordID);
     @Query("UPDATE Record SET score = "+
             "(SELECT COUNT(*) FROM Quiz WHERE recordID = :recordID AND ISCORRECT=1)"+
             " WHERE recordID = :recordID")
@@ -44,11 +45,13 @@ public interface RecordDao {
     @Query("SELECT * FROM RECORD WHERE recordID=:recordID")
     Single<RecordWithQuizs> getRecordWithQuizs(int recordID);
 
-    @Query("SELECT * FROM RECORD WHERE RELATEDWITHTEST = 1 ORDER BY TIME DESC")
-    Single<List<Record>> getTestRecords();
+    @Query("SELECT * FROM RECORD WHERE DICTID=:dictID ORDER BY TIME DESC")
+    Single<List<Record>> getAllRecordsByDictID(int dictID);
+    @Query("SELECT * FROM RECORD WHERE RELATEDWITHTEST = 1 AND DICTID=:dictID ORDER BY TIME DESC")
+    Single<List<Record>> getTestRecordsByDictID(int dictID);
 
-    @Query("SELECT * FROM RECORD WHERE RELATEDWITHTEST = 0 ORDER BY TIME DESC")
-    Single<List<Record>> getQuizRecords();
+    @Query("SELECT * FROM RECORD WHERE RELATEDWITHTEST = 0 AND DICTID=:dictID ORDER BY TIME DESC")
+    Single<List<Record>> getQuizRecordsByDictID(int dictID);
 
 
 

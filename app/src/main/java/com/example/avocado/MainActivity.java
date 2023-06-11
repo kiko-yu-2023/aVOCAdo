@@ -19,6 +19,7 @@ import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 import com.example.avocado.db.record_with_quizes_and_tests.QuizRepository;
 import com.example.avocado.db.record_with_quizes_and_tests.Record;
 import com.example.avocado.db.record_with_quizes_and_tests.RecordRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.Test;
 import com.example.avocado.db.record_with_quizes_and_tests.TestRepository;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         db= AppDatabase.getDatabase(getApplicationContext());
         dr=new DictRepository(db.dictDao(),db.wordDao());
         wr=new WordRepository(db.wordDao());
-        rr=new RecordRepository(db.recordDao());
+        rr=new RecordRepository(db.recordDao(),db.quizDao(),db.testDao());
         qr=new QuizRepository(db.quizDao());
         tr=new TestRepository(db.testDao());
 
@@ -103,7 +104,9 @@ public class MainActivity extends AppCompatActivity {
         //insertRecordAndQuiz(1);
 
 
-
+//        putSentence("hello");
+//        putWord("hello");
+        //insertRecordAndTest(4);
     }
 
     public void replaceFragment(Fragment fragment){
@@ -129,7 +132,47 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(event);
     }
+    //wordID로 word 객체 찾아오기
+    static void getWord(int wordID)
+    {
+        wr.getWord(wordID).subscribe(new SingleObserver<Word>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
 
+            @Override
+            public void onSuccess(@NonNull Word word) {
+                //작동 코드ㅡ
+            }
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그 getWord",e.toString());
+            }
+        });
+    }
+    //1. dictId있는 특정 dict에 대한 모든 record를 가져오는 기능
+    static void getRecordsByDictID(int dictID)
+    {
+        //종류 상관없이면 getAllRecords, 아니면 getQuizRecords 혹은 getTestRecords
+        //함수명 제외 코드는 다 같음
+        rr.getAllRecordsByDictID(dictID).subscribe(new SingleObserver<List<Record>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull List<Record> records) {
+                Log.d("로그 record get"," "+records.size());
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그 record get",e.toString());
+            }
+        });
+    }
+    //2. 특정 dict 하나에 record insert하는거 함수로
     //레코드를 만들고 그 안에 퀴즈 리스트를 넣고 퀴즈 리스트의 점수로 레코드 업데이트
     static void insertRecordAndQuiz(int dictID)
     {
@@ -156,6 +199,41 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         Log.e("로그 quiz insert mainActivity",e.toString());
+                    }
+                });
+            }
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+        });
+
+    }
+    static void insertRecordAndTest(int dictID)
+    {
+        Record rec=new Record(true,dictID);
+        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(@NonNull Integer recordID) {
+                Test t1=new Test(true,true,"hi","안녕",5,recordID);
+                Test t2=new Test(true,false,"good","나쁜",6,recordID);
+                  tr.insert(t1,t2).subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+                    @Override
+                    public void onComplete() {
+                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
+                    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.e("로그 test insert mainActivity",e.toString());
                     }
                 });
             }
@@ -249,10 +327,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
-                        .subscribe();
+//                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
+//                        .subscribe();
+//                wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
+//                        .subscribe();
+//                wr.insert(new Word(true,"Where are you from?","넌 어디서 왔니?",null,null,dict.getDictID()))
+//                        .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
-                dr.updateModifiedTime(dict.getDictID(),new Date());
+                dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
             //해당 단어장 검색 싪패
             @Override
@@ -274,10 +356,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                wr.insert(new Word(false,"apple","사과","An apple is red","사과는 빨간색이다",dict.getDictID()))
+                wr.insert(new Word(false,"cat","고양이","Cat is my favorite animal","고양이는 내가 좋아하는 동물이야",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"piano","피아노","Are you good at playing the piano?","너 피아노 잘쳐?",dict.getDictID()))
                         .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
-                dr.updateModifiedTime(dict.getDictID(),new Date());
+                dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
             //해당 단어장 검색 싪패
             @Override
@@ -298,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어장과 연결된 단어리스트 찾기
-                dr.getWordsBydictID(dict.getDictID())
+                dr.getWordsByDictID(dict.getDictID())
                         .subscribe(new SingleObserver<DictWithWords>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {

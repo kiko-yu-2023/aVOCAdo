@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface QuizDao {
@@ -18,4 +19,7 @@ public interface QuizDao {
 
     @Query("DELETE FROM QUIZ WHERE QUIZID=:quizID")
     Completable delete(int quizID);
+
+    @Query("SELECT EXISTS (SELECT * FROM QUIZ WHERE RECORDID = :recordID)")
+    Single<Boolean> RecordHasQuiz(int recordID);
 }

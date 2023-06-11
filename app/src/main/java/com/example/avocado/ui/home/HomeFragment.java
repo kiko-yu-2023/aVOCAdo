@@ -44,6 +44,8 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
     //검색한 데이터 리스트
     public ArrayList<Dict> search_list = new ArrayList<>();
     public EditText editText;
+    //리스너 오버라이딩
+    private OnItemClickListener listener;
 
 
     public static Fragment newInstance() {
@@ -59,6 +61,8 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
+
+        container.removeAllViews();
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -193,16 +197,29 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
         binding = null;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+
     public void onItemClick(int position, String dictName){
         //아이템 클릭 시 실행될 코드
         // MemoActivity로 이동하는 코드
 
-        Intent intent = new Intent(getActivity(), MemoActivity.class);
+        if(listener != null){
+            listener.onItemClick(position, dictName);
+        }else{
+            Intent intent = new Intent(getActivity(), MemoActivity.class);
 
-        //Bundle을 사용하여 데이터 전달(제목으로 가져옴.)
-        intent.putExtra("dictName",dictName);
-        Log.d("dictName",dictName);
-        startActivity(intent);
+            //Bundle을 사용하여 데이터 전달(제목으로 가져옴.)
+            intent.putExtra("dictName",dictName);
+            Log.d("dictName",dictName);
+            startActivity(intent);
+        }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position, String dictName);
     }
 
 }
+

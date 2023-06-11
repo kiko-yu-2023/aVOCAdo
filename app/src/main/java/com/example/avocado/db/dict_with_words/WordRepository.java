@@ -31,7 +31,11 @@ public class WordRepository {
         return wordDao.insert(word).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-
+    public Single<Word> getWord(int wordID)
+    {
+        return wordDao.getWord(wordID).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
     public Completable delete(Word...words)
     {
         return wordDao.delete(words).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());

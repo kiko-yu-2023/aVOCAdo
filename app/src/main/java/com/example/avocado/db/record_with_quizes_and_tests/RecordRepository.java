@@ -14,9 +14,12 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RecordRepository {
     private RecordDao rd;
-    public RecordRepository(RecordDao rd)
+    private QuizDao qd;
+    private TestDao td;
+    public RecordRepository(RecordDao rd,QuizDao qd,TestDao td)
     {
-        this.rd=rd;
+        this.rd=rd; this.qd=qd;
+        this.td=td;
     }
     public Single<Integer> insert(Record record)
     {
@@ -47,35 +50,60 @@ public class RecordRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<RecordWithQuizs> getRecordWithQuizs(Record record)
+    public Single<RecordWithQuizs> getRecordWithQuizs(int recordID)
     {
-        if(record.isRelatedWithTest())
-        {
-            return Single.error(new Throwable("Quiz Record가 아닙니다"));
-        }
-        return rd.getRecordWithQuizs(record.getRecordID()).subscribeOn(Schedulers.io())
+        return rd.getRecord(recordID).flatMap(record -> {
+            if(record.isRelatedWithTest()) {
+                return Single.error(new Throwable("Quiz Record가 아닙니다"));
+            }
+            else {
+                return qd.RecordHasQuiz(recordID);
+            }
+        }).flatMap(hasQuiz->{
+            if(hasQuiz)
+            {
+                return rd.getRecordWithQuizs(recordID);
+            }
+            else {
+                return Single.error(new Throwable("해당하는 퀴즈가 없습니다"));
+            }}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+
+    }
+
+    public Single<RecordWithTests> getRecordWithTests(int recordID)
+    {
+        return rd.getRecord(recordID).flatMap(record -> {
+            if(!record.isRelatedWithTest())
+            {
+                return Single.error(new Throwable("Test Record가 아닙니다"));
+            }
+            else {
+                return td.RecordHasTest(recordID);
+            }
+        }).flatMap(hasTest->{
+            if(hasTest)
+            {
+                return rd.getRecordWithTests(recordID);
+            }
+            else {
+                return Single.error(new Throwable("해당하는 테스트가 없습니다"));
+            }}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<List<Record>> getAllRecordsByDictID(int dictID)
+    {
+        return rd.getAllRecordsByDictID(dictID).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+    public Single<List<Record>> getTestRecordsByDictID(int dictID)
+    {
+        return rd.getTestRecordsByDictID(dictID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<RecordWithTests> getRecordWithTests(Record record)
+    public Single<List<Record>> getQuizRecordsByDictID(int dictID)
     {
-        if(!record.isRelatedWithTest())
-        {
-            return Single.error(new Throwable("Test Record가 아닙니다"));
-        }
-        return rd.getRecordWithTests(record.getRecordID()).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Single<List<Record>> getTestRecords()
-    {
-        return rd.getTestRecords().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Single<List<Record>> getQuizRecords()
-    {
-        return rd.getQuizRecords().subscribeOn(Schedulers.io())
+        return rd.getQuizRecordsByDictID(dictID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 }

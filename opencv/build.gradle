@@ -97,11 +97,11 @@ println "OpenCV: " +openCVersionName + " " + project.buildscript.sourceFile
 
 android {
     namespace 'com.example.avocado'
-    compileSdkVersion 26
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 33
 
         versionCode openCVersionCode
         versionName openCVersionName
