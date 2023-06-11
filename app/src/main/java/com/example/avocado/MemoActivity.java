@@ -86,10 +86,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         // Instantiate a ViewPager2 and a PagerAdapter.
         viewPager = binding.viewPager2Container;
 
-
-        //popBackStack 할수있도록
-        fragmentManager = getSupportFragmentManager();
-
         toLeft = binding.beforeFragmentLayout;
         toRight = binding.nextFragmentLayout;
 
@@ -120,7 +116,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
                 currentPage = position;
 
-                if(NUM_PAGES==1)
+                if(pagerAdapter.getItemCount()==1)
                 {
                     toRight.setEnabled(false);
                     toLeft.setEnabled(false);
@@ -150,11 +146,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     @Override
     public void onBackPressed(){
         //WordListFragment 갔다가 돌아올 때 필요한 코드
-        if(fragmentManager.getBackStackEntryCount()>0)
-        {
-            fragmentManager.popBackStack();
-        }
-        else if (viewPager.getCurrentItem() == 0) {
+        if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();

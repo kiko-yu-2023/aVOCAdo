@@ -237,7 +237,6 @@ public class WordListFragment extends Fragment {
                 // 메뉴 아이템 2 클릭 시 처리할 로직
                 return true;
 //                     다른 메뉴 아이템들에 대한 처리도 추가합니다.
-                return false;
             }
         });
 
