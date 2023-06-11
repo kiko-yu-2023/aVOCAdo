@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
         //putSentence("Test");
         //putWord("Test");
+
+        //insertRecordAndTest(4);
     }
 
     public void replaceFragment(Fragment fragment){
@@ -130,7 +132,24 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(event);
     }
+    //wordID로 word 객체 찾아오기
+    static void getWord(int wordID)
+    {
+        wr.getWord(wordID).subscribe(new SingleObserver<Word>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
 
+            @Override
+            public void onSuccess(@NonNull Word word) {
+                //작동 코드ㅡ
+            }
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그 getWord",e.toString());
+            }
+        });
+    }
     //1. dictId있는 특정 dict에 대한 모든 record를 가져오는 기능
     static void getRecordsByDictID(int dictID)
     {

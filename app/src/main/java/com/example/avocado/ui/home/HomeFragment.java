@@ -158,6 +158,38 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
     }
 
 
+    //HomeFragment가 화면에 보일 때마다 실행.
+    public void onResume(){
+        super.onResume();
+
+        // 이후 데이터 가져오기 함수화 필요.
+        // 삭제 연산시 데이터 0일경우 추가 필요.
+
+        AppDatabase db=AppDatabase.getDatabase(getContext());
+        //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
+        DictRepository dRepo = new DictRepository(db.dictDao(),db.wordDao());
+        dRepo.getDictsByModified()
+                .subscribe(new Consumer<List<Dict>>() {
+                    @Override
+                    public void accept(List<Dict> dicts) throws Throwable {
+                        if(dicts.size()==0)
+                        {
+
+                        }
+                        else
+                        {
+                            //noMemoText.setText("");
+                            Log.d("dicts size",Integer.toString(dicts.size()));
+                            total_items.clear(); // total_items 리스트 초기화
+                            total_items.addAll(dicts); // 데이터 추가
+                            adapter_dict.setItems(total_items);
+                            adapter_dict.notifyDataSetChanged();
+
+                        }
+                    }
+                });
+
+    }
 
     @Override
     public void onDestroyView() {
