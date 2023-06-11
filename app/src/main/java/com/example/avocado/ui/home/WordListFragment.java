@@ -232,6 +232,7 @@ public class WordListFragment extends Fragment {
                     // 다른 메뉴 아이템들에 대한 처리도 추가합니다.
                 }
 <<<<<<< HEAD
+<<<<<<< HEAD
                 else if(itemId == R.id.navigation_move)
                 {
                     //Bundle로 현재 받은 선택 리스트 넘기기 -> 단어장 이름,
@@ -243,6 +244,8 @@ public class WordListFragment extends Fragment {
                 return true;
 //                     다른 메뉴 아이템들에 대한 처리도 추가합니다.
 =======
+=======
+>>>>>>> parent of 839f01e (move drawable added)
                 return false;
 >>>>>>> parent of 839f01e (move drawable added)
             }
