@@ -45,8 +45,7 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
     public ArrayList<Dict> search_list = new ArrayList<>();
     public EditText editText;
     //리스너 오버라이딩
-    private OnItemClickListener listener;
-
+    private OnItemClickListener onItemClickListener;
 
     public static Fragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -137,7 +136,6 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
         });
 
 
-
         final FloatingActionButton addMemo = binding.floatingActionButton;
         addMemo.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -198,15 +196,15 @@ public class HomeFragment extends Fragment implements DictAdapter.OnItemClickLis
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
-        this.listener = listener;
+        this.onItemClickListener = listener;
     }
 
     public void onItemClick(int position, String dictName){
         //아이템 클릭 시 실행될 코드
         // MemoActivity로 이동하는 코드
 
-        if(listener != null){
-            listener.onItemClick(position, dictName);
+        if(onItemClickListener != null){
+            onItemClickListener.onItemClick(position, dictName);
         }else{
             Intent intent = new Intent(getActivity(), MemoActivity.class);
 

@@ -14,7 +14,6 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public abstract class QuizDataFragment extends Fragment {
-
     private AppDatabase db = AppDatabase.getDatabase(getContext());
     private DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());;
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,6 +23,7 @@ import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 import com.example.avocado.ui.home.HomeFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,8 @@ public class ExamFragment extends Fragment{
                         playQuiz(title);
                     }
                 });
+
+                //단어장 추가 플로팅액션버튼 숨기기
 
                 FragmentManager fragmentManager = getChildFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();

@@ -42,7 +42,6 @@ public class ExamResultFragment extends Fragment {
         this.quizList = quizList;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
