@@ -28,8 +28,7 @@ public interface WordDao {
     @Query("SELECT EXISTS (SELECT * FROM WORD WHERE dictID = :dictID)")
     Single<Boolean> dictHasWord(int dictID);
 
-    @Query("SELECT * FROM WORD WHERE WORDID=:wordID")
-    Single<Word> getWord(int wordID);
+
     //userInput 단어의 예문 보여주기
     /* deprcated
     * @Query("SELECT * FROM Word WHERE WORD = :userInput")

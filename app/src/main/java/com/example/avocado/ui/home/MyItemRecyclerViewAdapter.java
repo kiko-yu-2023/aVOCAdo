@@ -3,6 +3,7 @@ package com.example.avocado.ui.home;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -10,16 +11,17 @@ import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.databinding.FragmentWordListBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link }.
  * TODO: Replace the implementation with code for your data type.
  */
-public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHolder> {
+public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<Word> wordData;
 
-    public WordListAdapter(ArrayList<Word> items) {
+    public MyItemRecyclerViewAdapter(ArrayList<Word> items) {
         wordData = items;
     }
 

@@ -1,8 +1,10 @@
 package com.example.avocado.ui.home;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,7 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.example.avocado.R;
+import com.example.avocado.databinding.FragmentHomeBinding;
+import com.example.avocado.databinding.FragmentWordListBinding;
 import com.example.avocado.databinding.FragmentWordListListBinding;
 import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
@@ -18,12 +24,14 @@ import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
 import com.example.avocado.db.dict_with_words.WordRepository;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 
 /**
  * A fragment representing a list of Items.
@@ -42,7 +50,7 @@ public class WordListFragment extends Fragment {
     ArrayList<Word> wordList;
     private String dictName;
 
-    public WordListAdapter adapter_word;
+    public MyItemRecyclerViewAdapter adapter_word;
     //원본 데이터 리스트
     public ArrayList<Word> total_items = new ArrayList<>();
 
@@ -86,7 +94,7 @@ public class WordListFragment extends Fragment {
 
         //TextView noMemoText = binding.noMemoText;
 
-        adapter_word = new WordListAdapter(total_items);
+        adapter_word = new MyItemRecyclerViewAdapter(total_items);
         //adapter_dict.setOnItemClickListener(this);
         rc_list.setLayoutManager(new LinearLayoutManager(getContext()));
         rc_list.setAdapter(adapter_word);
