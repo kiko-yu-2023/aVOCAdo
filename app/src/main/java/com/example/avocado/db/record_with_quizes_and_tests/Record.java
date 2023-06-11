@@ -11,7 +11,7 @@ public class Record {
     @PrimaryKey(autoGenerate = true)
     private int recordID;
     private Date time;
-    private int score;
+    private String score;
     private boolean relatedWithTest;
     private int dictID;
 
@@ -45,11 +45,11 @@ public class Record {
         this.time = time;
     }
 
-    public int getScore() {
+    public String getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(String score) {
         this.score = score;
     }
 

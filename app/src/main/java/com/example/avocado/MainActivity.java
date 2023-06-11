@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
         //insertRecordAndQuiz(1);
 
 
-        //putSentence("The Little Prince");
-        //putWord("The Little Prince");
+        //putSentence("Test");
+        //putWord("Test");
     }
 
     public void replaceFragment(Fragment fragment){
@@ -153,78 +153,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //2. 특정 dict 하나에 record insert하는거 함수로
-    //레코드를 만들고 그 안에 퀴즈 리스트를 넣고 퀴즈 리스트의 점수로 레코드 업데이트
-    static void insertRecordAndQuiz(int dictID)
-    {
-        Record rec=new Record(true,dictID);
-        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
 
-            }
 
-            @Override
-            public void onSuccess(@NonNull Integer recordID) {
-                Quiz q1=new Quiz(true,1,"random","abdf",1,recordID);
-                Quiz q2=new Quiz(true,1,"random","abdf",2,recordID);
-                qr.insert(q1,q2).subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-                    @Override
-                    public void onComplete() {
-                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
-                    }
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.e("로그 quiz insert mainActivity",e.toString());
-                    }
-                });
-            }
-            @Override
-            public void onError(@NonNull Throwable e) {
-
-            }
-        });
-
-    }
-    static void insertRecordAndTest(int dictID)
-    {
-        Record rec=new Record(true,dictID);
-        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-
-            }
-
-            @Override
-            public void onSuccess(@NonNull Integer recordID) {
-                Test t1=new Test(true,true,"hi","안녕",5,recordID);
-                Test t2=new Test(true,false,"good","나쁜",6,recordID);
-                  tr.insert(t1,t2).subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-                    @Override
-                    public void onComplete() {
-                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
-                    }
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.e("로그 test insert mainActivity",e.toString());
-                    }
-                });
-            }
-            @Override
-            public void onError(@NonNull Throwable e) {
-
-            }
-        });
-
-    }
     //deleteWord or Sentence
     static void deleteWord(int wordID)
     {
@@ -308,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
+                wr.insert(new Word(true,"I am Sam","나는 샘이다",null,null,dict.getDictID()))
                         .subscribe();
                 wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
                         .subscribe();

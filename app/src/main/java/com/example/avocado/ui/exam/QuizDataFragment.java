@@ -8,7 +8,6 @@ import com.example.avocado.db.AppDatabase;
 import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
-import com.example.avocado.db.dict_with_words.WordRepository;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
@@ -17,7 +16,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 public abstract class QuizDataFragment extends Fragment {
 
     private AppDatabase db = AppDatabase.getDatabase(getContext());
-    private WordRepository wr = new WordRepository(db.wordDao());;
     private DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());;
 
     protected void loadData(String title){

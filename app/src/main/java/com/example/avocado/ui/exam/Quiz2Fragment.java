@@ -13,6 +13,9 @@ import android.widget.Toast;
 import com.example.avocado.databinding.FragmentQuiz2Binding;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
+
+import java.util.ArrayList;
 
 public class Quiz2Fragment extends QuizDataFragment {
 
@@ -21,14 +24,17 @@ public class Quiz2Fragment extends QuizDataFragment {
     TextView textView;
     EditText inputWordQuiz2;
     ImageView completeQuiz2;
-    private String title;
-    private int correctAnswer;
+    private String title;//사전 이름
+    private int correctAnswer;//정답 개수
     private Word word;
+    private ArrayList<Quiz> quiz; //이 퀴즈 저장
+    private boolean isCorrect;
 
-    public Quiz2Fragment(String title, Word word, int correctAnswer) {
+    public Quiz2Fragment(String title, Word word, int correctAnswer, ArrayList<Quiz> quiz) {
         this.title = title;
         this.word = word;
         this.correctAnswer = correctAnswer;
+        this.quiz = quiz;
     }
 
 
@@ -53,14 +59,19 @@ public class Quiz2Fragment extends QuizDataFragment {
         completeQuiz2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isCorrect(inputWordQuiz2.getText().toString())) {
-                    // Correct answer
+                isCorrect = inputWordQuiz2.getText().toString().toLowerCase().equals(word.getContent());
+
+                if (isCorrect) {
                     correctAnswer ++;
                 } else {
                     // Incorrect answer
                     Toast.makeText(getContext(), "Incorrect answer", Toast.LENGTH_SHORT).show();
                 }
+
+                updateQuizList();
+
                 ExamFragment parentFragment = (ExamFragment) getParentFragment();
+
                 if (parentFragment != null) {
                     parentFragment.openNextQuizFragment(correctAnswer);
                 }
@@ -76,6 +87,15 @@ public class Quiz2Fragment extends QuizDataFragment {
         showExampleWithBlank();
     }
 
+    private ArrayList<Quiz> updateQuizList(){
+        String example = word.getExampleSentence();
+        String modifiedExample = example.replace(word.getContent(), "_______");
+        quiz.add(new Quiz(isCorrect,2,
+                modifiedExample,inputWordQuiz2.getText().toString(),word.getWordID(),0));
+
+        return quiz;
+    }
+
 
     private void showExampleWithBlank() {
         if (word != null) {
@@ -88,13 +108,13 @@ public class Quiz2Fragment extends QuizDataFragment {
         }
     }
 
-    private boolean isCorrect(String inputWord) {
-        if(inputWord.equals(word.getContent())){
-            return true;
-        }else{
-            return false;
-        }
-    }
+//    private void isCorrect(String inputWord) {
+//        if(inputWord.equals(word.getContent().toLowerCase())){
+//            isCorrect = true;
+//        }else{
+//            isCorrect = false;
+//        }
+//    }
 
     @Override
     public void onDestroyView() {

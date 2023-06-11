@@ -20,8 +20,11 @@ import com.example.avocado.db.dict_with_words.Dict;
 import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 import com.example.avocado.ui.home.HomeFragment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import io.reactivex.rxjava3.core.SingleObserver;
@@ -38,6 +41,7 @@ public class ExamFragment extends Fragment{
 
 
     private int correctAnswer = 0;
+    private ArrayList<Quiz> quiz = new ArrayList<>();
     private String title;
 
 
@@ -143,19 +147,19 @@ public class ExamFragment extends Fragment{
             Fragment selectedFragment;
 
             if (word.isSentence()) {
-                selectedFragment = new Quiz4Fragment(title, word, correctAnswer);
+                selectedFragment = new Quiz4Fragment(title, word, correctAnswer, quiz);
             } else {
                 int randomFragment = new Random().nextInt(3) + 1;
 
                 switch (randomFragment) {
                     case 1:
-                        selectedFragment = new Quiz1Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz1Fragment(title, word, correctAnswer, quiz);
                         break;
                     case 2:
-                        selectedFragment = new Quiz2Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz2Fragment(title, word, correctAnswer, quiz);
                         break;
                     case 3:
-                        selectedFragment = new Quiz3Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz3Fragment(title, word, correctAnswer, quiz);
                         break;
                     default:
                         selectedFragment = new HomeFragment();
@@ -187,18 +191,18 @@ public class ExamFragment extends Fragment{
 
             Fragment selectedFragment;
             if (word.isSentence()) {
-                selectedFragment = new Quiz4Fragment(title, word, correctAnswer);
+                selectedFragment = new Quiz4Fragment(title, word, correctAnswer, quiz);
             } else {
                 int randomFragment = new Random().nextInt(3) + 1;
                 switch (randomFragment) {
                     case 1:
-                        selectedFragment = new Quiz1Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz1Fragment(title, word, correctAnswer, quiz);
                         break;
                     case 2:
-                        selectedFragment = new Quiz2Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz2Fragment(title, word, correctAnswer, quiz);
                         break;
                     case 3:
-                        selectedFragment = new Quiz3Fragment(title, word, correctAnswer);
+                        selectedFragment = new Quiz3Fragment(title, word, correctAnswer, quiz);
                         break;
                     default:
                         selectedFragment = new HomeFragment();
@@ -212,7 +216,7 @@ public class ExamFragment extends Fragment{
             transaction.commit();
         }else{
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.test_layout, new ExamResultFragment(correctAnswer, dictWithWords));
+            transaction.replace(R.id.test_layout, new ExamResultFragment(correctAnswer, dictWithWords, quiz));
             transaction.addToBackStack(null);
             transaction.commit();
         }

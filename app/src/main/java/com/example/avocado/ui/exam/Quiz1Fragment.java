@@ -2,11 +2,6 @@ package com.example.avocado.ui.exam;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +13,7 @@ import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz1Binding;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,19 +25,23 @@ public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListe
 
     private FragmentQuiz1Binding binding;
 
-    TextView textView;
-    Button button1, button2, button3, button4;
+    private TextView textView;
+    private Button button1, button2, button3, button4;
     private ArrayList<Button> buttons;
-    List<String> meanings;
+    private List<String> meanings;
 
-    private String title;
-    private int correctAnswer;
+    private String title;//사전 이름
+    private int correctAnswer;//정답 개수
     private Word word;
+    private String InputWordQuiz1; //사용자 선택 답
+    private ArrayList<Quiz> quiz; //이 퀴즈 저장
+    private boolean isCorrect;//정답 여부
 
-    public Quiz1Fragment(String title, Word word, int correctAnswer) {
+    public Quiz1Fragment(String title, Word word, int correctAnswer, ArrayList<Quiz> quiz) {
         this.title = title;
         this.word = word;
         this.correctAnswer = correctAnswer;
+        this.quiz = quiz;
     }
 
     @Override
@@ -74,7 +74,6 @@ public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListe
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
 
-
         loadData(title);
 
         return root;
@@ -83,22 +82,21 @@ public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v instanceof Button){
-            Button clickedButton = (Button) v;
-            boolean isCorrectAnswer = clickedButton.getText().toString().equals(word.getMeaning());
+        InputWordQuiz1 = ((Button) v).getText().toString();
+        isCorrect = InputWordQuiz1.equals(word.getMeaning());
 
-            if (isCorrectAnswer) {
-                v.setBackgroundResource(R.color.correct_button);
-                correctAnswer++;
-            } else {
-                v.setBackgroundResource(R.color.incorrect_button);
-            }
-            ExamFragment parentFragment = (ExamFragment) getParentFragment();
-            if (parentFragment != null) {
-                parentFragment.openNextQuizFragment(correctAnswer); // Pass the updated correctAnswer value
-            }
-            removeFragment(this);
+        if (isCorrect) {
+            v.setBackgroundResource(R.color.correct_button);
+            correctAnswer++;
+        } else {
+            v.setBackgroundResource(R.color.incorrect_button);
+        }
 
+        updateQuizList();
+
+        ExamFragment parentFragment = (ExamFragment) getParentFragment();
+        if (parentFragment != null) {
+            parentFragment.openNextQuizFragment(correctAnswer); // Pass the updated correctAnswer value
         }
     }
 
@@ -107,6 +105,17 @@ public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListe
         fillOptions(dictWithWords.words);
     }
 
+    private ArrayList<Quiz> updateQuizList(){
+        if(meanings != null) {
+            quiz.add(new Quiz(isCorrect, 1,
+                    meanings.toString(), InputWordQuiz1, word.getWordID(), 0));
+        }else{
+            Toast.makeText(getActivity(), "퀴즈 생성하기 실패", Toast.LENGTH_SHORT).show();
+        }
+
+        return quiz;
+
+    }
 
     private void showWord() {
         if (word != null) {
@@ -139,15 +148,15 @@ public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListe
             Toast.makeText(getActivity(), "단어 개수 부족", Toast.LENGTH_SHORT).show();
         }
     }
-
     private void removeFragment(Quiz1Fragment quiz1Fragment) {
-        FragmentManager fragmentManager = getParentFragmentManager();
-        Fragment currentFragment = fragmentManager.findFragmentById(R.id.test_layout);
-
-        if (currentFragment != null && currentFragment instanceof Quiz4Fragment && currentFragment.isAdded()) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.remove(currentFragment).commitAllowingStateLoss();
-        }
+//        FragmentManager fragmentManager = getParentFragmentManager();
+//        Fragment currentFragment = fragmentManager.findFragmentById(R.id.test_layout);
+//
+//        if (currentFragment != null && currentFragment instanceof Quiz4Fragment && currentFragment.isAdded()) {
+//            FragmentTransaction transaction = fragmentManager.beginTransaction();
+//            transaction.remove(currentFragment).commitAllowingStateLoss();
+//        }
+//
     }
 
 }
