@@ -8,6 +8,7 @@ import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.internal.operators.completable.CompletableError;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -44,7 +45,7 @@ public class WordRepository {
     {
         return wordDao.delete(wordID).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
-    public Completable update(Word word)
+    public Completable update(Word...word)
     {
         return wordDao.update(word).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -65,4 +66,5 @@ public class WordRepository {
         return wordDao.getOnlySentencesInDict(dictID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
 }

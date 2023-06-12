@@ -3,6 +3,8 @@ package com.example.avocado.ui.home;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -74,8 +76,8 @@ public class WordListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            receivedBundle= getArguments();
-            dictName = getArguments().getString("dictName","");
+            receivedBundle = getArguments();
+            dictName = getArguments().getString("dictName", "");
         }
 
     }
@@ -103,9 +105,9 @@ public class WordListFragment extends Fragment {
         rc_list.setAdapter(adapter_word);
 
 
-        AppDatabase db=AppDatabase.getDatabase(getContext());
+        AppDatabase db = AppDatabase.getDatabase(getContext());
         //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
-        DictRepository dr = new DictRepository(db.dictDao(),db.wordDao());
+        DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
         WordRepository wr = new WordRepository(db.wordDao());
 
         dr.getDictByTitle(dictName).subscribe(new SingleObserver<Dict>() {
@@ -139,7 +141,7 @@ public class WordListFragment extends Fragment {
                                 dictId = dict.getDictID();
                                 total_items = (ArrayList<Word>) dictWithWords.words;
 
-                                Log.d("set","설정함");
+                                Log.d("set", "설정함");
                                 adapter_word.setWordList(total_items);
                                 adapter_word.notifyDataSetChanged();
                             }
@@ -147,7 +149,7 @@ public class WordListFragment extends Fragment {
                             @Override
                             public void onError(Throwable t) {
                                 Log.e("wordList", t.toString());
-                                dictId=dict.getDictID();
+                                dictId = dict.getDictID();
                                 adapter_word.notifyDataSetChanged();
                             }
                         });
@@ -159,7 +161,7 @@ public class WordListFragment extends Fragment {
             }
         });
 
-        adapter_word.setOnItemClickListener(new WordListAdapter.OnItemClickListener(){
+        adapter_word.setOnItemClickListener(new WordListAdapter.OnItemClickListener() {
 
             @Override
             public void onItemClick(View view, int position) {
@@ -173,37 +175,34 @@ public class WordListFragment extends Fragment {
                     adapter_word.isSelected.set(position, false);
                 } else //fasle인 경우
                 {
-                    Log.d("add",total_items.get(position).getContent());
+                    Log.d("add", total_items.get(position).getContent());
                     seletList.add(total_items.get(position));
                     adapter_word.isSelected.set(position, true);
                 }
 
-                if(seletList.size() ==0)
-                {
+                if (seletList.size() == 0) {
                     bottomNavView.setVisibility(View.GONE);
                     seletList.clear();
-                }
-                else
+                } else
                     bottomNavView.setVisibility(View.VISIBLE);
                 adapter_word.notifyDataSetChanged();
             }
         });
 
         bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            AppDatabase db = AppDatabase.getDatabase(getContext());
+            //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
+            DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
+            WordRepository wr = new WordRepository(db.wordDao());
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 // 클릭된 메뉴 아이템을 기반으로 처리 로직을 구현합니다.
                 int itemId = item.getItemId();
                 if (itemId == R.id.navigation_trash) {// 휴지통 클릭했을 때의 로직
-                    Log.d("pressed","navigation_trash pressed");
+                    //Log.d("pressed", "navigation_trash pressed");
 
-                    AppDatabase db=AppDatabase.getDatabase(getContext());
-                    //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
-                    DictRepository dr = new DictRepository(db.dictDao(),db.wordDao());
-                    WordRepository wr = new WordRepository(db.wordDao());
-
-                    for(int i=0;i<seletList.size();i++)
-                    {
+                    //그냥 배열로 변경.
+                    for (int i = 0; i < seletList.size(); i++) {
                         wr.delete(seletList.get(i)).subscribe(new CompletableObserver() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
@@ -212,24 +211,78 @@ public class WordListFragment extends Fragment {
 
                             @Override
                             public void onComplete() {
-                                Log.d("deleted","deleted");
+                                Log.d("deleted", "deleted");
                                 Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                                 adapter_word.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                Log.e("deleted","deleted failed");
+                                Log.e("deleted", "deleted failed");
 
                             }
                         });
                     }
+                }
+                //
+                else if (itemId == R.id.navigation_move) {
+                    //단어장 선택 화면 보여주기
+                    boolean hasAddMemo = false;
+                    HomeFragment homeFragment = (HomeFragment) HomeFragment.newInstance(hasAddMemo);
+                    getChildFragmentManager().findFragmentById(R.id.wordListLayout);
+                    homeFragment.setOnItemClickListener(new HomeFragment.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position, String seletedDictName) {
 
-                    return true;
-//                    case R.id.menu_item2:
-//                        // 메뉴 아이템 2 클릭 시 처리할 로직
-//                        return true;
-                    // 다른 메뉴 아이템들에 대한 처리도 추가합니다.
+                            //선택된 dict로 단어들 이동.
+                            dr.getDictByTitle(seletedDictName).subscribe(new SingleObserver<Dict>() {
+                                @Override
+                                public void onSubscribe(@NonNull Disposable d) {
+
+                                }
+
+                                @Override
+                                public void onSuccess(@NonNull Dict dict) {
+                                    for(Word i:seletList)
+                                    {
+                                        i.setDictID(dict.getDictID());
+                                    }
+                                    wr.update(seletList.toArray(new Word[seletList.size()])).subscribe(new CompletableObserver() {
+                                        @Override
+                                        public void onSubscribe(@NonNull Disposable d) {
+
+                                        }
+
+                                        @Override
+                                        public void onComplete() {
+                                            Log.d("word move","success");
+                                            Toast.makeText(getContext(),"단어가 "+dictName+"로부터 "+seletedDictName+"으로 이동되었습니다.",Toast.LENGTH_LONG).show();
+
+                                            //이전 fragment로 돌아가기
+                                        }
+
+                                        @Override
+                                        public void onError(@NonNull Throwable e) {
+                                            Log.d("word move","success");
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError(@NonNull Throwable e) {
+
+                                }
+                            });
+
+                        }
+                    });
+
+                    FragmentManager fragmentManager = getChildFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                    transaction.replace(R.id.wordListLayout, homeFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
                 }
                 return false;
             }

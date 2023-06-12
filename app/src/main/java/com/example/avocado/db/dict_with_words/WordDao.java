@@ -18,7 +18,7 @@ public interface WordDao {
     Completable insert(Word word);
 
     @Update
-    Completable update(Word word);
+    Completable update(Word...word);
 
     @Delete
     Completable delete(Word ... words);
