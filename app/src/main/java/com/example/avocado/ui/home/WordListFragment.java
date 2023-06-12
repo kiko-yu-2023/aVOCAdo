@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.avocado.R;
@@ -26,11 +27,13 @@ import com.example.avocado.db.dict_with_words.WordRepository;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 
 /**
  * A fragment representing a list of Items.
@@ -43,6 +46,7 @@ public class WordListFragment extends Fragment {
 
     private FragmentWordListListBinding binding;
     private RecyclerView rc_list;
+    private TextView noMemoText;
     private int dictId;
 
     private Bundle receivedBundle;
@@ -97,7 +101,7 @@ public class WordListFragment extends Fragment {
         rc_list = binding.recyclerviewWord;
         rc_list.setHasFixedSize(true);
 
-        //TextView noMemoText = binding.noMemoText;
+        noMemoText = binding.noTextView;
 
         adapter_word = new WordListAdapter(total_items);
         //adapter_dict.setOnItemClickListener(this);
@@ -133,6 +137,7 @@ public class WordListFragment extends Fragment {
                                 Log.d("wordList", "words size: " + dictWithWords.words.size());
                                 //내용이 있을 경우
                                 if (dictWithWords.words.size() > 0) {
+                                    noMemoText.setText("");
                                     for (Word w : dictWithWords.words) {
                                         Log.d("wordList", w.toString());
 
@@ -259,6 +264,8 @@ public class WordListFragment extends Fragment {
                                             Toast.makeText(getContext(),"단어가 "+dictName+"로부터 "+seletedDictName+"으로 이동되었습니다.",Toast.LENGTH_LONG).show();
 
                                             //이전 fragment로 돌아가기
+                                            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                                            fragmentManager.popBackStack();
                                         }
 
                                         @Override
@@ -290,4 +297,68 @@ public class WordListFragment extends Fragment {
 
         return root;
     }
+    //HomeFragment가 화면에 보일 때마다 실행.
+    public void onResume(){
+        super.onResume();
+
+        // 이후 데이터 가져오기 함수화 필요.
+        // 삭제 연산시 데이터 0일경우 추가 필요.
+
+        AppDatabase db=AppDatabase.getDatabase(getContext());
+        //dictRepo를 private으로 클래스 oncreate 밖에 정의하는 걸 추천
+        DictRepository dr = new DictRepository(db.dictDao(),db.wordDao());
+        dr.getDictByTitle(dictName).subscribe(new SingleObserver<Dict>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+            }
+
+            //성공적으로 단어장 검색
+            @Override
+            public void onSuccess(@NonNull Dict dict) {
+                //단어장과 연결된 단어리스트 찾기
+                dr.getWordsByDictID(dict.getDictID())
+                        .subscribe(new SingleObserver<DictWithWords>() {
+                            //성공 단어장-단어리스트 객체 - dicWithWords
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
+                                //단어리스트(List) 불러오기 - dictWithWords.words
+                                Log.d("wordList", "words size: " + dictWithWords.words.size());
+                                //내용이 있을 경우
+                                if (dictWithWords.words.size() > 0) {
+                                    noMemoText.setText("");
+                                    for (Word w : dictWithWords.words) {
+                                        Log.d("wordList", w.toString());
+
+                                    }
+                                }
+                                dictId = dict.getDictID();
+                                total_items = (ArrayList<Word>) dictWithWords.words;
+
+                                Log.d("set", "설정함");
+                                adapter_word.setWordList(total_items);
+                                adapter_word.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e("wordList", t.toString());
+                                dictId = dict.getDictID();
+                                adapter_word.notifyDataSetChanged();
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e("로그getDictByTitle", e.toString());
+            }
+        });
+
+    }
+
 }
