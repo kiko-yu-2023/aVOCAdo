@@ -218,7 +218,8 @@ public class WordListFragment extends Fragment {
                             public void onComplete() {
                                 Log.d("deleted", "deleted");
                                 Toast.makeText(getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                                adapter_word.notifyDataSetChanged();
+
+                                
                             }
 
                             @Override

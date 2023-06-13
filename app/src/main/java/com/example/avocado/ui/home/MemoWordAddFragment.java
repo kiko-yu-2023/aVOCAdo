@@ -86,8 +86,6 @@ public class MemoWordAddFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment Memo.
      */
     // TODO: Rename and change types and number of parameters
@@ -209,6 +207,7 @@ public class MemoWordAddFragment extends Fragment {
                                     if (interactionListener != null) {
                                         Log.d("로그 getandinsert word data from dict", "success");
                                         //super.getDict
+
                                         interactionListener.moveToNextPageAndChangeFragment(word2);
                                     }
                                 }
