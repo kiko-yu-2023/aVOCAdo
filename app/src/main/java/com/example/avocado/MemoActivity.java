@@ -54,9 +54,9 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
      * and next wizard steps.
      */
 
-    private AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-    private DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
-    private WordRepository wr = new WordRepository(db.wordDao());
+    private AppDatabase db;
+    private DictRepository dr;
+    private WordRepository wr;
     private ViewPager2 viewPager;
     private ActivityMemoBinding binding;
     private ConstraintLayout toLeft;
@@ -80,6 +80,10 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         Intent intent = getIntent();
         dictName = intent.getStringExtra("dictName");
 
+        db = AppDatabase.getDatabase(getApplicationContext());
+        dr = new DictRepository(db.dictDao(), db.wordDao());
+        wr = new WordRepository(db.wordDao());
+
         pagerAdapter = new ViewPagerAdapter(this);
 
         ActionBar ab = getSupportActionBar();
@@ -88,17 +92,11 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         Log.d("getItemCount after",Integer.toString(pagerAdapter.wordList.size()));
 
         // Instantiate a ViewPager2 and a PagerAdapter.
-        viewPager = binding.viewPager2Container;
-
 
         //popBackStack 할수있도록
 
         toLeft = binding.beforeFragmentLayout;
         toRight = binding.nextFragmentLayout;
-
-
-        viewPager.setUserInputEnabled(false);
-        viewPager.setAdapter(pagerAdapter);
 
         toLeft.setOnClickListener(new View.OnClickListener() {
 
@@ -115,40 +113,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             }
         });
 
-        //화면 변경시 이벤트
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
 
-                currentPage = position;
-                Log.d("currentPage", String.valueOf(currentPage));
-
-                if(pagerAdapter.getItemCount()==1)
-                {
-                    toRight.setEnabled(false);
-                    toLeft.setEnabled(false);
-                    toLeft.setVisibility(View.INVISIBLE);
-                    toRight.setVisibility(View.INVISIBLE);
-                }
-                else
-                    if (position == 0) {
-                    toRight.setEnabled(true);
-                    toLeft.setEnabled(false);
-                    toLeft.setVisibility(View.INVISIBLE);
-                } else if (position == pagerAdapter.getItemCount() - 1) { //마지막 페이지
-                    toRight.setEnabled(false);
-                    toLeft.setEnabled(true);
-                    toLeft.setVisibility(View.VISIBLE);
-                    toRight.setVisibility(View.INVISIBLE);
-                } else {
-                    toRight.setEnabled(true);
-                    toLeft.setEnabled(true);
-                    toLeft.setVisibility(View.VISIBLE);
-                    toRight.setVisibility(View.VISIBLE);
-                }
-            }
-        });
     }
 
     @Override
@@ -199,16 +164,94 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
                                 dictId = dict.getDictID();
                                 pagerAdapter.wordList.addAll(dictWithWords.words);
                                 Log.d("getItemCount done",Integer.toString(pagerAdapter.wordList.size()));
+                                viewPager = binding.viewPager2Container;
+                                viewPager.setUserInputEnabled(false);
+                                viewPager.setAdapter(pagerAdapter);
 
 
                                 pagerAdapter.notifyDataSetChanged();
+
+                                //화면 변경시 이벤트
+                                viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                                    @Override
+                                    public void onPageSelected(int position) {
+                                        super.onPageSelected(position);
+
+                                        currentPage = position;
+                                        Log.d("currentPage", String.valueOf(currentPage));
+
+                                        if(pagerAdapter.getItemCount()==1)
+                                        {
+                                            toRight.setEnabled(false);
+                                            toLeft.setEnabled(false);
+                                            toLeft.setVisibility(View.INVISIBLE);
+                                            toRight.setVisibility(View.INVISIBLE);
+                                        }
+                                        else
+                                        if (position == 0) {
+                                            toRight.setEnabled(true);
+                                            toLeft.setEnabled(false);
+                                            toLeft.setVisibility(View.INVISIBLE);
+                                        } else if (position == pagerAdapter.getItemCount() - 1) { //마지막 페이지
+                                            toRight.setEnabled(false);
+                                            toLeft.setEnabled(true);
+                                            toLeft.setVisibility(View.VISIBLE);
+                                            toRight.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            toRight.setEnabled(true);
+                                            toLeft.setEnabled(true);
+                                            toLeft.setVisibility(View.VISIBLE);
+                                            toRight.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                });
                             }
 
                             @Override
                             public void onError(Throwable t) {
                                 Log.e("로그word", t.toString());
                                 dictId=dict.getDictID();
+                                viewPager = binding.viewPager2Container;
+                                viewPager.setUserInputEnabled(false);
+                                viewPager.setAdapter(pagerAdapter);
+
                                 //pagerAdapter.notifyDataSetChanged();
+
+                                //화면 변경시 이벤트
+                                //나중에 transaction으로 변경 필요
+                                viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                                    @Override
+                                    public void onPageSelected(int position) {
+                                        super.onPageSelected(position);
+
+                                        currentPage = position;
+                                        Log.d("currentPage", String.valueOf(currentPage));
+
+                                        if(pagerAdapter.getItemCount()==1)
+                                        {
+                                            toRight.setEnabled(false);
+                                            toLeft.setEnabled(false);
+                                            toLeft.setVisibility(View.INVISIBLE);
+                                            toRight.setVisibility(View.INVISIBLE);
+                                        }
+                                        else
+                                        if (position == 0) {
+                                            toRight.setEnabled(true);
+                                            toLeft.setEnabled(false);
+                                            toLeft.setVisibility(View.INVISIBLE);
+                                        } else if (position == pagerAdapter.getItemCount() - 1) { //마지막 페이지
+                                            toRight.setEnabled(false);
+                                            toLeft.setEnabled(true);
+                                            toLeft.setVisibility(View.VISIBLE);
+                                            toRight.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            toRight.setEnabled(true);
+                                            toLeft.setEnabled(true);
+                                            toLeft.setVisibility(View.VISIBLE);
+                                            toRight.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                });
                             }
                         });
             }
@@ -328,33 +371,21 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 
     @Override
     public void moveToNextPageAndChangeFragment(Word word) {
-        // ViewPager2의 페이지 수를 증가시키고 새로운 Fragment를 추가하는 작업을 수행합니다.
-        // 이 작업은 Activity에서 처리해야 합니다.
-
-        // MemoWordAddFragment를 다음 페이지로 넘기기
-        //현재 자리에 MemoWordFragment를 끼워넣기
-        //DB로부터 가져올 필요 없지 않나?
+        // ViewPager2의 현재 페이지를 새로운 페이지로 대체하는 작업을 수행합니다.
 
         int currentPosition = viewPager.getCurrentItem();
 
-        MemoWordFragment fragment = new MemoWordFragment();
+        // 어댑터에서 현재 페이지의 데이터를 가져옵니다.
 
-        Bundle bundle = new Bundle();
-        bundle.putString("inputFixedString", word.getContent());
-        bundle.putString("wordMeaningSt", word.getMeaning());
-        bundle.putString("exampleSentenceSt", word.getExampleSentence());
-        bundle.putString("exampleSentenceMeaningSt", word.getExampleMeaning());
+        // 새로운 데이터로 현재 페이지의 아이템을 대체합니다.
+        pagerAdapter.wordList.set(currentPosition, word);
 
-        fragment.setArguments(bundle);
-
-        Log.d("current page", String.valueOf(currentPosition));
-        //pagerAdapter.addItem(currentPosition,fragment);
-        viewPager.setCurrentItem(currentPosition);
-
-        //getDictWithWordsByTitle(dictName);
+        // 어댑터에 데이터 변경을 알립니다.
         pagerAdapter.notifyDataSetChanged();
-
     }
+
+
+
 
 }
 
