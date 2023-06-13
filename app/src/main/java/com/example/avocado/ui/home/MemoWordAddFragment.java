@@ -54,12 +54,11 @@ public class MemoWordAddFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "para1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "dictName";
+    private static final String ARG_PARAM2 = "dictId";
+    private static final String ARG_PARAM3 = "position";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private Boolean isSentence = false;
 
     private Interpreter tflite;
@@ -82,6 +81,7 @@ public class MemoWordAddFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -91,11 +91,14 @@ public class MemoWordAddFragment extends Fragment {
      * @return A new instance of fragment Memo.
      */
     // TODO: Rename and change types and number of parameters
-    public static MemoWordAddFragment newInstance(String param1, String param2) {
+    public static MemoWordAddFragment newInstance(String dictName, int dictId,int position) {
         MemoWordAddFragment fragment = new MemoWordAddFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, dictName);
+        args.putInt(ARG_PARAM2, dictId);
+        args.putInt(ARG_PARAM3,position);
+
+        Log.d("arg Id", String.valueOf(dictId));
         fragment.setArguments(args);
         return fragment;
     }
@@ -114,11 +117,10 @@ public class MemoWordAddFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
 
-            position = args.getInt("position", position);
-            dictName = args.getString("dictName", "");
-            Log.d("args", dictName);
-            dictId = args.getInt("dictId", 0);
-            Log.d("args", Integer.toString(dictId));
+            dictName = args.getString(ARG_PARAM1);
+            dictId = args.getInt(ARG_PARAM2);
+            position = args.getInt(ARG_PARAM3);
+            Log.d("args r", String.valueOf(dictId));
         }
 
         if (!OpenCVLoader.initDebug()) {

@@ -1,19 +1,19 @@
 {
   "buildFiles": [
-    "/Users/hyyun/Documents/GitHub/aVOCAdo/opencv/libcxx_helper/CMakeLists.txt"
+    "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\libcxx_helper\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "/Users/hyyun/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "/Users/hyyun/Documents/GitHub/aVOCAdo/opencv/.cxx/Debug/2o554d35/arm64-v8a",
+      "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\arm64-v8a",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "/Users/hyyun/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "/Users/hyyun/Documents/GitHub/aVOCAdo/opencv/.cxx/Debug/2o554d35/arm64-v8a",
+    "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\arm64-v8a",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
@@ -21,13 +21,13 @@
       "toolchain": "toolchain",
       "abi": "arm64-v8a",
       "artifactName": "opencv_jni_shared",
-      "output": "/Users/hyyun/Documents/GitHub/aVOCAdo/opencv/.cxx/Debug/2o554d35/arm64-v8a/libopencv_jni_shared.a"
+      "output": "C:\\Users\\mmow1\\imsiproject\\aVOCAdo\\opencv\\.cxx\\Debug\\2o554d35\\arm64-v8a\\libopencv_jni_shared.a"
     }
   },
   "toolchains": {
     "toolchain": {
-      "cCompilerExecutable": "/Users/hyyun/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
-      "cppCompilerExecutable": "/Users/hyyun/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+      "cCompilerExecutable": "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\mmow1\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

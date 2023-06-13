@@ -53,6 +53,10 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next wizard steps.
      */
+
+    private AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+    private DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
+    private WordRepository wr = new WordRepository(db.wordDao());
     private ViewPager2 viewPager;
     private ActivityMemoBinding binding;
     private ConstraintLayout toLeft;
@@ -77,11 +81,11 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         dictName = intent.getStringExtra("dictName");
 
         pagerAdapter = new ViewPagerAdapter(this);
-        //Log.d("getItemCount",Integer.toString(wordList.size()));
 
         ActionBar ab = getSupportActionBar();
         ab.setTitle(dictName);
         getDictWithWordsByTitle(dictName);
+        Log.d("getItemCount after",Integer.toString(pagerAdapter.wordList.size()));
 
         // Instantiate a ViewPager2 and a PagerAdapter.
         viewPager = binding.viewPager2Container;
@@ -118,6 +122,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
                 super.onPageSelected(position);
 
                 currentPage = position;
+                Log.d("currentPage", String.valueOf(currentPage));
 
                 if(pagerAdapter.getItemCount()==1)
                 {
@@ -162,10 +167,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
     void getDictWithWordsByTitle(String title) {
         //NUM_PAGES와 LIST 받아오기
 
-        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-        DictRepository dr = new DictRepository(db.dictDao(), db.wordDao());
-        WordRepository wr = new WordRepository(db.wordDao());
-
         //무결성을 위해 title 이란 이름의 단어장 검색
         dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
             @Override
@@ -181,7 +182,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
                             //성공 단어장-단어리스트 객체 - dicWithWords
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
-                                pagerAdapter.wordList.add(new Word(false,"empty",null,null,null,dictId)); //완충
+                                pagerAdapter.wordList.add(new Word(false,"empty",null,null,null,dict.getDictID())); //완충
                             }
 
                             @Override
@@ -197,6 +198,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
                                 }
                                 dictId = dict.getDictID();
                                 pagerAdapter.wordList.addAll(dictWithWords.words);
+                                Log.d("getItemCount done",Integer.toString(pagerAdapter.wordList.size()));
 
 
                                 pagerAdapter.notifyDataSetChanged();
@@ -222,7 +224,6 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
      * sequence.
      */
     private class ViewPagerAdapter extends FragmentStateAdapter {
-        private List<Fragment> fragments = new ArrayList<>();
         private List<Word> wordList= new ArrayList<>();
 
         public ViewPagerAdapter(FragmentActivity fa) {
@@ -236,16 +237,13 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
             Log.d("getItemCount","getItemCount() : "+ Integer.toString(getItemCount())+" position : "+position);
             if (position == getItemCount()-1) {
 
-                MemoWordAddFragment memoWordAddFragment = new MemoWordAddFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("position", position);
-                bundle.putString("dictName", dictName);
-                bundle.putInt("dictId", dictId);
-                memoWordAddFragment.setArguments(bundle);
-                return memoWordAddFragment;
+                Log.d("getItemCount2","getItemCount() : "+ Integer.toString(getItemCount())+" position : "+position);
+                    MemoWordAddFragment memoWordAddFragment = MemoWordAddFragment.newInstance(dictName, dictId, position);
+                    return memoWordAddFragment;
 
             } else {
                 // 나머지 인덱스인 경우 기존에 사용하던 Fragment 반환
+                Log.d("getItemCount3","getItemCount() : "+ Integer.toString(getItemCount())+" position : "+position);
                 MemoWordFragment wordFragment = new MemoWordFragment();
                 Bundle bundle = new Bundle();
 
@@ -275,13 +273,10 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
 //            fragments.set(index, fragment);
 //            notifyDataSetChanged();
 //        }
-        public void addItem(int index,Fragment fragment) {
-            fragments.add(index,fragment);
-            notifyDataSetChanged();
-        }
 
         @Override
         public int getItemCount() {
+            Log.d("getItemCount size", String.valueOf(wordList.size()));
             return wordList.size();
         }
     }
@@ -353,7 +348,7 @@ public class MemoActivity extends AppCompatActivity implements MemoWordAddFragme
         fragment.setArguments(bundle);
 
         Log.d("current page", String.valueOf(currentPosition));
-        pagerAdapter.addItem(currentPosition,fragment);
+        //pagerAdapter.addItem(currentPosition,fragment);
         viewPager.setCurrentItem(currentPosition);
 
         //getDictWithWordsByTitle(dictName);
