@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         //deleteWord(2);
         //insertRecordAndQuiz(1);
 
-
         //putSentence("Test");
         //putWord("Test");
     }
