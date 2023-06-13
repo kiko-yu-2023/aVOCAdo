@@ -74,6 +74,11 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.ViewHo
         return wordData.size();
     }
 
+    public void setItems(ArrayList<Word> words) {
+        wordData = words; // 기존 데이터를 새로운 데이터로 교체
+        notifyDataSetChanged(); // 어댑터에 데이터 변경을 알림
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView content;
         public final TextView meaning;
