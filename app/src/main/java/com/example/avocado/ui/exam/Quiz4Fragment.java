@@ -2,48 +2,39 @@ package com.example.avocado.ui.exam;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.avocado.databinding.FragmentQuiz4Binding;
-import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.dict_with_words.Dict;
-import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
-import com.example.avocado.db.dict_with_words.WordRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.SingleObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
+import java.util.ArrayList;
 
-public class Quiz4Fragment extends Fragment {
+public class Quiz4Fragment extends QuizDataFragment {
 
     private FragmentQuiz4Binding binding;
     TextView exampleMeaning;
     EditText inputSentenceQuiz4;
     ImageView completeQuiz4;
 
-    private AppDatabase db;
-    private DictRepository dr;
-    private WordRepository wr;
     private String title;
     private int correctAnswer;
     private Word word;
+    private ArrayList<Quiz> quiz; //이 퀴즈 저장
+    private boolean isCorrect;
 
-    public Quiz4Fragment(String title, Word word, int correctAnswer) {
+    public Quiz4Fragment(String title, Word word, int correctAnswer, ArrayList<Quiz> quiz) {
         this.title = title;
         this.word = word;
         this.correctAnswer = correctAnswer;
+        this.quiz = quiz;
     }
 
     @Override
@@ -63,21 +54,21 @@ public class Quiz4Fragment extends Fragment {
         inputSentenceQuiz4 = binding.inputSentenceQuiz4;
         completeQuiz4 = binding.completeQuiz4;
 
-        db=AppDatabase.getDatabase(getContext());
-        wr=new WordRepository(db.wordDao());
-        dr=new DictRepository(db.dictDao(),db.wordDao());
-
-        showExampleMeaning();
+        loadData(title);
 
         completeQuiz4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isCorrect(inputSentenceQuiz4.getText().toString())) {
-                    // Correct answer
+                isCorrect = inputSentenceQuiz4.getText().toString().equals(word.getContent());
+
+                if (isCorrect) {
                     correctAnswer ++;
                 } else {
                     Toast.makeText(getContext(), "Incorrect answer", Toast.LENGTH_SHORT).show();
                 }
+
+                updateQuizList();
+
                 ExamFragment parentFragment = (ExamFragment) getParentFragment();
                 if (parentFragment != null) {
                     parentFragment.openNextQuizFragment(correctAnswer);
@@ -88,47 +79,16 @@ public class Quiz4Fragment extends Fragment {
         return root;
     }
 
-    private void showExampleMeaning() {
-        //무결성을 위해 title 이란 이름의 단어장 검색
-        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
-            //성공적으로 단어장 검색
-            @Override
-            public void onSuccess(@NonNull Dict dict) {
-                //단어장과 연결된 단어리스트 찾기
-                dr.getWordsByDictID(dict.getDictID())
-                        .subscribe(new SingleObserver<DictWithWords>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
-
-                            }
-                            //성공 단어장-단어리스트 객체 - dictWithWords
-                            @Override
-                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
-                                Log.d("로그w&s","words si");
-                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
-
-                                showMeaning();
-
-                            }
-                            @Override
-                            public void onError(Throwable t) {
-                                Log.e("로그wordsInDict",t.toString());
-                            }
-
-                        });
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("로그getDictByTitle",e.toString());
-            }
-        });
-
+    protected void handleData(DictWithWords dictWithWords) {
+        showMeaning();
     }
 
+    private ArrayList<Quiz> updateQuizList(){
+        quiz.add(new Quiz(isCorrect,4,
+                word.getMeaning(),inputSentenceQuiz4.getText().toString(), word.getWordID(),0));
+
+        return quiz;
+    }
 
     private void showMeaning() {
         if (word != null) {
@@ -140,14 +100,13 @@ public class Quiz4Fragment extends Fragment {
         }
     }
 
-
-    private boolean isCorrect(String inputWord) {
-        if(inputWord.equals(word.getContent())){
-            return true;
-        }else{
-            return false;
-        }
-    }
+//    private void isCorrect(String inputSentenceQuiz4) {
+//        if(inputSentenceQuiz4.equals(word.getContent())){
+//            isCorrect = true;
+//        }else{
+//            isCorrect = false;
+//        }
+//    }
 
     @Override
     public void onDestroyView() {

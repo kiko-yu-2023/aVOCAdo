@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //배경화면 보이도록 패딩넣기
         ConstraintLayout mainLayout = binding.container;
         int padding = getResources().getDimensionPixelSize(R.dimen.fragment_padding);
-        mainLayout.setPadding(padding,0,padding,padding);
+        mainLayout.setPadding(padding, 0, padding, padding);
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -88,13 +88,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        db= AppDatabase.getDatabase(getApplicationContext());
-        dr=new DictRepository(db.dictDao(),db.wordDao());
-        wr=new WordRepository(db.wordDao());
-        rr=new RecordRepository(db.recordDao(),db.quizDao(),db.testDao());
-        qr=new QuizRepository(db.quizDao());
-        tr=new TestRepository(db.testDao());
-
+        db = AppDatabase.getDatabase(getApplicationContext());
+        dr = new DictRepository(db.dictDao(), db.wordDao());
+        wr = new WordRepository(db.wordDao());
+        rr = new RecordRepository(db.recordDao(), db.quizDao(), db.testDao());
+        qr = new QuizRepository(db.quizDao());
+        tr = new TestRepository(db.testDao());
 
 
         //dictInsert("abc");
@@ -103,10 +102,8 @@ public class MainActivity extends AppCompatActivity {
         //deleteWord(2);
         //insertRecordAndQuiz(1);
 
-
-//        putSentence("hello");
-//        putWord("hello");
-        //insertRecordAndTest(4);
+        //putSentence("Test");
+        //putWord("Test");
     }
 
     public void replaceFragment(Fragment fragment){
@@ -132,24 +129,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(event);
     }
-    //wordID로 word 객체 찾아오기
-    static void getWord(int wordID)
-    {
-        wr.getWord(wordID).subscribe(new SingleObserver<Word>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
 
-            @Override
-            public void onSuccess(@NonNull Word word) {
-                //작동 코드ㅡ
-            }
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("로그 getWord",e.toString());
-            }
-        });
-    }
     //1. dictId있는 특정 dict에 대한 모든 record를 가져오는 기능
     static void getRecordsByDictID(int dictID)
     {
@@ -172,78 +152,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //2. 특정 dict 하나에 record insert하는거 함수로
-    //레코드를 만들고 그 안에 퀴즈 리스트를 넣고 퀴즈 리스트의 점수로 레코드 업데이트
-    static void insertRecordAndQuiz(int dictID)
-    {
-        Record rec=new Record(true,dictID);
-        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
 
-            }
 
-            @Override
-            public void onSuccess(@NonNull Integer recordID) {
-                Quiz q1=new Quiz(true,1,"random","abdf",1,recordID);
-                Quiz q2=new Quiz(true,1,"random","abdf",2,recordID);
-                qr.insert(q1,q2).subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-                    @Override
-                    public void onComplete() {
-                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
-                    }
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.e("로그 quiz insert mainActivity",e.toString());
-                    }
-                });
-            }
-            @Override
-            public void onError(@NonNull Throwable e) {
-
-            }
-        });
-
-    }
-    static void insertRecordAndTest(int dictID)
-    {
-        Record rec=new Record(true,dictID);
-        rr.insert(rec).subscribe(new SingleObserver<Integer>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-
-            }
-
-            @Override
-            public void onSuccess(@NonNull Integer recordID) {
-                Test t1=new Test(true,true,"hi","안녕",5,recordID);
-                Test t2=new Test(true,false,"good","나쁜",6,recordID);
-                  tr.insert(t1,t2).subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-                    @Override
-                    public void onComplete() {
-                        rr.updateScore(recordID).doOnComplete(()->Log.e("로그 update score","success")).doOnError(e->{Log.e("로그 record score update",e.toString());}).subscribe();
-                    }
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.e("로그 test insert mainActivity",e.toString());
-                    }
-                });
-            }
-            @Override
-            public void onError(@NonNull Throwable e) {
-
-            }
-        });
-
-    }
     //deleteWord or Sentence
     static void deleteWord(int wordID)
     {
@@ -327,12 +237,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 문장 insert - 문장이므로 첫 인자 isSentence=true,예시문장 인자 null
-//                wr.insert(new Word(true,"I am sam","나는 샘이다",null,null,dict.getDictID()))
-//                        .subscribe();
-//                wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
-//                        .subscribe();
-//                wr.insert(new Word(true,"Where are you from?","넌 어디서 왔니?",null,null,dict.getDictID()))
-//                        .subscribe();
+                wr.insert(new Word(true,"I am Sam","나는 샘이다",null,null,dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(true,"Do you like coffee?","커피 좋아하니?",null,null,dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(true,"Where are you from?","넌 어디서 왔니?",null,null,dict.getDictID()))
+                        .subscribe();
                 //단어장이 수정되었으니 수정시간 업데이트
                 dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }
@@ -356,10 +266,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@NonNull Dict dict) {
                 //단어 db에 단어 insert - 단어이므로 첫 인자 isSentence=false, 예시문장 인자 not null
-                wr.insert(new Word(false,"cat","고양이","Cat is my favorite animal","고양이는 내가 좋아하는 동물이야",dict.getDictID()))
+                wr.insert(new Word(false,"cat","고양이","Cat is my favorite animal","고양이는 내가 좋아하는 동물이야.",dict.getDictID()))
                         .subscribe();
                 wr.insert(new Word(false,"piano","피아노","Are you good at playing the piano?","너 피아노 잘쳐?",dict.getDictID()))
                         .subscribe();
+                wr.insert(new Word(false,"apple","사과","I love apple.","난 사과를 좋아해.",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"coffee","커피","I need coffee.","나 커피가 필요해.",dict.getDictID()))
+                        .subscribe();
+                wr.insert(new Word(false,"phone","폰","I need to get a new phone.","새 휴대폰을 사야겠어.",dict.getDictID()))
+                        .subscribe();
+
                 //단어장이 수정되었으니 수정시간 업데이트
                 dr.updateModifiedTime(dict.getDictID(),new Date()).subscribe();
             }

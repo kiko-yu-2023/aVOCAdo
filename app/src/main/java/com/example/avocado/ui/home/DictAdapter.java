@@ -21,6 +21,7 @@ import com.example.avocado.db.dict_with_words.Dict;
 public class DictAdapter extends RecyclerView.Adapter<DictAdapter.ViewHolder>{
 
     private ArrayList<Dict> dictData;
+    private List<Dict> items;
     private OnItemClickListener listener;
     private DictItemListBinding binding;
 

@@ -2,11 +2,6 @@ package com.example.avocado.ui.exam;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,42 +11,37 @@ import android.widget.Toast;
 
 import com.example.avocado.R;
 import com.example.avocado.databinding.FragmentQuiz1Binding;
-import com.example.avocado.db.AppDatabase;
-import com.example.avocado.db.dict_with_words.Dict;
-import com.example.avocado.db.dict_with_words.DictRepository;
 import com.example.avocado.db.dict_with_words.DictWithWords;
 import com.example.avocado.db.dict_with_words.Word;
-import com.example.avocado.db.dict_with_words.WordRepository;
+import com.example.avocado.db.record_with_quizes_and_tests.Quiz;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.SingleObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
 
-public class Quiz1Fragment extends Fragment implements View.OnClickListener {
+public class Quiz1Fragment extends QuizDataFragment implements View.OnClickListener {
 
     private FragmentQuiz1Binding binding;
 
-    TextView textView;
-    Button button1, button2, button3, button4;
+    private TextView textView;
+    private Button button1, button2, button3, button4;
     private ArrayList<Button> buttons;
-    List<String> meanings;
-    private AppDatabase db;
-    private WordRepository wr;
-    private DictRepository dr;
+    private List<String> meanings;
 
-    private String title;
-    private int correctAnswer;
+    private String title;//사전 이름
+    private int correctAnswer;//정답 개수
     private Word word;
+    private String InputWordQuiz1; //사용자 선택 답
+    private ArrayList<Quiz> quiz; //이 퀴즈 저장
+    private boolean isCorrect;//정답 여부
 
-    public Quiz1Fragment(String title, Word word, int correctAnswer) {
+    public Quiz1Fragment(String title, Word word, int correctAnswer, ArrayList<Quiz> quiz) {
         this.title = title;
         this.word = word;
         this.correctAnswer = correctAnswer;
+        this.quiz = quiz;
     }
 
     @Override
@@ -84,75 +74,46 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
         button3.setOnClickListener(this);
         button4.setOnClickListener(this);
 
-        db = AppDatabase.getDatabase(getContext());
-        wr = new WordRepository(db.wordDao());
-        dr = new DictRepository(db.dictDao(), db.wordDao());
-
-        wordAccess(title);
+        loadData(title);
 
         return root;
     }
 
+
     @Override
     public void onClick(View v) {
-        if(v instanceof Button){
-            Button clickedButton = (Button) v;
-            boolean isCorrectAnswer = clickedButton.getText().toString().equals(word.getMeaning());
+        InputWordQuiz1 = ((Button) v).getText().toString();
+        isCorrect = InputWordQuiz1.equals(word.getMeaning());
 
-            if (isCorrectAnswer) {
-                v.setBackgroundResource(R.color.correct_button);
-                correctAnswer++;
-            } else {
-                v.setBackgroundResource(R.color.incorrect_button);
-            }
-            ExamFragment parentFragment = (ExamFragment) getParentFragment();
-            if (parentFragment != null) {
-                parentFragment.openNextQuizFragment(correctAnswer); // Pass the updated correctAnswer value
-            }
-            removeFragment(this);
+        if (isCorrect) {
+            v.setBackgroundResource(R.color.correct_button);
+            correctAnswer++;
+        } else {
+            v.setBackgroundResource(R.color.incorrect_button);
+        }
 
+        updateQuizList();
+
+        ExamFragment parentFragment = (ExamFragment) getParentFragment();
+        if (parentFragment != null) {
+            parentFragment.openNextQuizFragment(correctAnswer); // Pass the updated correctAnswer value
         }
     }
 
-    private void wordAccess(String title) {
-        //무결성을 위해 title 이란 이름의 단어장 검색
-        dr.getDictByTitle(title).subscribe(new SingleObserver<Dict>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
-            //성공적으로 단어장 검색
-            @Override
-            public void onSuccess(@NonNull Dict dict) {
-                //단어장과 연결된 단어리스트 찾기
-                dr.getWordsByDictID(dict.getDictID())
-                        .subscribe(new SingleObserver<DictWithWords>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
+    protected void handleData(DictWithWords dictWithWords) {
+        showWord();
+        fillOptions(dictWithWords.words);
+    }
 
-                            }
-                            //성공 단어장-단어리스트 객체 - dictWithWords
-                            @Override
-                            public void onSuccess(@NonNull DictWithWords dictWithWords) {
-                                Log.d("로그w&s","words si");
-                                Log.d("로그w&s","words size: "+dictWithWords.words.size());
+    private ArrayList<Quiz> updateQuizList(){
+        if(meanings != null) {
+            quiz.add(new Quiz(isCorrect, 1,
+                    meanings.toString(), InputWordQuiz1, word.getWordID(), 0));
+        }else{
+            Toast.makeText(getActivity(), "퀴즈 생성하기 실패", Toast.LENGTH_SHORT).show();
+        }
 
-                                showWord();
-
-                                fillOptions(dictWithWords.words);
-                            }
-                            @Override
-                            public void onError(Throwable t) {
-                                Log.e("로그wordsInDict",t.toString());
-                            }
-                        });
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.e("로그getDictByTitle",e.toString());
-            }
-
-        });
+        return quiz;
 
     }
 
@@ -187,15 +148,15 @@ public class Quiz1Fragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "단어 개수 부족", Toast.LENGTH_SHORT).show();
         }
     }
-
     private void removeFragment(Quiz1Fragment quiz1Fragment) {
-        FragmentManager fragmentManager = getParentFragmentManager();
-        Fragment currentFragment = fragmentManager.findFragmentById(R.id.test_layout);
-
-        if (currentFragment != null && currentFragment instanceof Quiz4Fragment && currentFragment.isAdded()) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.remove(currentFragment).commitAllowingStateLoss();
-        }
+//        FragmentManager fragmentManager = getParentFragmentManager();
+//        Fragment currentFragment = fragmentManager.findFragmentById(R.id.test_layout);
+//
+//        if (currentFragment != null && currentFragment instanceof Quiz4Fragment && currentFragment.isAdded()) {
+//            FragmentTransaction transaction = fragmentManager.beginTransaction();
+//            transaction.remove(currentFragment).commitAllowingStateLoss();
+//        }
+//
     }
 
 }

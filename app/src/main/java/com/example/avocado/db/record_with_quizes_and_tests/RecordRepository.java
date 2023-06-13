@@ -32,9 +32,9 @@ public class RecordRepository {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Completable updateScore(int recordID)
+    public Completable updateScore(String score,int recordID)
     {
-        return rd.updateQuizScore(recordID).subscribeOn(Schedulers.io())
+        return rd.updateScore(score,recordID).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

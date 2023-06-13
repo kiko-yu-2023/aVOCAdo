@@ -20,16 +20,9 @@ public interface RecordDao {
     Single<Long> insert(Record record);
     @Query("SELECT * FROM RECORD WHERE RECORDID=:recordID")
     Single<Record> getRecord(int recordID);
-    @Query("UPDATE Record SET score = "+
-            "(SELECT COUNT(*) FROM Quiz WHERE recordID = :recordID AND ISCORRECT=1)"+
-            " WHERE recordID = :recordID")
-    Completable updateQuizScore(int recordID);
 
-    @Query("UPDATE Record SET score = "+
-            "(SELECT COUNT(*)" +
-            " FROM Test WHERE recordID = :recordID AND ENGISCORRECT=1 AND KORISCORRECT=1)"+
-            " WHERE recordID = :recordID")
-    Completable updateTestScore(int recordID);
+    @Query("UPDATE Record SET score = :score where recordID=:recordID")
+    Completable updateScore(String score,int recordID);
 
     @Query("DELETE FROM RECORD WHERE RECORDID=:recordID")
     Completable delete(int recordID);

@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,8 +20,9 @@ import com.example.avocado.ui.home.HomeFragment;
 public class MyPageFragment extends Fragment implements View.OnClickListener{
 
     private FragmentMyPageBinding binding;
-
-    ImageView quizScore, testScore;
+    private ImageView quizScore, testScore;
+    private int selectedButton;
+    private String title;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -45,21 +48,41 @@ public class MyPageFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        selectedButton = v.getId();
+        selectDict();
+    }
+
+    private void selectDict() {
+        HomeFragment homeFragment = (new HomeFragment());
+        FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Fragment selectedFragment;
-
-        if (v.getId() == R.id.quiz_score) {
-            selectedFragment = new QuizScoreFragment();
-        } else if (v.getId() == R.id.test_score) {
-            selectedFragment = new TestScoreFragment();
-        } else{
-            selectedFragment = new HomeFragment();
-        }
-
-        transaction.replace(R.id.nav_host_fragment_activity_main, selectedFragment);
+        transaction.replace(R.id.mypage_layout, homeFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        homeFragment.setOnItemClickListener(new HomeFragment.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, String dictName) {
+                title = dictName;
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                Fragment selectedFragment;
+
+                if (selectedButton == R.id.quiz_score) {
+                    selectedFragment = new QuizScoreFragment(title);
+                } else if (selectedButton == R.id.test_score) {
+                    selectedFragment = new TestScoreFragment(title);
+                } else{
+                    selectedFragment = new HomeFragment();
+                }
+
+                transaction.replace(homeFragment.getId(), selectedFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+            }
+        });
     }
 }
